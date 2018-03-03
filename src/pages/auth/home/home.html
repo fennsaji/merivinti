@@ -1,0 +1,38 @@
+<ion-header>
+
+  <ion-navbar>
+    <!-- <ion-title>{{ Title }}</ion-title> -->
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+
+  <ion-list>
+      <ion-list-header no-lines >
+        <h1 text-center padding>{{ Title }}</h1>
+      </ion-list-header>
+      <ion-item-divider text-center>
+          No account? Signup
+      </ion-item-divider>
+    <button
+      block
+      ion-button
+      (click)="toRegister()">
+      Register
+    </button>
+    <ion-item-divider>
+        Have account? login here
+    </ion-item-divider>
+    <button
+      block
+      outline
+      ion-button
+      (click)="toLogin()">
+      Login
+    </button>
+  </ion-list>
+
+</ion-content>

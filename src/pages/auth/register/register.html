@@ -1,0 +1,85 @@
+<ion-header>
+
+  <ion-navbar no-border-bottom>
+    <ion-title text-center>Register</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <div no-border-top>
+    <ion-segment [(ngModel)]="reg">
+      <ion-segment-button value="member">
+        Member
+      </ion-segment-button>
+      <ion-segment-button value="church">
+        Church
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <div [ngSwitch]="reg">
+
+    <form [formGroup]="membForm" (ngSubmit)="onRegister('memb')" *ngSwitchCase="'member'">
+      <ion-list>
+        <ion-item>
+          <ion-label floating>Name</ion-label>
+          <ion-input type="text" formControlName="name"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating>Username</ion-label>
+          <ion-input type="text" formControlName="username"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating>Church Id</ion-label>
+          <ion-input type="text" formControlName="churchId"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating>Password</ion-label>
+          <ion-input type="password" formControlName="password"></ion-input>
+        </ion-item>
+        <br>
+        <button ion-button [disabled]="!membForm.valid" type="submit" block>Register
+        </button>
+      </ion-list>
+    </form>
+
+
+    <form [formGroup]="churchForm" (ngSubmit)="onRegister('church')" *ngSwitchCase="'church'">
+      <ion-list>
+        <div formGroupName="leaders">
+          <ion-item>
+            <ion-label floating>Leader Name</ion-label>
+            <ion-input type="text" formControlName="leadName">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label floating>Leader Id</ion-label>
+            <ion-input type="text" formControlName="leadId">
+            </ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label floating>Password</ion-label>
+            <ion-input type="password" formControlName="password">
+            </ion-input>
+          </ion-item>
+        </div>
+        <ion-item>
+          <ion-label floating>Church Name</ion-label>
+          <ion-input type="text" formControlName="cName">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating>Church Id</ion-label>
+          <ion-input type="text" formControlName="churchId">
+          </ion-input>
+        </ion-item>
+        <br>
+        <button ion-button type="submit" [disabled]="!churchForm.valid" block>Register
+        </button>
+      </ion-list>
+    </form>
+  </div>
+
+</ion-content>

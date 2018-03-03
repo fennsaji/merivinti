@@ -1,0 +1,17 @@
+page-home {
+  ion-content {
+    position: relative;
+  }
+  ion-list {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  h1 {
+    font-family: 'Amaranth', sans-serif;
+  }
+  ion-list {
+    font-family: 'Jura', sans-serif;
+  }
+}
