@@ -3,16 +3,16 @@ import { NavController, NavParams, IonicPage } from 'ionic-angular';
 
 @IonicPage()
 @Component({
-  selector: 'page-church',
-  templateUrl: 'church.html',
+  selector: 'page-new-prayer',
+  templateUrl: 'new-prayer.html',
 })
-export class ChurchPage {
+export class NewPrayerPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ChurchPage');
+    console.log('ionViewDidLoad NewPrayerPage');
   }
 
 }

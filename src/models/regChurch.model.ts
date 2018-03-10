@@ -1,5 +1,5 @@
 export interface IRegChurch {
-  cName: String;
+  churchName: String;
   churchId: String;
   leaders: {
     leadId: String;

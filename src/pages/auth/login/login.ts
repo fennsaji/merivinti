@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, IonicPage } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
 import { AuthService } from '../../../services/auth';
-import { TabsPage } from '../../tabs/tabs';
 
-// @IonicPage()
+@IonicPage()
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html',
@@ -21,13 +20,12 @@ export class LoginPage {
   }
 
   onLogin(f: NgForm): void {
-    this.navCtrl.setRoot(TabsPage);
     console.log('console', f.value);
     this.authSer.login(f.value).subscribe(data => {
-      console.log(data);
-      this.navCtrl.setRoot(TabsPage);
+      console.log('data', data);
+      this.navCtrl.setRoot('TabsPage');
     }, err => {
-      console.log(err);
+      console.log('error', err);
     });
   }
 }
