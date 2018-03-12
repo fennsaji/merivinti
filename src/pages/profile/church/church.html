@@ -1,18 +1,73 @@
-<!--
-  Generated template for the ChurchPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
   <ion-navbar>
-    <ion-title>church</ion-title>
+    <ion-buttons left (click)="search()">
+      <button ion-button icon-only>
+        <ion-icon name="person-add"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title text-center>{{ churchId }}</ion-title>
+    <ion-buttons right>
+      <button ion-button icon-only>
+        <ion-icon name="options"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
+  <ion-list no-lines>
+    <ion-item padding-horizontal padding-top>
+      <div item-start class="header-avatar">
+        <img src="">
+      </div>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <h6 text-center>{{church.church.noOfPost}}</h6>
+            <h6 text-center>Posts</h6>
+          </ion-col>
+          <ion-col>
+            <h6 text-center>{{church.church.noOfLeaders}}</h6>
+            <h6 text-center>Leaders</h6>
+          </ion-col>
+          <ion-col>
+            <h6 text-center>{{church.church.noOfMembers + church.church.noOfFollowers}}</h6>
+            <h6 text-center>Prayees</h6>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <button ion-button outline small block>Edit Profile</button>
+        </ion-row>
+      </ion-grid>
 
+
+    </ion-item>
+    <ion-item>
+      <div padding-horizontal>
+        <h3>
+          {{church.church.churchName}}
+        </h3>
+        <p>
+          {{church.church.churchId}}
+        </p>
+      </div>
+    </ion-item>
+    <ion-card *ngFor="let item of church.prayerReq">
+      <ion-item>
+        <ion-avatar item-start>
+          <img [src]="item.proPic">
+        </ion-avatar>
+        <h3>{{item.username}}</h3>
+        <p>
+          {{item.churchId}}
+        </p>
+      </ion-item>
+      <ion-card-content>
+        <h2>{{item.body}}</h2>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
 </ion-content>

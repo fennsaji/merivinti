@@ -1,10 +1,12 @@
-
 <ion-header>
-
   <ion-navbar>
-    <ion-title text-center>Upasana</ion-title>
+    <ion-title text-center>Vinti</ion-title>
+    <ion-buttons end (click)="search()">
+      <button ion-button icon-only>
+        <ion-icon name="person-add"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
-
 </ion-header>
 
 
@@ -23,10 +25,15 @@
       <p>
         {{pr.churchId}}
       </p>
+      <ion-icon name="more" small item-end></ion-icon>
     </ion-item>
-    <ion-card-content>
-      <p>{{pr.body}}</p>
+    <ion-card-content id="card-content">
+      <h2>{{pr.body}}</h2>
     </ion-card-content>
+    <ion-item>
+      <ion-icon name="share-alt" large></ion-icon>
+      <p item-end>{{ pr.date | date}}</p>
+    </ion-item>
   </ion-card>
 
   <ion-infinite-scroll (ionInfinite)="loadOldPrayers($event)">
@@ -34,6 +41,8 @@
   </ion-infinite-scroll>
 
   <ion-fab>
-    <button ion-fab mini color="secondary"><ion-icon name="add"></ion-icon></button>
+    <button ion-fab color="dark" mini (click)="createNewPrayer()">
+      <ion-icon name="create"></ion-icon>
+    </button>
   </ion-fab>
 </ion-content>

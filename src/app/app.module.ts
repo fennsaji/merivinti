@@ -4,23 +4,19 @@ import { HttpClientModule } from "@angular/common/http";
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { IonicStorageModule } from "@ionic/storage";
-
-import { TabsPage } from '../pages/tabs/tabs';
-
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { AuthService } from '../services/auth';
 import { ChurchService } from '../services/church';
-import { EventsService } from '../services/events';
+import { ActivitiesService } from '../services/activities';
 import { MemberService } from '../services/member';
 import { PrayerService } from '../services/prayer';
 
 @NgModule({
   declarations: [
-    MyApp,
-    TabsPage
+    MyApp
   ],
   imports: [
     BrowserModule,
@@ -33,15 +29,14 @@ import { PrayerService } from '../services/prayer';
   ],
   bootstrap: [IonicApp],
   entryComponents: [
-    MyApp,
-    TabsPage
+    MyApp
   ],
   providers: [
     StatusBar,
     SplashScreen,
     AuthService,
     ChurchService,
-    EventsService,
+    ActivitiesService,
     MemberService,
     PrayerService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}

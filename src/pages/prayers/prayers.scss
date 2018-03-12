@@ -1,3 +1,14 @@
-page-prayers {
 
+page-prayers {
+  ion-fab {
+    position: fixed;
+    bottom: 54px;
+    right : 5px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  #card-content {
+    padding: 0px 15px;
+  }
 }

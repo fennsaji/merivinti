@@ -9,27 +9,7 @@ import { PrayerService } from '../../services/prayer';
   templateUrl: 'prayers.html',
 })
 export class PrayersPage {
-  prayerReq : IPrayerReq[] = [
-    {
-      _id: '1',
-      // proPic: 'abc',
-      // name: 'Fenn',
-      username: 'fennsaji',
-      churchId: 'mfbChurch',
-      body: 'This is a Prayer Request',
-      date: Date(),
-      shareWith: 'me'
-    },{
-      _id: '2',
-      // proPic: 'aca',
-      // name: 'Fenn',
-      username: 'fennsaji',
-      churchId: 'mfbChurch',
-      body: 'This is a Prayer Request',
-      date: Date(),
-      shareWith: 'me'
-    }
-  ];
+  prayerReq : IPrayerReq[] = [];
 
   constructor(public navCtrl: NavController,
       public navParams: NavParams,
@@ -49,7 +29,11 @@ export class PrayersPage {
       });
   }
 
-  loadPrayers(refresher) {
+  getDate(date) {
+    return new Date(date).getMilliseconds() - new Date().getMilliseconds();
+  }
+
+  loadPrayers(refresher): void {
     this.prayerSer.loadPrayerReq()
       .subscribe(doc => {
         console.log('fromdB', doc);
@@ -65,8 +49,8 @@ export class PrayersPage {
       });
   }
 
-  loadOldPrayers(infinitescroll) {
-    var date = this.prayerReq[this.prayerReq.length-2].date;
+  loadOldPrayers(infinitescroll): void {
+    var date = this.prayerReq[this.prayerReq.length-1].date;
     this.prayerSer.loadOldPr(date)
     .subscribe(doc => {
       if(doc) {
@@ -80,5 +64,14 @@ export class PrayersPage {
       console.log('unable to refresh2');
       infinitescroll.complete();
     });
+  }
+
+  createNewPrayer(): void {
+    this.navCtrl.push('NewPrayerPage');
+  }
+
+  search(): void {
+    console.log('clicked');
+    this.navCtrl.push('SearchPage', {profile: 'people'});
   }
 }

@@ -117,5 +117,17 @@ export class AuthService {
   getToken(): string {
     return this.myInfo.token;
   }
+
+  getUsername(): string {
+    return this.myInfo.username;
+  }
+
+  getChurchId(): string {
+    return this.myInfo.churchId;
+  }
+
+  isLeader(): boolean {
+    return this.myInfo.isLeader;
+  }
 }
 // headers.append('Content-Type', 'application/json');

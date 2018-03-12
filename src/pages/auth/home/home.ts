@@ -7,7 +7,7 @@ import { NavController, NavParams, IonicPage } from 'ionic-angular';
   templateUrl: 'home.html',
 })
 export class HomePage {
-  Title: String = 'Upasana';
+  Title: String = 'Vinti';
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }

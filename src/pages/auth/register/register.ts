@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { NavController, NavParams, IonicPage } from 'ionic-angular';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth';
-import { TabsPage } from '../../tabs/tabs';
 
 @IonicPage()
 @Component({
