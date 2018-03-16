@@ -1,8 +1,10 @@
 import { Injectable } from "@angular/core";
 import { AuthService } from "./auth";
+import { Storage } from "@ionic/storage";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/do";
 import { HttpHeaders, HttpClient } from "@angular/common/http";
+import { FormControl } from "@angular/forms";
 
 @Injectable()
 export class MemberService {
@@ -16,7 +18,8 @@ export class MemberService {
   url : string = 'http://192.168.43.54:8080/member/';
 
   constructor(private authSer: AuthService,
-    private http: HttpClient) {}
+    private http: HttpClient,
+    private storage: Storage) {}
 
   initialize() {
     this.token = this.authSer.getToken();
@@ -26,11 +29,28 @@ export class MemberService {
         'Content-type': 'application/json'
       })
     }
-    this.updatefriend();
+    this.getbasicinfo();
   }
 
-  updatefriend(){
-    this.http.get<any>(this.url + 'getfriends', this.httpOptions)
+  getPrStorage() {
+    return this.storage.ready()
+    .then(() => {
+      return this.storage.get('myProfile')
+    })
+    .then((Pro) => {
+      console.log('1', Pro);
+      // this.prayerReq = [...pr];
+      // return pr;
+      if(Pro) {
+        return Pro;
+      } else {
+        return [];
+      }
+    });
+  }
+
+  getbasicinfo(){
+    this.http.get<any>(this.url + 'getbasicinfo', this.httpOptions)
       .subscribe(res => {
         console.log('list', res);
         this.friends = res.list.friends;
@@ -46,19 +66,23 @@ export class MemberService {
   searchUsers(search: string) {
     return this.http.post<any>(this.url + 'search', {search}, this.httpOptions)
      .map(data => {
-       this.updatefriend();
+       this.getbasicinfo();
        return data.users
       });
   }
 
   getMembProfile(username: string) {
-    return this.http.post<any>(this.url + 'getDetails', {username}, this.httpOptions);
+    return this.http.post<any>(this.url + 'getDetails', {username}, this.httpOptions)
+    .do(Pro => {
+      this.storage.set('myProfile', Pro);
+      return Pro;
+    });
   }
 
   addAsFriend(username: string) {
     return this.http.post<any>(this.url + 'sendfriendReq', {username}, this.httpOptions)
       .do(doc => {
-        this.updatefriend();
+        this.getbasicinfo();
         return doc;
       });
   }
@@ -67,7 +91,7 @@ export class MemberService {
     console.log(username, approval);
     return this.http.post<any>(this.url + 'handleFriendReq', {username, approval}, this.httpOptions)
       .do(doc => {
-        this.updatefriend();
+        this.getbasicinfo();
         return doc;
       });
   }
@@ -75,7 +99,7 @@ export class MemberService {
   cancelFriendReq(username: string) {
     return this.http.post<any>(this.url + 'cancelFriendReq', {username}, this.httpOptions)
       .do(doc => {
-        this.updatefriend();
+        this.getbasicinfo();
         return doc;
       });
   }
@@ -83,7 +107,7 @@ export class MemberService {
   unfriend(username: string) {
     return this.http.post<any>(this.url + 'unfriend', {username}, this.httpOptions)
       .do(doc => {
-        this.updatefriend();
+        this.getbasicinfo();
         return doc;
       });
   }
@@ -98,5 +122,22 @@ export class MemberService {
 
   hasRequested(username: string) {
     return this.requests.indexOf(username) > -1 ? true : false;
+  }
+
+  pendingFollowReq(churchId: string) {
+    return this.pendingReq.findIndex(d => d.id === churchId) > -1 ? true: false;
+  }
+
+  iffollowing(churchId: string) {
+    console.log(this.following);
+    return this.following.indexOf(churchId) > -1 ? true: false;
+  }
+
+  getRequests() {
+    return this.requests.slice();
+  }
+
+  pendingMembReq() {
+    return this.pendingMemb;
   }
 }

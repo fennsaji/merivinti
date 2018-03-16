@@ -2,57 +2,62 @@ import { Component, OnInit } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ChurchService } from '../../services/church';
 import { MemberService } from '../../services/member';
-import { AuthService } from '../../services/auth';
 
 @IonicPage()
 @Component({
-  selector: 'page-search',
-  templateUrl: 'search.html',
+  selector: "page-search",
+  templateUrl: "search.html"
 })
-export class SearchPage implements OnInit{
+export class SearchPage implements OnInit {
   Churches: Array<any>;
   People: Array<any>;
-  profile: string = 'people';
+  getMyChurch: boolean;
+  profile: string = "people";
 
-  constructor(public navCtrl: NavController,
+  constructor(
+    public navCtrl: NavController,
     public navParams: NavParams,
     private churchSer: ChurchService,
-    private membSer: MemberService,
-    private authSer: AuthService) {
-  }
+    private membSer: MemberService
+  ) {}
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad SearchPage');
+    console.log("ionViewDidLoad SearchPage");
   }
 
   ngOnInit() {
-    this.profile = this.navParams.get('profile');
+    this.profile = this.navParams.get("profile");
+    this.getMyChurch = this.navParams.get("myChurch");
   }
 
   // Add spinner
   onSearch(ev: any, profile: string) {
     let val = ev.target.value;
     console.log(val, profile);
-    if(profile === 'people' && val && val.trim() !='') {
-      this.membSer.searchUsers(val)
-      .subscribe(data => {
-        if(!data) {
-          console.log('No hits');
+    if (profile === "people" && val && val.trim() != "") {
+      this.membSer.searchUsers(val).subscribe(
+        data => {
+          if (!data) {
+            console.log("No hits");
+          }
+          this.People = data;
+        },
+        err => {
+          console.log("Something went wrong");
         }
-        this.People = data;
-      }, err => {
-        console.log('Something went wrong');
-      });
-    } else if( profile === 'church' && val && val.trim() !='') {
-      this.churchSer.searchChurch(val)
-        .subscribe(data => {
-          if(!data) {
-            console.log('No hits');
+      );
+    } else if (profile === "church" && val && val.trim() != "") {
+      this.churchSer.searchChurch(val).subscribe(
+        data => {
+          if (!data) {
+            console.log("No hits");
           }
           this.Churches = data;
-        }, err => {
-          console.log('Something went wrong');
-        });
+        },
+        err => {
+          console.log("Something went wrong");
+        }
+      );
     }
   }
 
@@ -61,44 +66,51 @@ export class SearchPage implements OnInit{
   }
 
   goToProfile(username: string) {
-    console.log('pro');
-    this.navCtrl.push('MemberPage', {username})
+    console.log("pro");
+    this.navCtrl.push("MemberPage", { username });
   }
 
-  goToChurch(churchId: string) {
-    this.navCtrl.push('ChurchPage', {churchId})
+  goToChurch(churchId: string, isInterested: boolean) {
+    this.navCtrl.push("ChurchPage", { churchId , isInterested });
   }
 
+  // member
   addAsFriend(username: string) {
-    console.log('added', username);
-    this.membSer.addAsFriend(username)
-      .subscribe(doc => {
-        console.log('success');
+    console.log("added", username);
+    this.membSer.addAsFriend(username).subscribe(
+      doc => {
+        console.log("success");
         // change icon
-      },  err => {
-        console.log('Error');
-      });
+      },
+      err => {
+        console.log("Error");
+      }
+    );
   }
 
   cancelFriendReq(username: string) {
-    this.membSer.cancelFriendReq(username)
-      .subscribe(doc => {
-        console.log('success');
+    this.membSer.cancelFriendReq(username).subscribe(
+      doc => {
+        console.log("success");
         // change icon
-      },  err => {
-        console.log('Error');
-      });
+      },
+      err => {
+        console.log("Error");
+      }
+    );
   }
 
   handlefriendReq(username: string, approval: boolean) {
-    console.log(approval,username);
-    this.membSer.handleFriendReq(username, approval)
-    .subscribe(doc => {
-      console.log('success');
-      // change icon
-    },  err => {
-      console.log('Error');
-    });
+    console.log(approval, username);
+    this.membSer.handleFriendReq(username, approval).subscribe(
+      doc => {
+        console.log("success");
+        // change icon
+      },
+      err => {
+        console.log("Error");
+      }
+    );
   }
 
   isFriend(username: string) {
@@ -113,15 +125,63 @@ export class SearchPage implements OnInit{
     return this.membSer.hasRequested(username);
   }
 
+  // church
   followChurch(churchId: string) {
-    console.log('churched');
+    this.churchSer.followChurch(churchId).subscribe(
+      doc => {
+        console.log("success");
+        // change icon
+      },
+      err => {
+        console.log("Error");
+      }
+    );
   }
 
   cancelfollow(churchId: string) {
-
+    this.churchSer.cancelfollowReq(churchId).subscribe(
+      doc => {
+        console.log("success");
+        // change icon
+      },
+      err => {
+        console.log("Error");
+      }
+    );
   }
 
-  handlefollowReq(churchId: string) {
+  pendingFollowReq(churchId: string) {
+    return this.membSer.pendingFollowReq(churchId);
+  }
 
+  following(churchId: string) {
+    return this.membSer.iffollowing(churchId);
+  }
+
+  //Member
+  sendMembReq(churchId: string) {
+    this.churchSer.sendMembReq(churchId).subscribe(
+      doc => {
+        console.log("success");
+      },
+      err => {
+        console.log("Erooorr");
+      }
+    );
+  }
+
+  cancelMembReq(churchId: string) {
+    this.churchSer.cancelMembReq(churchId).subscribe(
+      doc => {
+        console.log("success");
+      },
+      err => {
+        console.log("Erooorr");
+      }
+    );
+  }
+
+  pendingMembReq(churchId: string) {
+    return this.membSer.pendingMembReq() === churchId;
   }
 }

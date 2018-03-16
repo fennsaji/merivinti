@@ -7,9 +7,12 @@ import { IMembers } from "../models/member.model";
 import "rxjs/add/operator/map";
 // import { IChurch } from "../models/church.model";
 import { Storage } from "@ionic/storage";
+import { Platform, ToastController } from "ionic-angular";
+import { FormControl } from "@angular/forms";
 
 @Injectable()
 export class AuthService {
+  // url: string = 'http://192.168.1.34:8080/auth';
   url: string = 'http://192.168.43.54:8080/auth';
   myInfo: {
     token: string,
@@ -17,8 +20,15 @@ export class AuthService {
     churchId: string,
     isLeader: boolean
   };
+  onDevice: boolean;
 
-  constructor(private http: HttpClient, private storage: Storage) {}
+  constructor(private http: HttpClient,
+    // private network: Network,
+    private storage: Storage,
+    public platform: Platform,
+    public toastCtrl: ToastController) {
+      this.onDevice = this.platform.is('cordova');
+  }
 
   login(loginUser: ILoginUser): Observable<any> {
     return this.http.post<any>(this.url + '/login', loginUser).map(data => {
@@ -33,6 +43,50 @@ export class AuthService {
       this.saveData(this.myInfo);
       return data.memb;
     });
+  }
+
+  checkUsername(control: FormControl): Promise<any> {
+    console.log(control.value);
+    return new Promise<any>(res => {
+      this.http.post<any>('http://192.168.1.34:8080/auth/checkUname', {username: control.value})
+        .subscribe((doc) =>{
+          console.log(doc);
+          if(doc.success) {
+            let toast = this.toastCtrl.create({
+              message: 'Username already exists',
+              duration: 3000
+            });
+            toast.present();
+            res({"Username already exists": true})
+          } else {
+            res(null)
+          }
+        }, err => {
+          console.log(err);
+        })
+    })
+  }
+
+  checkChurchId(control: FormControl): Promise<any> {
+    console.log(control.value);
+    return new Promise<any>(res => {
+      this.http.post<any>('http://192.168.1.34:8080/auth/checkChurch', {churchId: control.value})
+        .subscribe((doc) =>{
+          console.log(doc);
+          if(doc.success) {
+            let toast = this.toastCtrl.create({
+              message: 'ChurchId already exists',
+              duration: 3000
+            });
+            toast.present();
+            res({"ChurchId already exists": true})
+          } else {
+            res(null)
+          }
+        }, err => {
+          console.log(err);
+        })
+    })
   }
 
   regChurch(regChurch: IRegChurch): Observable<any> {
@@ -128,6 +182,10 @@ export class AuthService {
 
   isLeader(): boolean {
     return this.myInfo.isLeader;
+  }
+
+  isOnline() {
+    // if(this.onDevice && Network.type)
   }
 }
 // headers.append('Content-Type', 'application/json');

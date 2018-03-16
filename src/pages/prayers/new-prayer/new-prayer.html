@@ -1,12 +1,37 @@
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>Add New Post</ion-title>
+  <ion-navbar hideBackButton>
+    <ion-title text-center>Add New Post</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+  <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+      <ion-list >
+          <ion-item>
+            <ion-textarea required name="body"autofocus ngModel placeholder="Write your Prayer Request here...">
+            </ion-textarea>
+          </ion-item>
+          <ion-item>
+            <ion-label>
+              Share with:
+            </ion-label>
+            <ion-select interface="popover" ngModel name="shareWith">
+              <ion-option value="friends">Friends</ion-option>
+              <ion-option value="church">Church</ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-row padding>
+            <ion-col padding-horizontal>
+                <button ion-button  block color="danger" type="button" (click)="ondiscard(f)">Discard</button>
+            </ion-col>
+            <ion-col padding-horizontal>
+                <button ion-button block  color="secondary" type="submit" [disabled]="!f.valid">Post</button>
+            </ion-col>
+          </ion-row>
+        </ion-list>
+  </form>
 
 </ion-content>

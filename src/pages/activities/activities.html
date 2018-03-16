@@ -1,29 +1,96 @@
-<!--
-  Generated template for the ActivitiesPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
   <ion-navbar>
     <ion-title text-center>Activities</ion-title>
   </ion-navbar>
 
+  <ion-segment [(ngModel)]="event">
+      <ion-segment-button value="request">
+        Requests
+      </ion-segment-button>
+      <ion-segment-button value="notification">
+        Notifications
+      </ion-segment-button>
+    </ion-segment>
+
 </ion-header>
 
 
 <ion-content>
-  <ion-list>
-    <ion-item>
-      <ion-avatar item-start>
-        <img src="">
-      </ion-avatar>
-      <h3>***** sent you friend Request</h3>
-      <button color="secondary" ion-button item-end icon-only><ion-icon name="checkmark" ></ion-icon></button>
-      <button
-        color="danger"
-        ion-button item-end icon-only><ion-icon name="close"></ion-icon></button>
-    </ion-item>
-  </ion-list>
+    <div [ngSwitch]="event">
+        <div *ngSwitchCase="'request'">
+            <ion-list>
+              <ion-list-header *ngIf="isLeader">Church</ion-list-header>
+                <ion-item
+                *ngFor="let user of followReq; let i = index;">
+                    <ion-avatar item-start>
+                      <img src="">
+                    </ion-avatar>
+                    <h2>{{ user }}</h2>
+                    <h3>wants to follow your church</h3>
+                    <button
+                      color="secondary"
+                      ion-button
+                      item-end
+                      icon-only
+                      padding-horizontal
+                      (tap)="handlefollowReq(user, true, i)">
+                      <ion-icon name="checkmark" large>
+                      </ion-icon>
+                    </button>
+                    <button
+                      color="danger"
+                      ion-button
+                      item-end
+                      padding-horizontal
+                      icon-only
+                      (tap)="handlefollowReq(user, false, i)">
+                      <ion-icon name="close" large>
+                      </ion-icon>
+                    </button>
+                  </ion-item>
+
+                  <ion-list-header *ngIf="isLeader">You</ion-list-header>
+                <ion-item
+                *ngFor="let user of requests; let i = index;">
+                  <ion-avatar item-start>
+                    <img src="">
+                  </ion-avatar>
+                  <h2>{{ user }}</h2>
+                  <h3>sent you friend Request</h3>
+                  <button
+                    color="secondary"
+                    ion-button
+                    item-end
+                    icon-only
+                    padding-horizontal
+                    (tap)="handleFriendReq(user, true, i)">
+                    <ion-icon name="checkmark" large>
+                    </ion-icon>
+                  </button>
+                  <button
+                    color="danger"
+                    ion-button
+                    item-end
+                    padding-horizontal
+                    icon-only
+                    (tap)="handleFriendReq(user, false, i)">
+                    <ion-icon name="close" large>
+                    </ion-icon>
+                  </button>
+                </ion-item>
+              </ion-list>
+          </div>
+
+          <div *ngSwitchCase="'notification'">
+              <ion-list>
+                  <ion-item *ngFor="let item of notifications">
+                    <ion-avatar item-start>
+                      <img src="">
+                    </ion-avatar>
+                    <h3>***** accepted your friend Request</h3>
+                  </ion-item>
+                </ion-list>
+            </div>
+          </div>
 </ion-content>

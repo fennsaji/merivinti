@@ -7,6 +7,7 @@ import { IonicStorageModule } from "@ionic/storage";
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { ReactiveFormsModule } from '@angular/forms';
+// import { Network } from "@ionic-native/network";
 
 import { AuthService } from '../services/auth';
 import { ChurchService } from '../services/church';
@@ -34,6 +35,7 @@ import { PrayerService } from '../services/prayer';
   providers: [
     StatusBar,
     SplashScreen,
+    // Network,
     AuthService,
     ChurchService,
     ActivitiesService,

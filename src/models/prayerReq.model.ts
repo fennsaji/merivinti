@@ -1,9 +1,9 @@
 export interface IPrayerReq {
-  // proPic: string,
-  // name: string,
-  _id: string,
+  proPic?: string,
+  name?: string,
+  _id?: string,
   username: string,
-  churchId: string,
+  churchId?: string,
   body: string,
   date: string,
   shareWith: string

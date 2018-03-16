@@ -6,7 +6,19 @@
 $font-path: "../assets/fonts";
 
 // @import url(https://fonts.googleapis.com/css?family=Amaranth|Jura);
+@font-face{
+  font-family: "Amaranth";
+  src: local('Amaranth'),url("../assets/fonts/Amaranth-Regular.ttf") format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
 
+@font-face{
+  font-family: "Jura";
+  src: local('Jura'),url("../assets/fonts/Jura-Regular.ttf") format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
 
 // The app direction is used to include
 // rtl styles in your app. For more info, please see:

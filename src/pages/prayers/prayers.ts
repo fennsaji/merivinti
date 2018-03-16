@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, IonicPage } from 'ionic-angular';
+import { NavController, NavParams, IonicPage, ModalController, ActionSheet } from 'ionic-angular';
 import { IPrayerReq } from '../../models/prayerReq.model';
 import { PrayerService } from '../../services/prayer';
 
@@ -13,7 +13,9 @@ export class PrayersPage {
 
   constructor(public navCtrl: NavController,
       public navParams: NavParams,
-      private prayerSer: PrayerService) {}
+      private prayerSer: PrayerService,
+      private modalCtrl: ModalController,
+      private actionSheet: ActionSheet) {}
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad PrayersPage');
@@ -27,10 +29,6 @@ export class PrayersPage {
       .catch(e => {
         console.log('error loading old pr');
       });
-  }
-
-  getDate(date) {
-    return new Date(date).getMilliseconds() - new Date().getMilliseconds();
   }
 
   loadPrayers(refresher): void {
@@ -67,11 +65,24 @@ export class PrayersPage {
   }
 
   createNewPrayer(): void {
-    this.navCtrl.push('NewPrayerPage');
+    // this.navCtrl.push('NewPrayerPage');
+    const modal = this.modalCtrl.create('NewPrayerPage');
+    modal.present();
+    modal.onDidDismiss((newPr) => {
+      console.log(newPr);
+      if(!newPr) {
+        return;
+      }
+      this.prayerReq.unshift(newPr);
+    });
   }
 
   search(): void {
     console.log('clicked');
     this.navCtrl.push('SearchPage', {profile: 'people'});
+  }
+
+  loadPrayerOptions(username: string) {
+    const options = this.actionSheet.
   }
 }

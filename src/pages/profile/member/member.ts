@@ -55,6 +55,6 @@ export class MemberPage implements OnInit {
   }
 
   search() {
-    this.navCtrl.push("SearchPage", { profile: "people" });
+    this.navCtrl.push("SearchPage", { profile: "people" , myChurch: false});
   }
 }

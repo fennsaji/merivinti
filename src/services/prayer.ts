@@ -39,7 +39,7 @@ export class PrayerService {
       });
   }
 
-  loadPrayerReq(): Observable<any> {
+  loadPrayerReq(): Observable<IPrayerReq[]> {
     return this.http.get<any>(this.url + '/getAllPr', this.httpOptions)
       .map(doc => {
         console.log('loading....', doc.prayers);
@@ -48,12 +48,16 @@ export class PrayerService {
       })
   }
 
-  loadOldPr(date: string): Observable<any> {
+  loadOldPr(date: string): Observable<IPrayerReq[]> {
     console.log('called load');
     return this.http.post<any>(this.url + '/getByDate', {date}, this.httpOptions)
     .map(doc => {
       console.log(doc);
       return doc.prayers;
     })
+  }
+
+  addNewPr(newPr: IPrayerReq) {
+    return this.http.post<any>(this.url + 'addNew', {newPr} ,this.httpOptions)
   }
 }

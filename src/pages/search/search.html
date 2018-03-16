@@ -3,7 +3,7 @@
   <ion-navbar hideBackButton>
     <ion-searchbar (ionInput)="onSearch($event, profile)"></ion-searchbar>
     <ion-buttons end>
-      <button ion-button icon-only (click)="onClose()">
+      <button ion-button icon-only (tap)="onClose()">
         <ion-icon name="close"></ion-icon>
       </button>
     </ion-buttons>
@@ -27,17 +27,18 @@
       <ion-list>
         <div *ngFor="let item of People">
           <ion-item>
-            <ion-avatar item-start (click)="goToProfile(item.username)">
+            <ion-avatar item-start (tap)="goToProfile(item.username)">
               <img [src]="item.proPic">
             </ion-avatar>
-            <h2 (click)="goToProfile(item.username)">
+            <h2 (tap)="goToProfile(item.username)">
               {{item.name}}
             </h2>
-            <ion-note (click)="goToProfile(item.username)">
+            <ion-note (tap)="goToProfile(item.username)">
               {{item.username}}
             </ion-note>
             <div *ngIf="!isFriend(item.username)" item-end>
-              <button ion-button item-end color="secondary"
+              <button
+                ion-button item-end color="secondary"
                 *ngIf="!isPendingFriend(item.username) && !hasRequested(item.username)"
                 (tap)="addAsFriend(item.username)">
                 <ion-icon name="person-add" item-start></ion-icon>
@@ -46,35 +47,35 @@
               <button
                 *ngIf="isPendingFriend(item.username)"
                 (tap)="cancelFriendReq(item.username)"
-                ion-button item-end color="secondary">
-                <ion-icon name="clock" item-start ></ion-icon>
+                ion-button item-end color="dark">
+                <ion-icon name="clock" item-start></ion-icon>
                 &nbsp;Requested
               </button>
               <button
-                ion-button
-                item-end color="secondary"
+                no-margin ion-button item-end color="secondary"
                 *ngIf="hasRequested(item.username)"
                 (tap)="handlefriendReq(item.username, true)">
                 &nbsp;Accept
               </button>
               <button
-                ion-button
-                item-end color="secondary"
+                no-margin ion-button item-end color="danger"
                 *ngIf="hasRequested(item.username)"
                 (tap)="handlefriendReq(item.username, false)">
                 &nbsp;Reject
               </button>
             </div>
-
           </ion-item>
+
         </div>
       </ion-list>
     </div>
 
     <div *ngSwitchCase="'church'">
-      <ion-list *ngFor="let item of Churches">
-        <ion-item>
-          <ion-avatar item-start (click)="goToChurch(item.churchId)">
+
+      <ion-list >
+
+        <ion-item *ngFor="let item of Churches">
+          <ion-avatar item-start (click)="goToChurch(item.churchId, getMyChurch)">
             <img [src]="item.proPic">
           </ion-avatar>
           <h3 (click)="goToChurch(item.churchId)">
@@ -83,7 +84,42 @@
           <p (click)="goToChurch(item.churchId)">
             {{item.churchId}}
           </p>
-          <ion-icon name="person-add" item-end (click)="followChurch(item.churchId)"></ion-icon>
+          <div *ngIf="!following(item.churchId) && !getMyChurch" item-end>
+            <button
+              ion-button
+              item-end
+              color="secondary"
+              *ngIf="!pendingFollowReq(item.churchId)"
+              (tap)="followChurch(item.churchId)">
+              <ion-icon name="person-add" item-start></ion-icon>
+              &nbsp;Follow
+            </button>
+            <button
+              *ngIf="pendingFollowReq(item.churchId)"
+              (tap)="cancelfollow(item.churchId)"
+              ion-button item-end color="dark">
+              <ion-icon name="clock" item-start></ion-icon>
+              &nbsp;Requested
+            </button>
+          </div>
+          <div *ngIf="getMyChurch" item-end>
+              <button
+                ion-button
+                item-end
+                color="secondary"
+                *ngIf="!pendingMembReq(item.churchId)"
+                (tap)="sendMembReq(item.churchId)">
+                <ion-icon name="person-add" item-start></ion-icon>
+                &nbsp;Join
+              </button>
+              <button
+                *ngIf="pendingMembReq(item.churchId)"
+                (tap)="cancelMembReq(item.churchId)"
+                ion-button item-end color="dark">
+                <ion-icon name="clock" item-start></ion-icon>
+                &nbsp;Requested
+              </button>
+            </div>
         </ion-item>
       </ion-list>
     </div>

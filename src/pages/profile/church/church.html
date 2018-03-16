@@ -1,15 +1,15 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-buttons left (click)="search()">
-      <button ion-button icon-only>
+    <ion-buttons left >
+      <button ion-button icon-only (tap)="search()">
         <ion-icon name="person-add"></ion-icon>
       </button>
     </ion-buttons>
     <ion-title text-center>{{ churchId }}</ion-title>
     <ion-buttons right>
-      <button ion-button icon-only>
-        <ion-icon name="options"></ion-icon>
+      <button ion-button icon-only (tap)="goToOptions()">
+        <ion-icon name="options" ></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -18,44 +18,68 @@
 
 
 <ion-content>
-  <ion-list no-lines>
+  <ion-list no-lines *ngIf="!noChurch">
     <ion-item padding-horizontal padding-top>
       <div item-start class="header-avatar">
         <img src="">
       </div>
-      <ion-grid>
+      <ion-item>
+          <div padding-horizontal>
+            <h3>
+              {{church.churchName}}
+            </h3>
+            <p>
+              {{church.churchId}}
+            </p>
+          </div>
+        </ion-item>
+
+    </ion-item>
+    <ion-grid>
         <ion-row>
           <ion-col>
-            <h6 text-center>{{church.church.noOfPost}}</h6>
+            <h6 text-center>{{church.noOfPost}}</h6>
             <h6 text-center>Posts</h6>
           </ion-col>
           <ion-col>
-            <h6 text-center>{{church.church.noOfLeaders}}</h6>
+            <h6 text-center>{{church.noOfLeaders}}</h6>
             <h6 text-center>Leaders</h6>
           </ion-col>
           <ion-col>
-            <h6 text-center>{{church.church.noOfMembers + church.church.noOfFollowers}}</h6>
+            <h6 text-center>{{church.noOfMembers + church.noOfFollowers}}</h6>
             <h6 text-center>Prayees</h6>
           </ion-col>
         </ion-row>
         <ion-row>
-          <button ion-button outline small block>Edit Profile</button>
+          <button ion-button outline small block
+            *ngIf="isMyChurch && isLeader"
+            (tap)="goToEditProfile()">Edit Profile</button>
+          <div *ngIf="!isMyChurch && !isInterested">
+            <button ion-button outline small block
+              *ngIf="!following(churchId) && !pendingFollowReq(churchId)"
+              (tap)="followChurch()">Follow</button>
+            <button ion-button outline small block
+              *ngIf="!following(churchId) && pendingFollowReq(churchId)"
+              (tap)="cancelfollow()">Requested</button>
+            <button ion-button outline small block
+              *ngIf="following()"
+              (tap)="unfollow()">Unfollow</button>
+          </div>
+          <div *ngIf="!isMyChurch && isInterested">
+              <button ion-button outline small block
+                *ngIf="!following(churchId) && !pendingFollowReq(churchId)"
+                (tap)="sendMembReq()">Join</button>
+              <button ion-button outline small block
+                *ngIf="!following(churchId) && pendingFollowReq(churchId)"
+                (tap)="cancelMembReq()">Requested</button>
+            </div>
+          <div *ngIf="isMyChurch && !isLeader">
+            <button ion-button outline small block (tap)="unmember()">Leave</button>
+          </div>
         </ion-row>
       </ion-grid>
 
-
-    </ion-item>
-    <ion-item>
-      <div padding-horizontal>
-        <h3>
-          {{church.church.churchName}}
-        </h3>
-        <p>
-          {{church.church.churchId}}
-        </p>
-      </div>
-    </ion-item>
-    <ion-card *ngFor="let item of church.prayerReq">
+    <ion-card *ngFor="let item of prayerReq">
       <ion-item>
         <ion-avatar item-start>
           <img [src]="item.proPic">
@@ -69,5 +93,13 @@
         <h2>{{item.body}}</h2>
       </ion-card-content>
     </ion-card>
+  </ion-list>
+  <ion-list>
+    <ion-item>
+      <ion-header>Click below to search for your church</ion-header>
+    </ion-item>
+    <ion-item>
+      <button ion-button (tap)="searchMyChurch()">Search for Church</button>
+    </ion-item>
   </ion-list>
 </ion-content>
