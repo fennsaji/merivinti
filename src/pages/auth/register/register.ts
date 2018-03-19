@@ -14,6 +14,7 @@ export class RegisterPage implements OnInit{
   reg: string = "member";
   churchForm: FormGroup;
   membForm: FormGroup;
+  isLoading: boolean;
 
   constructor(public navCtrl: NavController,
     private http: HttpClient,
@@ -60,13 +61,15 @@ export class RegisterPage implements OnInit{
   }
 
   onRegister(type: String): void {
+    this.isLoading = true;
     if(type === 'church') {
       console.log(this.churchForm.value);
       this.authSer.regChurch(this.churchForm.value).subscribe(data => {
         console.log('data1', data);
+        this.isLoading = false;
         this.navCtrl.setRoot('TabsPage');
       }, err => {
-
+        this.isLoading = false;
         console.log(err.error);
         let toast = this.toastCtrl.create({
           message: "Something Went Wrong",
@@ -80,8 +83,10 @@ export class RegisterPage implements OnInit{
       console.log(this.membForm.value);
       this.authSer.regMember(this.membForm.value).subscribe(data => {
         console.log('data' ,data);
+        this.isLoading = false;
         this.navCtrl.setRoot('TabsPage');
       }, err => {
+        this.isLoading = false;
         if(err.error.errObj) {
           let toast = this.toastCtrl.create({
             message: err.error.errObj.msg,

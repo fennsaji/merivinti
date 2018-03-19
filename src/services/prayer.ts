@@ -11,7 +11,7 @@ export class PrayerService {
   prayerReq : IPrayerReq[];
   token: string;
   httpOptions: Object;
-  url: string = 'http://192.168.43.54:8080/prayer';
+  url: string = 'http://192.168.1.34:8080/prayer/';
 
   constructor(private storage: Storage, private http: HttpClient, private auth: AuthService) {}
 
@@ -60,4 +60,5 @@ export class PrayerService {
   addNewPr(newPr: IPrayerReq) {
     return this.http.post<any>(this.url + 'addNew', {newPr} ,this.httpOptions)
   }
+  
 }

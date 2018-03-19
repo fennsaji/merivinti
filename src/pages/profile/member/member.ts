@@ -1,16 +1,29 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { NavController, NavParams, IonicPage } from "ionic-angular";
 import { AuthService } from "../../../services/auth";
 import { MemberService } from "../../../services/member";
+import { IPrayerReq } from "../../../models/prayerReq.model";
 
 @IonicPage()
 @Component({
   selector: "page-member",
   templateUrl: "member.html"
 })
-export class MemberPage implements OnInit {
+export class MemberPage {
+  isMyProfile: boolean;
+  isLoading: boolean;
   username: string;
-  profile;
+
+  profile = {
+    name: "",
+    username: "",
+    proPic: "",
+    noOfFollowing: null,
+    noOfFriends: null,
+    noOfPost: null,
+    churchId: ""
+  };
+  prayerReq: IPrayerReq[];
 
   constructor(
     public navCtrl: NavController,
@@ -19,35 +32,43 @@ export class MemberPage implements OnInit {
     private membSer: MemberService
   ) {}
 
-  ngOnInit() {
-    this.profile = {
-      member: {
-        name: "absadsjdhdj",
-        username: "sfafadfs",
-        noOfFollowing: 0,
-        noOfFriends: 0,
-        noOfPost: 0,
-        churchId: "asfasdfaf"
-      },
-      prayerReq: []
-    };
+  ionViewDidLoad() {
+    this.isLoading = true;
+    console.log('enter');
     if(this.navParams.get('username')) {
       this.username = this.navParams.get('username');
-      console.log(this.username);
+      this.isMyProfile = false;
+      console.log(this.username, this.isMyProfile);
     } else {
       this.username = this.authSer.getUsername();
+      this.isMyProfile = true;
     }
-    this.membSer.getMembProfile(this.username)
-      .subscribe(doc => {
-        this.profile = doc;
-        console.log('doc', this.profile);
-      }, err => {
-        console.log('Something went wrong');
-      });
+    this.getProfile(null);
   }
 
-  ionViewDidLoad() {
-    console.log("ionViewDidLoad MemberPage");
+  getProfile(refresher) {
+    this.membSer.getMembProfile(this.username)
+    .subscribe(doc => {
+      this.isLoading = false;
+      this.profile = doc.member;
+      this.prayerReq = doc.prayerReq;
+      console.log('doc', this.profile);
+      if(refresher)
+        refresher.complete();
+    }, err => {
+      console.log('Something went wrong');
+      this.isLoading = false;
+      if(refresher)
+        refresher.complete();
+    });
+  }
+
+  gotoInfoPrayees() {
+    this.navCtrl.push('ListIdPage', {type:'Friends', id: this.username})
+  }
+
+  gotoInfoFollowing() {
+    this.navCtrl.push('ListIdPage', {type:'Following', id: this.username})
   }
 
   onLogout() {

@@ -12,6 +12,7 @@ export class SearchPage implements OnInit {
   Churches: Array<any>;
   People: Array<any>;
   getMyChurch: boolean;
+  isLoading: boolean;
   profile: string = "people";
 
   constructor(
@@ -32,29 +33,34 @@ export class SearchPage implements OnInit {
 
   // Add spinner
   onSearch(ev: any, profile: string) {
+    this.isLoading = true;
     let val = ev.target.value;
     console.log(val, profile);
     if (profile === "people" && val && val.trim() != "") {
       this.membSer.searchUsers(val).subscribe(
         data => {
+          this.isLoading = false;
           if (!data) {
             console.log("No hits");
           }
           this.People = data;
         },
         err => {
+          this.isLoading = false;
           console.log("Something went wrong");
         }
       );
     } else if (profile === "church" && val && val.trim() != "") {
       this.churchSer.searchChurch(val).subscribe(
         data => {
+          this.isLoading = false;
           if (!data) {
             console.log("No hits");
           }
           this.Churches = data;
         },
         err => {
+          this.isLoading = false;
           console.log("Something went wrong");
         }
       );

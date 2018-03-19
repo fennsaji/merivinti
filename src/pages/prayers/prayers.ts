@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, IonicPage, ModalController, ActionSheet } from 'ionic-angular';
+import { NavController, NavParams, IonicPage, ModalController, ActionSheetController, Platform } from 'ionic-angular';
 import { IPrayerReq } from '../../models/prayerReq.model';
 import { PrayerService } from '../../services/prayer';
 
@@ -10,23 +10,28 @@ import { PrayerService } from '../../services/prayer';
 })
 export class PrayersPage {
   prayerReq : IPrayerReq[] = [];
+  isLoading: boolean;
 
   constructor(public navCtrl: NavController,
       public navParams: NavParams,
       private prayerSer: PrayerService,
       private modalCtrl: ModalController,
-      private actionSheet: ActionSheet) {}
+      public platform: Platform,
+      public actionSheet: ActionSheetController) {}
 
   ionViewDidLoad() {
+    this.isLoading = true;
     console.log('ionViewDidLoad PrayersPage');
     this.prayerSer.initializeAndGetPr()
       .then((pr: IPrayerReq[]) => {
+        this.isLoading = false;
         console.log('prr', pr)
         this.prayerReq = [...pr];
         this.loadPrayers(null);
         console.log('2', this.prayerReq)
       })
       .catch(e => {
+        this.isLoading = false;
         console.log('error loading old pr');
       });
   }
@@ -82,7 +87,45 @@ export class PrayersPage {
     this.navCtrl.push('SearchPage', {profile: 'people'});
   }
 
-  loadPrayerOptions(username: string) {
-    const options = this.actionSheet.
+  loadPrayerOptions(prayerId: string) {
+    const options = this.actionSheet.create(
+      {
+        title: 'Albums',
+        cssClass: 'action-sheets-basic-page',
+        buttons: [
+          {
+            text: 'Delete',
+            role: 'destructive',
+            icon: !this.platform.is('ios') ? 'trash' : null,
+            handler: () => {
+              console.log('Delete clicked');
+            }
+          },
+          {
+            text: 'Share',
+            icon: !this.platform.is('ios') ? 'share' : null,
+            handler: () => {
+              console.log('Share clicked');
+            }
+          },
+          {
+            text: 'Edit',
+            icon: !this.platform.is('ios') ? 'hammer' : null,
+            handler: () => {
+              console.log('Play clicked');
+            }
+          },
+          {
+            text: 'Cancel',
+            role: 'cancel', // will always sort to be on the bottom
+            icon: !this.platform.is('ios') ? 'close' : null,
+            handler: () => {
+              console.log('Cancel clicked');
+            }
+          }
+        ]
+      }
+    );
+    options.present();
   }
 }

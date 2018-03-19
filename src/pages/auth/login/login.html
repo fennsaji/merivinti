@@ -1,13 +1,13 @@
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="navbar">
     <ion-title>Login</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content padding class="background">
   <form #f="ngForm" (ngSubmit)="onLogin(f)">
   <ion-list>
     <ion-item>
@@ -19,7 +19,12 @@
         <ion-input type="password" name="password" required [(ngModel)]="password"></ion-input>
       </ion-item>
       <br>
-      <button ion-button type="submit" padding block [disabled]="!f.valid">Login</button>
+      <div *ngIf="isLoading" class="spinner">
+          <ion-spinner icon="android"></ion-spinner>
+      </div>
+      <button *ngIf="!isLoading" ion-button type="submit" padding block [disabled]="!f.valid">
+        <span>Login</span>
+      </button>
     </ion-list>
   </form>
 </ion-content>

@@ -1,6 +1,6 @@
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="navbar">
     <ion-title text-center>Activities</ion-title>
   </ion-navbar>
 
@@ -16,17 +16,21 @@
 </ion-header>
 
 
-<ion-content>
+<ion-content class="background">
+
     <div [ngSwitch]="event">
         <div *ngSwitchCase="'request'">
+            <div *ngIf="isLoading" class="spinner">
+                <ion-spinner icon="android"></ion-spinner>
+            </div>
+            <ion-list-header *ngIf="isLeader">Church</ion-list-header>
             <ion-list>
-              <ion-list-header *ngIf="isLeader">Church</ion-list-header>
                 <ion-item
                 *ngFor="let user of followReq; let i = index;">
                     <ion-avatar item-start>
                       <img src="">
                     </ion-avatar>
-                    <h2>{{ user }}</h2>
+                    <h2>{{ user.username }}</h2>
                     <h3>wants to follow your church</h3>
                     <button
                       color="secondary"
@@ -34,7 +38,7 @@
                       item-end
                       icon-only
                       padding-horizontal
-                      (tap)="handlefollowReq(user, true, i)">
+                      (tap)="handlefollowReq(user.username, true, i)">
                       <ion-icon name="checkmark" large>
                       </ion-icon>
                     </button>
@@ -44,7 +48,7 @@
                       item-end
                       padding-horizontal
                       icon-only
-                      (tap)="handlefollowReq(user, false, i)">
+                      (tap)="handlefollowReq(user.username, false, i)">
                       <ion-icon name="close" large>
                       </ion-icon>
                     </button>
@@ -83,6 +87,9 @@
           </div>
 
           <div *ngSwitchCase="'notification'">
+              <div *ngIf="isLoading" class="spinner">
+                  <ion-spinner icon="android"></ion-spinner>
+              </div>
               <ion-list>
                   <ion-item *ngFor="let item of notifications">
                     <ion-avatar item-start>

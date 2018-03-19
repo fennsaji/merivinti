@@ -11,6 +11,7 @@ import { AuthService } from '../../../services/auth';
 export class LoginPage {
   username: string;
   password: string;
+  isLoading: boolean;
 
   constructor(public navCtrl: NavController,
       public navParams: NavParams,
@@ -23,11 +24,14 @@ export class LoginPage {
   }
 
   onLogin(f: NgForm): void {
+    this.isLoading = true;
     console.log('console', f.value);
     this.authSer.login(f.value).subscribe(data => {
       console.log('data', data);
+      this.isLoading = false;
       this.navCtrl.setRoot('TabsPage');
     }, err => {
+      this.isLoading = false;;
       let toast;
       if(err.error) {
         var msg;

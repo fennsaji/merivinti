@@ -10,6 +10,8 @@ import { PrayerService } from '../../../services/prayer';
   templateUrl: 'new-prayer.html',
 })
 export class NewPrayerPage {
+  default = 'church';
+  isLoading: boolean;
 
   constructor(public navCtrl: NavController,
       public navParams: NavParams,
@@ -24,15 +26,19 @@ export class NewPrayerPage {
 
   // Make it modal page
   onSubmit(f: NgForm) {
+    this.isLoading = true;
     console.log(f.value);
     var newPr = f.value;
     newPr.date = new Date();
     newPr.username = this.authSer.getUsername();
+    newPr.churchId = this.authSer.getChurchId();
     console.log(newPr);
     this.prayerSer.addNewPr(newPr)
       .subscribe(res => {
+        this.isLoading = false;
         this.viewCtrl.dismiss(res.newPr);
       }, err => {
+        this.isLoading = false;
         console.log('Error', err);
       });
   }

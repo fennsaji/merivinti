@@ -1,13 +1,13 @@
 <ion-header>
 
-  <ion-navbar no-border-bottom>
+  <ion-navbar color="navbar" no-border-bottom>
     <ion-title>Register</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content padding class="background">
   <div no-border-top>
     <ion-segment [(ngModel)]="reg">
       <ion-segment-button value="member">
@@ -39,7 +39,7 @@
           <ion-input type="password" formControlName="password"></ion-input>
         </ion-item>
         <br>
-        <button ion-button [disabled]="!membForm.valid" type="submit" block>Register
+        <button *ngIf="!isLoading" ion-button [disabled]="!membForm.valid" type="submit" block>Register
         </button>
       </ion-list>
     </form>
@@ -75,10 +75,12 @@
           </ion-input>
         </ion-item>
         <br>
-        <button ion-button type="submit" [disabled]="!churchForm.valid" block>Register
+        <button *ngIf="!isLoading" ion-button type="submit" [disabled]="!churchForm.valid" block>Register
         </button>
       </ion-list>
     </form>
   </div>
-
+  <div *ngIf="isLoading" class="spinner">
+      <ion-spinner icon="android"></ion-spinner>
+  </div>
 </ion-content>

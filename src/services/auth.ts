@@ -12,8 +12,8 @@ import { FormControl } from "@angular/forms";
 
 @Injectable()
 export class AuthService {
-  // url: string = 'http://192.168.1.34:8080/auth';
-  url: string = 'http://192.168.43.54:8080/auth';
+  url: string = 'http://192.168.1.34:8080/auth';
+  // url: string = 'http://192.168.43.54:8080/auth';
   myInfo: {
     token: string,
     username: string,

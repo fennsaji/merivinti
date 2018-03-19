@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, EventEmitter } from "@angular/core";
 import { AuthService } from "./auth";
 import { Storage } from "@ionic/storage";
 import "rxjs/add/operator/map";
@@ -9,13 +9,22 @@ import { FormControl } from "@angular/forms";
 @Injectable()
 export class MemberService {
   token: string;
+  username: string;
   httpOptions : Object;
   friends: string[];
   pendingReq: any[];
   pendingMemb: string;
   requests: string[];
   following: string[];
-  url : string = 'http://192.168.43.54:8080/member/';
+  newNotifications: number;
+  notifications: any[];
+
+  public newNotify = new EventEmitter<number>();
+  public notify = new EventEmitter<any[]>();
+  public friendReq = new EventEmitter<string[]>();
+
+  url : string = 'http://192.168.1.34:8080/member/';
+
 
   constructor(private authSer: AuthService,
     private http: HttpClient,
@@ -29,7 +38,10 @@ export class MemberService {
         'Content-type': 'application/json'
       })
     }
+    this.username = this.authSer.getUsername();
     this.getbasicinfo();
+    this.getNotifications();
+    console.log('initiated member');
   }
 
   getPrStorage() {
@@ -49,7 +61,7 @@ export class MemberService {
     });
   }
 
-  getbasicinfo(){
+  getbasicinfo() {
     this.http.get<any>(this.url + 'getbasicinfo', this.httpOptions)
       .subscribe(res => {
         console.log('list', res);
@@ -58,9 +70,30 @@ export class MemberService {
         this.pendingMemb = res.list.pendingMemb;
         this.requests = res.list.requests;
         this.following = res.list.following;
+        this.friendReq.emit(this.requests)
+        this.newNotify.emit(this.newNotifications);
       }, err => {
-        console.log('errorrrr');
+        console.log('Errorr1');
       });
+  }
+
+  getNotifications() {
+    this.http.get<any>(this.url + 'getNotifications', this.httpOptions)
+    .subscribe(res => {
+      this.notifications = res.list.notifications;
+      this.newNotifications = res.list.newNotifications;
+      this.notify.emit(this.notifications);
+    }, err => {
+      console.log('Errorr1');
+    });
+  }
+
+  getInfoFriends(username) {
+    return this.http.post<any>(this.url + 'getInfoFriends', {username}, this.httpOptions);
+  }
+
+  getInfoFollowings(username) {
+    return this.http.post<any>(this.url + 'getInfoFollowings', {username}, this.httpOptions);
   }
 
   searchUsers(search: string) {
@@ -131,10 +164,6 @@ export class MemberService {
   iffollowing(churchId: string) {
     console.log(this.following);
     return this.following.indexOf(churchId) > -1 ? true: false;
-  }
-
-  getRequests() {
-    return this.requests.slice();
   }
 
   pendingMembReq() {

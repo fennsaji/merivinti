@@ -1,9 +1,11 @@
-import { Injectable } from "@angular/core";
+import { Injectable, EventEmitter } from "@angular/core";
 import { AuthService } from "./auth";
 import { Observable } from "rxjs/Observable";
 import { Storage } from "@ionic/storage";
 import { HttpHeaders, HttpClient } from "@angular/common/http";
 import { MemberService } from "./member";
+import "rxjs/add/operator/do";
+import "rxjs/add/operator/map";
 
 @Injectable()
 export class ChurchService {
@@ -14,7 +16,14 @@ export class ChurchService {
   members: string;
   followers: string[];
   families: any[];
-  url : string = 'http://192.168.43.54:8080/church/';
+  newNotifications: number;
+
+  public newNotify = new  EventEmitter<number>();
+  public notify = new  EventEmitter<any[]>();
+  public followReq = new  EventEmitter<any[]>();
+
+  // url : string = 'http://192.168.43.54:8080/church/';
+  url: string = 'http://192.168.1.34:8080/church/';
 
   constructor(private authSer: AuthService,
     private http: HttpClient,
@@ -30,22 +39,50 @@ export class ChurchService {
       })
     }
     this.getbasicinfo();
+    this.getNotifications();
   }
 
   getbasicinfo() {
     if(this.authSer.isLeader()) {
-      this.http.get<any>(this.url + 'getbasicinfo', this.httpOptions)
-    .subscribe(res => {
-      console.log('list23', res);
-      this.leaders = res.list.leaders;
-      this.requests = res.list.requests;
-      this.members = res.list.members;
-      this.requests = res.list.requests;
-      this.followers = res.list.followers;
-    }, err => {
-      console.log('errorrrr');
-    });
+      return this.http.get<any>(this.url + 'getbasicinfo', this.httpOptions)
+        .subscribe(res => {
+          console.log('list23', res);
+          this.leaders = res.list.leaders;
+          this.requests = res.list.requests;
+          this.members = res.list.members;
+          this.followers = res.list.followers;
+          this.newNotifications = res.list.newNotifications;
+          this.newNotify.emit(this.newNotifications);
+          this.followReq.emit(this.requests);
+          return Promise.resolve();
+        }, err => {
+          console.log('Errorr');
+        });
     }
+  }
+
+  getNotifications() {
+    if(this.authSer.isLeader()) {
+      this.http.get<any>(this.url + 'getNotifications', this.httpOptions)
+      .subscribe(res => {
+        this.newNotifications = res.list.newNotifications;
+        this.newNotify.emit(this.newNotifications);
+      }, err => {
+        console.log('Errorr1');
+      });
+    }
+  }
+
+  getInfoFollowers(churchId) {
+    return this.http.post<any>(this.url + 'getInfoFollowers', {churchId}, this.httpOptions);
+  }
+
+  getInfoMembers(churchId) {
+    return this.http.post<any>(this.url + 'getInfoMembers', {churchId}, this.httpOptions);
+  }
+
+  getInfoLeaders(churchId) {
+    return this.http.post<any>(this.url + 'getInfoLeaders', {churchId}, this.httpOptions);
   }
 
   getPrStorage() {
@@ -93,8 +130,8 @@ export class ChurchService {
       });
   }
 
-  handlefollowReq(churchId: string, approval: boolean) {
-    return this.http.post<any>(this.url + 'handlefollowReq', {churchId, approval}, this.httpOptions)
+  handlefollowReq(username: string, approval: boolean) {
+    return this.http.post<any>(this.url + 'handlefollowReq', {username, approval}, this.httpOptions)
       .do(res => {
         this.getbasicinfo();
         return res;
@@ -156,9 +193,5 @@ export class ChurchService {
       this.getbasicinfo();
       return res;
     });
-  }
-
-  getRequests() {
-    return this.requests.slice();
   }
 }

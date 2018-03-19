@@ -1,0 +1,53 @@
+<ion-header>
+
+  <ion-navbar color="navbar">
+    <ion-title>{{type}}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding class="background">
+    <div *ngIf="isLoading" class="spinner">
+        <ion-spinner icon="android"></ion-spinner>
+    </div>
+  <ion-list>
+    <ion-title *ngIf="lists2 && !lists">Members</ion-title>
+    <ion-item *ngFor="let item of lists; let i = index">
+      <ion-avatar item-start (tap)="goToProfile(item.username)">
+        <img [src]="item.proPic">
+      </ion-avatar>
+      <h2 (tap)="goToProfile(item.username)">
+        {{item.name}}
+      </h2>
+      <ion-note (tap)="goToProfile(item.username)">
+        {{item.username}}
+      </ion-note>
+      <button ion-button item-end color="secondary" *ngIf="isMyChurchAndLeader"
+        (tap)="remove('Member', item.username, i)">
+        <ion-icon name="remove-circle" item-start></ion-icon>
+        &nbsp;Remove
+      </button>
+    </ion-item>
+    <div *ngIf="lists2">
+      <ion-title>Followers</ion-title>
+      <ion-item *ngFor="let item of lists2; let i= index">
+        <ion-avatar item-start (tap)="goToProfile(item.username)">
+          <img [src]="item.proPic">
+        </ion-avatar>
+        <h2 (tap)="goToProfile(item.username)">
+          {{item.name}}
+        </h2>
+        <ion-note (tap)="goToProfile(item.username)">
+          {{item.username}}
+        </ion-note>
+        <button ion-button item-end color="secondary" *ngIf="isMyChurchAndLeader"
+          (tap)="remove('Follower', item.username, i)">
+          <ion-icon name="remove-circle" item-start></ion-icon>
+          &nbsp;Remove
+        </button>
+      </ion-item>
+    </div>
+  </ion-list>
+
+</ion-content>

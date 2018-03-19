@@ -1,8 +1,8 @@
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="navbar">
     <ion-title text-center>{{ username }}</ion-title>
-    <ion-buttons end (click)="search()">
+    <ion-buttons *ngIf="isMyProfile" end (tap)="search()">
       <button ion-button icon-only>
         <ion-icon name="person-add"></ion-icon>
       </button>
@@ -11,24 +11,33 @@
 
 </ion-header>
 
-<ion-content>
-  <ion-list no-lines>
-    <ion-item padding-horizontal padding-top>
+<ion-content class="cardbg">
+
+  <ion-refresher (ionRefresh)="getProfile($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="isLoading" class="spinner">
+      <ion-spinner icon="android"></ion-spinner>
+  </div>
+
+  <ion-list *ngIf="!isLoading" no-lines>
+    <ion-item  color="card" padding-horizontal padding-top>
       <div item-start class="header-avatar">
-        <img src="">
+        <img [src]="profile.proPic">
       </div>
       <ion-grid>
         <ion-row>
           <ion-col>
-            <h6 text-center>{{profile.member.noOfPost}}</h6>
+            <h6 text-center>{{profile.noOfPost}}</h6>
             <h6 text-center>Posts</h6>
           </ion-col>
-          <ion-col>
-            <h6 text-center>{{profile.member.noOfFriends}}</h6>
+          <ion-col (tap)="gotoInfoPrayees()">
+            <h6 text-center>{{profile.noOfFriends}}</h6>
             <h6 text-center>Prayees</h6>
           </ion-col>
-          <ion-col>
-            <h6 text-center>{{profile.member.noOfFollowing}}</h6>
+          <ion-col (tap)="gotoInfoFollowing()">
+            <h6 text-center>{{profile.noOfFollowing}}</h6>
             <h6 text-center>Following</h6>
           </ion-col>
         </ion-row>
@@ -39,20 +48,20 @@
 
 
     </ion-item>
-    <ion-item>
+    <ion-item  color="card">
       <div padding-horizontal>
         <h3>
-          {{profile.member.name}}
+          {{profile.name}}
         </h3>
         <p>
-          {{profile.member.username}}
+          {{profile.username}}
         </p>
         <p>
-          Attends: {{profile.member.churchId}}
+          Attends: {{profile.churchId}}
         </p>
       </div>
     </ion-item>
-    <ion-card *ngFor="let item of profile.prayerReq">
+    <ion-card *ngFor="let item of prayerReq">
       <ion-item>
         <ion-avatar item-start>
           <img [src]="item.proPic">

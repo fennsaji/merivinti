@@ -1,5 +1,9 @@
 
 page-prayers {
+  .background {
+    background-color: color($colors, background);
+  }
+
   ion-fab {
     position: fixed;
     bottom: 54px;
@@ -14,5 +18,22 @@ page-prayers {
 
   .share{
     margin: auto;
+  }
+
+  ion-title{
+    font-family: 'Amaranth', sans-serif;
+  }
+  ion-spinner * {
+    width: 38px;
+    height: 38px;
+    stroke: #444;
+    fill: #222;
+  }
+  div.spinner {
+    width: 40px;
+    height: 40px;
+    margin: auto;
+    top: 0; left: 0; bottom: 0; right: 0;
+    text-align: center;
   }
 }

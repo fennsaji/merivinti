@@ -1,13 +1,13 @@
 <ion-header>
 
-  <ion-navbar hideBackButton>
+  <ion-navbar hideBackButton color="navbar">
     <ion-title text-center>Add New Post</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content padding class="background">
   <form #f="ngForm" (ngSubmit)="onSubmit(f)">
       <ion-list >
           <ion-item>
@@ -18,12 +18,15 @@
             <ion-label>
               Share with:
             </ion-label>
-            <ion-select interface="popover" ngModel name="shareWith">
+            <ion-select interface="popover" [(ngModel)]="default" name="shareWith">
               <ion-option value="friends">Friends</ion-option>
               <ion-option value="church">Church</ion-option>
             </ion-select>
           </ion-item>
-          <ion-row padding>
+          <div *ngIf="isLoading" class="spinner">
+            <ion-spinner icon="android"></ion-spinner>
+          </div>
+          <ion-row *ngIf="!isLoading" padding>
             <ion-col padding-horizontal>
                 <button ion-button  block color="danger" type="button" (click)="ondiscard(f)">Discard</button>
             </ion-col>

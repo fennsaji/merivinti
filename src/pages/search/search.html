@@ -1,6 +1,6 @@
 <ion-header>
 
-  <ion-navbar hideBackButton>
+  <ion-navbar hideBackButton color="navbar">
     <ion-searchbar (ionInput)="onSearch($event, profile)"></ion-searchbar>
     <ion-buttons end>
       <button ion-button icon-only (tap)="onClose()">
@@ -20,10 +20,14 @@
 
 </ion-header>
 
-<ion-content>
+<ion-content class="background">
+
 
   <div [ngSwitch]="profile">
     <div *ngSwitchCase="'people'">
+        <div *ngIf="isLoading" class="spinner">
+            <ion-spinner icon="android"></ion-spinner>
+        </div>
       <ion-list>
         <div *ngFor="let item of People">
           <ion-item>
@@ -71,7 +75,9 @@
     </div>
 
     <div *ngSwitchCase="'church'">
-
+        <div *ngIf="isLoading" class="spinner">
+            <ion-spinner icon="android"></ion-spinner>
+        </div>
       <ion-list >
 
         <ion-item *ngFor="let item of Churches">

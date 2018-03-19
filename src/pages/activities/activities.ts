@@ -9,12 +9,13 @@ import { AuthService } from '../../services/auth';
   selector: 'page-activities',
   templateUrl: 'activities.html',
 })
-export class ActivitiesPage implements OnInit{
+export class ActivitiesPage {
   event: string = 'notification';
   requests: string[];
   followReq: any[];
   isLeader: boolean;
   notifications: any[];
+  isLoading: boolean;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
@@ -24,13 +25,28 @@ export class ActivitiesPage implements OnInit{
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad ActivitiesPage');
+    this.isLoading = true;
+    console.log('Enter ActivitiesPage');
+    this.membSer.friendReq.subscribe((data) => {
+      this.requests = data;
+    }, err => {
+
+    });
+    this.churchSer.followReq.subscribe((data) => {
+      this.followReq = data;
+    }, err => {
+
+    });
+    this.membSer.notify.subscribe(doc => {
+      this.notifications = doc;
+    })
+    this.isLeader = this.authSer.isLeader();
   }
 
-  ngOnInit() {
-    this.requests = this.membSer.getRequests();
-    this.followReq = this.membSer.getRequests();
-    this.isLeader = this.authSer.isLeader();
+  ionViewDidEnter() {
+    console.log('Enter');
+    this.membSer.getNotifications();
+    this.churchSer.getNotifications();
   }
 
   handleFriendReq(username: string, approval: boolean, i: number) {
@@ -38,7 +54,6 @@ export class ActivitiesPage implements OnInit{
       .subscribe(doc => {
         console.log('success');
         this.requests.splice(i, 1);
-        // change icon
       },  err => {
         console.log('Error');
       });

@@ -1,29 +1,34 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { NavController, NavParams, IonicPage } from "ionic-angular";
 import { ChurchService } from "../../../services/church";
 import { AuthService } from "../../../services/auth";
 import { MemberService } from "../../../services/member";
+import { IPrayerReq } from "../../../models/prayerReq.model";
 
 @IonicPage()
 @Component({
   selector: "page-church",
   templateUrl: "church.html"
 })
-export class ChurchPage implements OnInit {
+export class ChurchPage {
   churchId: string;
   isMyChurch: boolean;
   isLeader: boolean;
   noChurch: boolean;
   isInterested: boolean;
+  hasRequested: string;
+  isLoading: boolean;
+
   church = {
-    churchName: "123",
-    churchId: "123",
-    noOfFollowers: 3,
-    noOfLeaders: 2,
-    noOfMembers: 4,
-    noOfPost: 1
+    churchName: "",
+    churchId: "",
+    proPic: "",
+    noOfFollowers: null,
+    noOfLeaders: null,
+    noOfMembers: null,
+    noOfPost: null
   };
-  prayerReq: any[];
+  prayerReq: IPrayerReq[];
 
   constructor(
     public navCtrl: NavController,
@@ -34,11 +39,13 @@ export class ChurchPage implements OnInit {
   ) {}
 
   ionViewDidLoad() {
-    console.log("ionViewDidLoad ChurchPage");
-  }
-
-  ngOnInit() {
+    this.isLoading = true;
     console.log("ngoninit church");
+    if(this.membSer.pendingMembReq()) {
+      this.hasRequested = this.membSer.pendingMembReq();
+    } else {
+      this.hasRequested = null;
+    }
     if (this.navParams.get("churchId")) {
       this.churchId = this.navParams.get("churchId");
       this.isInterested = this.navParams.get("isInterested");
@@ -54,29 +61,50 @@ export class ChurchPage implements OnInit {
       this.isMyChurch = true;
       this.isLeader = this.authSer.isLeader();
       this.isInterested = false;
-      this.churchSer
-        .getPrStorage()
-        .then(Pro => {
-          // this.church = Pro.church;
-          // this.prayerReq = Pro.prayerReq;
-        })
-        .catch(err => {});
     }
+    this.getProfile(null);
+  }
 
-    this.churchSer.getChurchProfile(this.churchId).subscribe(
+  getProfile(refresher) {
+    // this.churchSer
+    // .getPrStorage()
+    // .then(Pro => {
+    //   // this.church = Pro.church;
+    //   // this.prayerReq = Pro.prayerReq;
+    // })
+    // .catch(err => {});
+    if(this.churchId) {
+          this.churchSer.getChurchProfile(this.churchId).subscribe(
       Pro => {
         this.church = Pro.church;
         this.prayerReq = Pro.prayerReq;
         console.log("doc", Pro);
+        this.isLoading = false;
+        if(refresher)
+        refresher.complete();
       },
       err => {
         console.log("Something went wrong");
+        this.isLoading = false;
+        if(refresher)
+        refresher.complete();
       }
     );
+    } else {
+      this.isLoading = false;
+    }
   }
 
   search() {
     this.navCtrl.push("SearchPage", { profile: "church" , myChurch: false});
+  }
+
+  gotoInfoLeaders() {
+    this.navCtrl.push('ListIdPage', {type:'Leaders', id: this.churchId})
+  }
+
+  gotoInfoPrayees() {
+    this.navCtrl.push('ListIdPage', {type:'Members', id: this.churchId})
   }
 
   // church
