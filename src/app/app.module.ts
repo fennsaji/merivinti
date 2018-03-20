@@ -14,10 +14,12 @@ import { ChurchService } from '../services/church';
 import { ActivitiesService } from '../services/activities';
 import { MemberService } from '../services/member';
 import { PrayerService } from '../services/prayer';
+import { safeHtml } from '../pipes/safe-html';
 
 @NgModule({
   declarations: [
     MyApp
+
   ],
   imports: [
     BrowserModule,

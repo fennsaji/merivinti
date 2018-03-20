@@ -1,10 +1,15 @@
 <ion-header>
 
   <ion-navbar color="navbar">
-    <ion-title text-center>{{ username }}</ion-title>
-    <ion-buttons *ngIf="isMyProfile" end (tap)="search()">
+    <ion-buttons *ngIf="isMyProfile" start (tap)="search()">
       <button ion-button icon-only>
         <ion-icon name="person-add"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title text-center>{{ username }}</ion-title>
+    <ion-buttons right *ngIf="isMyProfile">
+      <button ion-button icon-only (tap)="goToOptions()">
+        <ion-icon name="options"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -24,7 +29,7 @@
   <ion-list *ngIf="!isLoading" no-lines>
     <ion-item  color="card" padding-horizontal padding-top>
       <div item-start class="header-avatar">
-        <img [src]="profile.proPic">
+        <img [src]="profile.proPic | safeHtml">
       </div>
       <ion-grid>
         <ion-row>
@@ -42,10 +47,44 @@
           </ion-col>
         </ion-row>
         <ion-row>
-          <button ion-button outline small block>Edit Profile</button>
+          <button ion-button outline small block *ngIf="!isMyProfile" (tap)="onEditProfile()">Edit Profile</button>
+          <div *ngIf="!isFriend(username) && !isMyProfile" item-end>
+            <button
+              ion-button item-end color="secondary"
+              *ngIf="!isPendingFriend(username) && !hasRequested(username)"
+              (tap)="addAsFriend(username)">
+              <ion-icon name="person-add" item-start></ion-icon>
+              &nbsp;Befriend
+            </button>
+            <button
+              *ngIf="isPendingFriend(username)"
+              (tap)="cancelFriendReq(username)"
+              ion-button item-end color="dark">
+              <ion-icon name="clock" item-start></ion-icon>
+              &nbsp;Requested
+            </button>
+            <button
+              no-margin ion-button item-end color="secondary"
+              *ngIf="hasRequested(username)"
+              (tap)="handlefriendReq(username, true)">
+              &nbsp;Accept
+            </button>
+            <button
+              no-margin ion-button item-end color="danger"
+              *ngIf="hasRequested(username)"
+              (tap)="handlefriendReq(username, false)">
+              &nbsp;Reject
+            </button>
+          </div>
+          <button
+            ion-button item-end color="secondary"
+            *ngIf="isFriend(username)"
+            (tap)="unfriend(username)">
+            <ion-icon name="person" item-start></ion-icon>
+            &nbsp;Unfriend
+          </button>
         </ion-row>
       </ion-grid>
-
 
     </ion-item>
     <ion-item  color="card">

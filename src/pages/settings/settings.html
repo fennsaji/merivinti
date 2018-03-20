@@ -9,17 +9,21 @@
 
 <ion-content padding class="background">
   <ion-list>
-    <ion-item>
+    <button ion-item (tap)="onEditProfile()">
       <ion-icon name="person" item-start></ion-icon>
       <p>Edit Profile</p>
-    </ion-item>
-    <ion-item>
+    </button>
+    <button ion-item *ngIf="isLeader" (tap)="onEditChurch()">
       <ion-icon name="build" item-start></ion-icon>
       <p>Edit Church</p>
-    </ion-item>
+    </button>
+    <button ion-item (tap)="onUpdate()">
+        <ion-icon name="download" item-start></ion-icon>
+        <p>Check for Update</p>
+      </button>
     <button ion-item (tap)="onLogout()">
       <ion-icon name="log-out" item-start></ion-icon>
-      <p>Edit Church</p>
+      <p>Logout</p>
     </button>
   </ion-list>
 </ion-content>

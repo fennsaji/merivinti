@@ -48,14 +48,14 @@
         </ion-row>
         <ion-row>
           <button ion-button outline small block *ngIf="isMyChurch && isLeader" (tap)="goToEditProfile()">Edit Profile</button>
-          <div *ngIf="!isMyChurch && !isInterested">
+          <div *ngIf="!isMyChurch && !hasRequested()">
             <button ion-button outline small block *ngIf="!following(churchId) && !pendingFollowReq(churchId)" (tap)="followChurch()">Follow</button>
             <button ion-button outline small block *ngIf="!following(churchId) && pendingFollowReq(churchId)" (tap)="cancelfollow()">Requested</button>
             <button ion-button outline small block *ngIf="following()" (tap)="unfollow()">Unfollow</button>
           </div>
-          <div *ngIf="!isMyChurch && isInterested">
-            <button ion-button outline small block *ngIf="!following(churchId) && !pendingFollowReq(churchId)" (tap)="sendMembReq()">Join</button>
-            <button ion-button outline small block *ngIf="!following(churchId) && pendingFollowReq(churchId)" (tap)="cancelMembReq()">Requested</button>
+          <div *ngIf="!isMyChurch && hasRequested">
+            <button ion-button outline small block *ngIf="!following(churchId) && hasRequested() !== churchId" (tap)="sendMembReq()">Join</button>
+            <button ion-button outline small block *ngIf="!following(churchId) && hasRequested() === churchId" (tap)="cancelMembReq()">Requested</button>
           </div>
           <div *ngIf="isMyChurch && !isLeader">
             <button ion-button outline small block (tap)="unmember()">Leave</button>
@@ -91,7 +91,7 @@
       </ion-card-content>
     </ion-card>
   </ion-list>
-  <ion-list class="centeralize" no-lines *ngIf="noChurch && !hasRequested && !isLoading">
+  <ion-list class="centeralize" no-lines *ngIf="noChurch && !hasRequested() && !isLoading">
     <ion-item>
       <h2>You are not a member of any church</h2>
       <h3>Click below to search for your church</h3>
@@ -100,7 +100,7 @@
       <button ion-button block (tap)="searchMyChurch()">Search for Church</button>
     </ion-item>
   </ion-list>
-  <ion-list no-lines class="centeralize" *ngIf="noChurch && hasRequested && !isLoading">
+  <ion-list no-lines class="centeralize" *ngIf="noChurch && hasRequested() && !isLoading">
       <ion-item>
         <h2>Your request to {{ hasRequested }} is pending</h2>
         <h3>Click below to search for another church</h3>

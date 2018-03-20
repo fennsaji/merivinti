@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ChurchService } from '../../services/church';
 import { MemberService } from '../../services/member';
+import { AuthService } from '../../services/auth';
 
 @IonicPage()
 @Component({
@@ -11,7 +12,6 @@ import { MemberService } from '../../services/member';
 export class SearchPage implements OnInit {
   Churches: Array<any>;
   People: Array<any>;
-  getMyChurch: boolean;
   isLoading: boolean;
   profile: string = "people";
 
@@ -19,16 +19,12 @@ export class SearchPage implements OnInit {
     public navCtrl: NavController,
     public navParams: NavParams,
     private churchSer: ChurchService,
-    private membSer: MemberService
+    private membSer: MemberService,
+    public authSer: AuthService
   ) {}
-
-  ionViewDidLoad() {
-    console.log("ionViewDidLoad SearchPage");
-  }
 
   ngOnInit() {
     this.profile = this.navParams.get("profile");
-    this.getMyChurch = this.navParams.get("myChurch");
   }
 
   // Add spinner
@@ -165,27 +161,27 @@ export class SearchPage implements OnInit {
   }
 
   //Member
-  sendMembReq(churchId: string) {
-    this.churchSer.sendMembReq(churchId).subscribe(
-      doc => {
-        console.log("success");
-      },
-      err => {
-        console.log("Erooorr");
-      }
-    );
-  }
+  // sendMembReq(churchId: string) {
+  //   this.churchSer.sendMembReq(churchId).subscribe(
+  //     doc => {
+  //       console.log("success");
+  //     },
+  //     err => {
+  //       console.log("Erooorr");
+  //     }
+  //   );
+  // }
 
-  cancelMembReq(churchId: string) {
-    this.churchSer.cancelMembReq(churchId).subscribe(
-      doc => {
-        console.log("success");
-      },
-      err => {
-        console.log("Erooorr");
-      }
-    );
-  }
+  // cancelMembReq(churchId: string) {
+  //   this.churchSer.cancelMembReq(churchId).subscribe(
+  //     doc => {
+  //       console.log("success");
+  //     },
+  //     err => {
+  //       console.log("Erooorr");
+  //     }
+  //   );
+  // }
 
   pendingMembReq(churchId: string) {
     return this.membSer.pendingMembReq() === churchId;

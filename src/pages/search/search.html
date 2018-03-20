@@ -73,7 +73,7 @@
         </div>
       </ion-list>
     </div>
-
+<!-- add action sheet for responding -->
     <div *ngSwitchCase="'church'">
         <div *ngIf="isLoading" class="spinner">
             <ion-spinner icon="android"></ion-spinner>
@@ -81,7 +81,7 @@
       <ion-list >
 
         <ion-item *ngFor="let item of Churches">
-          <ion-avatar item-start (click)="goToChurch(item.churchId, getMyChurch)">
+          <ion-avatar item-start (click)="goToChurch(item.churchId)">
             <img [src]="item.proPic">
           </ion-avatar>
           <h3 (click)="goToChurch(item.churchId)">
@@ -90,7 +90,7 @@
           <p (click)="goToChurch(item.churchId)">
             {{item.churchId}}
           </p>
-          <div *ngIf="!following(item.churchId) && !getMyChurch" item-end>
+          <div *ngIf="!following(item.churchId) && authSer.getChurchId()" item-end>
             <button
               ion-button
               item-end
@@ -108,6 +108,15 @@
               &nbsp;Requested
             </button>
           </div>
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+
+
+</ion-content>
+
+<!--
           <div *ngIf="getMyChurch" item-end>
               <button
                 ion-button
@@ -125,11 +134,4 @@
                 <ion-icon name="clock" item-start></ion-icon>
                 &nbsp;Requested
               </button>
-            </div>
-        </ion-item>
-      </ion-list>
-    </div>
-  </div>
-
-
-</ion-content>
+            </div> -->

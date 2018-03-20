@@ -1,10 +1,10 @@
+import { HttpHeaders, HttpClient } from "@angular/common/http";
 import { Injectable, EventEmitter } from "@angular/core";
-import { AuthService } from "./auth";
+import { FormControl } from "@angular/forms";
 import { Storage } from "@ionic/storage";
+import { AuthService } from "./auth";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/do";
-import { HttpHeaders, HttpClient } from "@angular/common/http";
-import { FormControl } from "@angular/forms";
 
 @Injectable()
 export class MemberService {
@@ -23,7 +23,7 @@ export class MemberService {
   public notify = new EventEmitter<any[]>();
   public friendReq = new EventEmitter<string[]>();
 
-  url : string = 'http://192.168.1.34:8080/member/';
+  url : string = 'http://192.168.43.54:8080/member/';
 
 
   constructor(private authSer: AuthService,
@@ -70,7 +70,7 @@ export class MemberService {
         this.pendingMemb = res.list.pendingMemb;
         this.requests = res.list.requests;
         this.following = res.list.following;
-        this.friendReq.emit(this.requests)
+        this.friendReq.emit(this.requests);
         this.newNotify.emit(this.newNotifications);
       }, err => {
         console.log('Errorr1');
@@ -81,18 +81,28 @@ export class MemberService {
     this.http.get<any>(this.url + 'getNotifications', this.httpOptions)
     .subscribe(res => {
       this.notifications = res.list.notifications;
-      this.newNotifications = res.list.newNotifications;
+      this.requests = res.list.requests;
+      this.friendReq.emit(this.requests);
       this.notify.emit(this.notifications);
     }, err => {
       console.log('Errorr1');
     });
   }
 
-  getInfoFriends(username) {
+  clearNewNotify() {
+    this.http.delete<any>(this.url + 'newNotifications', this.httpOptions)
+    .subscribe(res => {
+      console.log('successss');
+    }, err => {
+      console.log('Errorr1');
+    });
+  }
+
+  getInfoFriends(username: string) {
     return this.http.post<any>(this.url + 'getInfoFriends', {username}, this.httpOptions);
   }
 
-  getInfoFollowings(username) {
+  getInfoFollowings(username: string) {
     return this.http.post<any>(this.url + 'getInfoFollowings', {username}, this.httpOptions);
   }
 

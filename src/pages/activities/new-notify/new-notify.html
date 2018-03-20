@@ -1,0 +1,31 @@
+<ion-header>
+
+    <ion-navbar hideBackButton color="navbar">
+      <ion-title text-center>Add New Post</ion-title>
+    </ion-navbar>
+
+  </ion-header>
+
+
+  <ion-content padding class="background">
+    <form #f="ngForm" (ngSubmit)="onSubmit(f)">
+        <ion-list >
+            <ion-item>
+              <ion-textarea required name="body"autofocus ngModel placeholder="Write your Prayer Request here...">
+              </ion-textarea>
+            </ion-item>
+            <div *ngIf="isLoading" class="spinner">
+              <ion-spinner icon="android"></ion-spinner>
+            </div>
+            <ion-row *ngIf="!isLoading" padding>
+              <ion-col padding-horizontal>
+                  <button ion-button  block color="danger" type="button" (click)="ondiscard(f)">Discard</button>
+              </ion-col>
+              <ion-col padding-horizontal>
+                  <button ion-button block  color="secondary" type="submit" [disabled]="!f.valid">Notify</button>
+              </ion-col>
+            </ion-row>
+          </ion-list>
+    </form>
+
+  </ion-content>

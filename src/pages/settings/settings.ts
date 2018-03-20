@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth';
   templateUrl: 'settings.html',
 })
 export class SettingsPage {
+  isLeader: boolean;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
@@ -16,6 +17,7 @@ export class SettingsPage {
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad SettingsPage');
+    this.isLeader = this.authSer.isLeader();
   }
 
   onLogout() {
@@ -25,5 +27,17 @@ export class SettingsPage {
       }, err => {
         console.log('Error');
       });
+  }
+
+  onEditProfile() {
+    this.navCtrl.push('EditProfilePage');
+  }
+
+  onEditChurch() {
+    this.navCtrl.push('EditChurchPage');
+  }
+
+  onUpdate() {
+
   }
 }

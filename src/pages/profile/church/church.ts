@@ -15,8 +15,6 @@ export class ChurchPage {
   isMyChurch: boolean;
   isLeader: boolean;
   noChurch: boolean;
-  isInterested: boolean;
-  hasRequested: string;
   isLoading: boolean;
 
   church = {
@@ -41,14 +39,9 @@ export class ChurchPage {
   ionViewDidLoad() {
     this.isLoading = true;
     console.log("ngoninit church");
-    if(this.membSer.pendingMembReq()) {
-      this.hasRequested = this.membSer.pendingMembReq();
-    } else {
-      this.hasRequested = null;
-    }
+
     if (this.navParams.get("churchId")) {
       this.churchId = this.navParams.get("churchId");
-      this.isInterested = this.navParams.get("isInterested");
       this.isMyChurch = false;
       this.noChurch = false;
       console.log(this.churchId);
@@ -60,7 +53,6 @@ export class ChurchPage {
         this.noChurch = false;
       this.isMyChurch = true;
       this.isLeader = this.authSer.isLeader();
-      this.isInterested = false;
     }
     this.getProfile(null);
   }
@@ -80,6 +72,7 @@ export class ChurchPage {
         this.prayerReq = Pro.prayerReq;
         console.log("doc", Pro);
         this.isLoading = false;
+        this.noChurch = false;
         if(refresher)
         refresher.complete();
       },
@@ -96,7 +89,7 @@ export class ChurchPage {
   }
 
   search() {
-    this.navCtrl.push("SearchPage", { profile: "church" , myChurch: false});
+    this.navCtrl.push("SearchPage", { profile: "church"});
   }
 
   gotoInfoLeaders() {
@@ -150,6 +143,10 @@ export class ChurchPage {
 
   following(churchId: string) {
     return this.membSer.iffollowing(churchId);
+  }
+
+  hasRequested() {
+    return this.membSer.pendingMembReq();
   }
 
   //Member

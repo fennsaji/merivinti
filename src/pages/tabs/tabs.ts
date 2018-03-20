@@ -9,7 +9,8 @@ import { AuthService } from '../../services/auth';
   templateUrl: 'tabs.html'
 })
 export class TabsPage implements OnInit{
-  newNotifications: number = 3;
+  newNotify: number;
+  newChurchNotify: number;
 
   tab1 = 'PrayersPage';
   tab2 = 'ActivitiesPage';
@@ -30,11 +31,11 @@ export class TabsPage implements OnInit{
     this.membSer.initialize();
     // notifications
     this.membSer.newNotify.subscribe(data => {
-      this.newNotifications = data;
+      this.newNotify = data;
     });
     if(this.authSer.isLeader()) {
       this.churchSer.newNotify.subscribe(data => {
-        this.newNotifications += data;
+        this.newChurchNotify = data;
       });
     }
   }

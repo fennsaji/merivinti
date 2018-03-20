@@ -5,99 +5,93 @@
   </ion-navbar>
 
   <ion-segment [(ngModel)]="event">
-      <ion-segment-button value="request">
-        Requests
-      </ion-segment-button>
-      <ion-segment-button value="notification">
-        Notifications
-      </ion-segment-button>
-    </ion-segment>
+    <ion-segment-button value="request">
+      Requests
+    </ion-segment-button>
+    <ion-segment-button value="notification">
+      Notifications
+    </ion-segment-button>
+  </ion-segment>
 
 </ion-header>
 
 
 <ion-content class="background">
 
-    <div [ngSwitch]="event">
-        <div *ngSwitchCase="'request'">
-            <div *ngIf="isLoading" class="spinner">
-                <ion-spinner icon="android"></ion-spinner>
-            </div>
-            <ion-list-header *ngIf="isLeader">Church</ion-list-header>
-            <ion-list>
-                <ion-item
-                *ngFor="let user of followReq; let i = index;">
-                    <ion-avatar item-start>
-                      <img src="">
-                    </ion-avatar>
-                    <h2>{{ user.username }}</h2>
-                    <h3>wants to follow your church</h3>
-                    <button
-                      color="secondary"
-                      ion-button
-                      item-end
-                      icon-only
-                      padding-horizontal
-                      (tap)="handlefollowReq(user.username, true, i)">
-                      <ion-icon name="checkmark" large>
-                      </ion-icon>
-                    </button>
-                    <button
-                      color="danger"
-                      ion-button
-                      item-end
-                      padding-horizontal
-                      icon-only
-                      (tap)="handlefollowReq(user.username, false, i)">
-                      <ion-icon name="close" large>
-                      </ion-icon>
-                    </button>
-                  </ion-item>
+  <ion-refresher (ionRefresh)="getNotifications($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
-                  <ion-list-header *ngIf="isLeader">You</ion-list-header>
-                <ion-item
-                *ngFor="let user of requests; let i = index;">
-                  <ion-avatar item-start>
-                    <img src="">
-                  </ion-avatar>
-                  <h2>{{ user }}</h2>
-                  <h3>sent you friend Request</h3>
-                  <button
-                    color="secondary"
-                    ion-button
-                    item-end
-                    icon-only
-                    padding-horizontal
-                    (tap)="handleFriendReq(user, true, i)">
-                    <ion-icon name="checkmark" large>
-                    </ion-icon>
-                  </button>
-                  <button
-                    color="danger"
-                    ion-button
-                    item-end
-                    padding-horizontal
-                    icon-only
-                    (tap)="handleFriendReq(user, false, i)">
-                    <ion-icon name="close" large>
-                    </ion-icon>
-                  </button>
-                </ion-item>
-              </ion-list>
-          </div>
+  <div [ngSwitch]="event">
+    <div *ngSwitchCase="'request'">
+      <div *ngIf="isLoading" class="spinner">
+        <ion-spinner icon="android"></ion-spinner>
+      </div>
+      <ion-list-header *ngIf="isLeader && followReq">Church</ion-list-header>
+      <ion-list>
+        <ion-item *ngFor="let user of followReq; let i = index;">
+          <ion-avatar item-start>
+            <img src="">
+          </ion-avatar>
+          <h2>{{ user.username }}</h2>
+          <h3>wants to follow your church</h3>
+          <button color="secondary" ion-button item-end icon-only padding-horizontal
+            (tap)="handlefollowReq(user.username, true, i)">
+            <ion-icon name="checkmark" large>
+            </ion-icon>
+          </button>
+          <button color="danger" ion-button item-end padding-horizontal icon-only
+            (tap)="handlefollowReq(user.username, false, i)">
+            <ion-icon name="close" large>
+            </ion-icon>
+          </button>
+        </ion-item>
 
-          <div *ngSwitchCase="'notification'">
-              <div *ngIf="isLoading" class="spinner">
-                  <ion-spinner icon="android"></ion-spinner>
-              </div>
-              <ion-list>
-                  <ion-item *ngFor="let item of notifications">
-                    <ion-avatar item-start>
-                      <img src="">
-                    </ion-avatar>
-                    <h3>***** accepted your friend Request</h3>
-                  </ion-item>
-                </ion-list>
-            </div>
-          </div>
+        <ion-list-header *ngIf="isLeader && requests">You</ion-list-header>
+        <ion-item *ngFor="let user of requests; let i = index;">
+          <ion-avatar item-start>
+            <img src="">
+          </ion-avatar>
+          <h2>{{ user }}</h2>
+          <h3>sent you friend Request</h3>
+          <button color="secondary" ion-button item-end icon-only padding-horizontal
+            (tap)="handleFriendReq(user, true, i)">
+            <ion-icon name="checkmark" large>
+            </ion-icon>
+          </button>
+          <button color="danger" ion-button item-end padding-horizontal icon-only
+            (tap)="handleFriendReq(user, false, i)">
+            <ion-icon name="close" large>
+            </ion-icon>
+          </button>
+        </ion-item>
+      </ion-list>
+      <ion-title *ngIf="!followReq && !requests">
+        You have no pending requests
+      </ion-title>
+    </div>
+
+    <div *ngSwitchCase="'notification'">
+      <div *ngIf="isLoading" class="spinner">
+        <ion-spinner icon="android"></ion-spinner>
+      </div>
+      <ion-list>
+        <ion-item *ngFor="let item of notifications">
+          <ion-avatar item-start>
+            <img src="">
+          </ion-avatar>
+          <h3>
+            <span (click)="goToProfile(item.by, item.who)">{{ item.who }} </span> {{ item.body }}</h3>
+        </ion-item>
+      </ion-list>
+      <ion-title *ngIf="!notifications">
+        You have no pending requests
+      </ion-title>
+    </div>
+  </div>
+  <ion-fab *ngIf="authSer.isLeader()">
+      <button ion-fab color="secondary" mini (click)="createNewNotify()">
+        <ion-icon name="create"></ion-icon>
+      </button>
+    </ion-fab>
 </ion-content>

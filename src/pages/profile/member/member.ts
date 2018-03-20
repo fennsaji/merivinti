@@ -78,4 +78,74 @@ export class MemberPage {
   search() {
     this.navCtrl.push("SearchPage", { profile: "people" , myChurch: false});
   }
+
+  addAsFriend(username: string) {
+    console.log("added", username);
+    this.membSer.addAsFriend(username).subscribe(
+      doc => {
+        console.log("success");
+        // change icon
+      },
+      err => {
+        console.log("Error");
+      }
+    );
+  }
+
+  cancelFriendReq(username: string) {
+    this.membSer.cancelFriendReq(username).subscribe(
+      doc => {
+        console.log("success");
+        // change icon
+      },
+      err => {
+        console.log("Error");
+      }
+    );
+  }
+
+  handlefriendReq(username: string, approval: boolean) {
+    console.log(approval, username);
+    this.membSer.handleFriendReq(username, approval).subscribe(
+      doc => {
+        console.log("success");
+        // change icon
+      },
+      err => {
+        console.log("Error");
+      }
+    );
+  }
+
+  unfriend(username: string) {
+    this.membSer.unfriend(username).subscribe(
+      doc => {
+        console.log("success");
+        // change icon
+      },
+      err => {
+        console.log("Error");
+      }
+    );
+  }
+
+  isFriend(username: string) {
+    return this.membSer.isAFriend(username);
+  }
+
+  isPendingFriend(username: string) {
+    return this.membSer.isPendingFriend(username);
+  }
+
+  hasRequested(username: string) {
+    return this.membSer.hasRequested(username);
+  }
+
+  goToOptions() {
+    this.navCtrl.push('SettingsPage');
+  }
+
+  onEditProfile() {
+    this.navCtrl.push('SettingsPage');
+  }
 }

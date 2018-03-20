@@ -21,7 +21,7 @@ export class ActivitiesPage {
     public navParams: NavParams,
     private membSer: MemberService,
     private churchSer: ChurchService,
-    private authSer: AuthService) {
+    public authSer: AuthService) {
   }
 
   ionViewDidLoad() {
@@ -30,23 +30,32 @@ export class ActivitiesPage {
     this.membSer.friendReq.subscribe((data) => {
       this.requests = data;
     }, err => {
-
+      console.log('Error ActivitiesPage');
     });
     this.churchSer.followReq.subscribe((data) => {
       this.followReq = data;
     }, err => {
-
+      console.log('Enter errorr');
     });
     this.membSer.notify.subscribe(doc => {
       this.notifications = doc;
-    })
+      this.isLoading = false;
+    });
     this.isLeader = this.authSer.isLeader();
+    this.membSer.clearNewNotify();
+    this.churchSer.deleteNewNotify();
+    this.getNotifications(null);
+  }
+
+  getNotifications(refresher) {
+    this.membSer.getNotifications();
+    this.churchSer.getNotifications();
+    if(refresher)
+    refresher.complete();
   }
 
   ionViewDidEnter() {
     console.log('Enter');
-    this.membSer.getNotifications();
-    this.churchSer.getNotifications();
   }
 
   handleFriendReq(username: string, approval: boolean, i: number) {
@@ -68,5 +77,16 @@ export class ActivitiesPage {
     },  err => {
       console.log('Error');
     });
+  }
+
+  goToProfile(type: string, id: string) {
+    if(type === 'user')
+      this.navCtrl.push('MemberPage', {username: id});
+    else
+      this.navCtrl.push('ChurchPage', {churchId: id});
+  }
+
+  createNewNotify() {
+    this.navCtrl.push('NewNotifyPage');
   }
 }
