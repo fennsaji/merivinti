@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicPage } from 'ionic-angular';
+import { IonicPage, Events } from 'ionic-angular';
 import { ChurchService } from '../../services/church';
 import { MemberService } from '../../services/member';
 import { AuthService } from '../../services/auth';
@@ -10,7 +10,8 @@ import { AuthService } from '../../services/auth';
 })
 export class TabsPage implements OnInit{
   newNotify: number;
-  newChurchNotify: number;
+  newChurchNotify: number = 0;
+  newProfileNotify: number = 0;
 
   tab1 = 'PrayersPage';
   tab2 = 'ActivitiesPage';
@@ -20,6 +21,7 @@ export class TabsPage implements OnInit{
 
   constructor(private churchSer: ChurchService,
       private membSer: MemberService,
+      public events: Events,
       private authSer: AuthService) {}
 
   ngOnInit() {
@@ -27,16 +29,31 @@ export class TabsPage implements OnInit{
   }
 
   initializePages() {
+    console.log('tabs page');
+    this.events.subscribe('profileNotify:updated', data => {
+      console.log('notifudap', data);
+      this.newProfileNotify = data;
+      this.newNotify = this.newChurchNotify + this.newProfileNotify;
+    });
+    this.events.subscribe('churchNotify:updated', data => {
+      console.log('notifudac', data);
+      this.newChurchNotify = data;
+      this.newNotify = this.newChurchNotify + this.newProfileNotify;
+    });
+
     this.churchSer.initialize();
     this.membSer.initialize();
     // notifications
-    this.membSer.newNotify.subscribe(data => {
-      this.newNotify = data;
-    });
-    if(this.authSer.isLeader()) {
-      this.churchSer.newNotify.subscribe(data => {
-        this.newChurchNotify = data;
-      });
-    }
+    // this.membSer.newNotify.subscribe(data => {
+    //   console.log('new norifu',data);
+    //   this.newNotify = 1;
+
+    // });
+    // if(this.membSer.ifLeader()) {
+    //   this.churchSer.newNotify.subscribe(data => {
+    //     this.newChurchNotify = +data;
+    //     console.log('new norifu',data);
+    //   });
+    // }
   }
 }

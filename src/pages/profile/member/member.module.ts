@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { MemberPage } from './member';
-import { safeHtml } from '../../../pipes/safe-html';
+import { PipesModule } from '../../../pipes/pipes.module';
 
 @NgModule({
   declarations: [
-    MemberPage,
-    safeHtml
+    MemberPage
   ],
   imports: [
     IonicPageModule.forChild(MemberPage),
+    PipesModule
   ],
 })
 export class ActivitiesPageModule {}

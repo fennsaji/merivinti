@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { ChurchService } from '../../services/church';
 import { MemberService } from '../../services/member';
 import { AuthService } from '../../services/auth';
@@ -18,6 +18,7 @@ export class SearchPage implements OnInit {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
+    public toastCtrl: ToastController,
     private churchSer: ChurchService,
     private membSer: MemberService,
     public authSer: AuthService
@@ -37,12 +38,22 @@ export class SearchPage implements OnInit {
         data => {
           this.isLoading = false;
           if (!data) {
+            var toast = this.toastCtrl.create({
+              message: "No hits!!",
+              duration: 3000
+            });
+            toast.present();
             console.log("No hits");
           }
           this.People = data;
         },
         err => {
           this.isLoading = false;
+          var toast = this.toastCtrl.create({
+            message: "Unable to connect to server",
+            duration: 3000
+          });
+          toast.present();
           console.log("Something went wrong");
         }
       );
@@ -51,11 +62,21 @@ export class SearchPage implements OnInit {
         data => {
           this.isLoading = false;
           if (!data) {
+            var toast = this.toastCtrl.create({
+              message: "No hits!!",
+              duration: 3000
+            });
+            toast.present();
             console.log("No hits");
           }
           this.Churches = data;
         },
         err => {
+          var toast = this.toastCtrl.create({
+            message: "Unable to connect to server",
+            duration: 3000
+          });
+          toast.present();
           this.isLoading = false;
           console.log("Something went wrong");
         }
@@ -85,6 +106,11 @@ export class SearchPage implements OnInit {
         // change icon
       },
       err => {
+        var toast = this.toastCtrl.create({
+          message: "Could not connect to Server",
+          duration: 3000
+        });
+        toast.present();
         console.log("Error");
       }
     );
@@ -97,6 +123,11 @@ export class SearchPage implements OnInit {
         // change icon
       },
       err => {
+        var toast = this.toastCtrl.create({
+          message: "Could not connect to Server",
+          duration: 3000
+        });
+        toast.present();
         console.log("Error");
       }
     );
@@ -110,6 +141,11 @@ export class SearchPage implements OnInit {
         // change icon
       },
       err => {
+        var toast = this.toastCtrl.create({
+          message: "Could not connect to Server",
+          duration: 3000
+        });
+        toast.present();
         console.log("Error");
       }
     );
@@ -135,6 +171,11 @@ export class SearchPage implements OnInit {
         // change icon
       },
       err => {
+        var toast = this.toastCtrl.create({
+          message: "Could not connect to Server",
+          duration: 3000
+        });
+        toast.present();
         console.log("Error");
       }
     );
@@ -147,6 +188,11 @@ export class SearchPage implements OnInit {
         // change icon
       },
       err => {
+        var toast = this.toastCtrl.create({
+          message: "Could not connect to Server",
+          duration: 3000
+        });
+        toast.present();
         console.log("Error");
       }
     );

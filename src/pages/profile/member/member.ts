@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { NavController, NavParams, IonicPage } from "ionic-angular";
+import { NavController, NavParams, IonicPage, ToastController } from "ionic-angular";
 import { AuthService } from "../../../services/auth";
 import { MemberService } from "../../../services/member";
 import { IPrayerReq } from "../../../models/prayerReq.model";
@@ -29,7 +29,8 @@ export class MemberPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     private authSer: AuthService,
-    private membSer: MemberService
+    private membSer: MemberService,
+    public toastCtrl: ToastController
   ) {}
 
   ionViewDidLoad() {
@@ -47,7 +48,9 @@ export class MemberPage {
   }
 
   getProfile(refresher) {
-    this.membSer.getMembProfile(this.username)
+    var toast;
+    if(this.authSer.isOnline()) {
+      this.membSer.getMembProfile(this.username, this.isMyProfile)
     .subscribe(doc => {
       this.isLoading = false;
       this.profile = doc.member;
@@ -57,10 +60,42 @@ export class MemberPage {
         refresher.complete();
     }, err => {
       console.log('Something went wrong');
+      var toast = this.toastCtrl.create({
+        message: "Unable to connect to server",
+        duration: 3000
+      });
+      toast.present();
       this.isLoading = false;
       if(refresher)
         refresher.complete();
     });
+    } else if(this.isMyProfile){
+      this.membSer
+        .getPrStorage()
+        .then(Pro => {
+          console.log('proifil', Pro);
+          this.profile = Pro.member;
+          this.prayerReq = Pro.prayerReq;
+        })
+        .catch(err => {
+          toast = this.toastCtrl.create({
+            message: "Unable to read from Storage",
+            duration: 3000
+          });
+          toast.present();
+        });
+      toast = this.toastCtrl.create({
+        message: "No internet Connection",
+        duration: 3000
+      });
+      toast.present();
+    } else {
+      toast = this.toastCtrl.create({
+        message: "No internet Connection",
+        duration: 3000
+      });
+      toast.present();
+    }
   }
 
   gotoInfoPrayees() {
@@ -87,6 +122,11 @@ export class MemberPage {
         // change icon
       },
       err => {
+        var toast = this.toastCtrl.create({
+          message: "No internet Connection",
+          duration: 3000
+        });
+        toast.present();
         console.log("Error");
       }
     );
@@ -99,6 +139,11 @@ export class MemberPage {
         // change icon
       },
       err => {
+        var toast = this.toastCtrl.create({
+          message: "No internet Connection",
+          duration: 3000
+        });
+        toast.present();
         console.log("Error");
       }
     );
@@ -112,6 +157,11 @@ export class MemberPage {
         // change icon
       },
       err => {
+        var toast = this.toastCtrl.create({
+          message: "No internet Connection",
+          duration: 3000
+        });
+        toast.present();
         console.log("Error");
       }
     );
@@ -124,6 +174,11 @@ export class MemberPage {
         // change icon
       },
       err => {
+        var toast = this.toastCtrl.create({
+          message: "No internet Connection",
+          duration: 3000
+        });
+        toast.present();
         console.log("Error");
       }
     );
@@ -146,6 +201,6 @@ export class MemberPage {
   }
 
   onEditProfile() {
-    this.navCtrl.push('SettingsPage');
+    this.navCtrl.push('EditProfilePage');
   }
 }

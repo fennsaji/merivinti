@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { SearchPage } from './search';
-import { safeHtml } from '../../pipes/safe-html';
+import { PipesModule } from '../../pipes/pipes.module';
 
 @NgModule({
   declarations: [
-    SearchPage,
-    safeHtml
+    SearchPage
   ],
   imports: [
     IonicPageModule.forChild(SearchPage),
+    PipesModule
   ],
 })
 export class SearchPageModule {}

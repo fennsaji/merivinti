@@ -1,7 +1,7 @@
 <ion-header>
 
   <ion-navbar color="navbar">
-    <ion-title>edit-profile</ion-title>
+    <ion-title>Edit Profile</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -10,9 +10,26 @@
 <ion-content padding class="background">
     <form #f="ngForm" (ngSubmit)="onUpdate(f)">
         <ion-list>
+            <div item-start class="header-avatar">
+                <img [src]="proPic | safeHtml">
+              </div>
+              <ion-row>
+                  <ion-col>
+                    <button
+                      ion-button
+                      icon-left
+                      block
+                      outline
+                      type="button"
+                      (click)="onSelectPhoto()">
+                      <ion-icon name="camera"></ion-icon>
+                      Change Profile Pic
+                    </button>
+                  </ion-col>
+                </ion-row>
           <ion-item>
               <ion-label floating>Name</ion-label>
-              <ion-input type="text" name="name" required ngModel></ion-input>
+              <ion-input type="text" name="name" required [(ngModel)]="name"></ion-input>
             </ion-item>
             <br>
             <div *ngIf="isLoading" class="spinner">

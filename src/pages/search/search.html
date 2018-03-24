@@ -32,7 +32,7 @@
         <div *ngFor="let item of People">
           <ion-item>
             <ion-avatar item-start (tap)="goToProfile(item.username)">
-              <img [src]="item.proPic">
+              <img [src]="item.proPic | safeHtml">
             </ion-avatar>
             <h2 (tap)="goToProfile(item.username)">
               {{item.name}}
@@ -78,11 +78,10 @@
         <div *ngIf="isLoading" class="spinner">
             <ion-spinner icon="android"></ion-spinner>
         </div>
-      <ion-list >
-
+      <ion-list>
         <ion-item *ngFor="let item of Churches">
           <ion-avatar item-start (click)="goToChurch(item.churchId)">
-            <img [src]="item.proPic">
+            <img [src]="item.proPic | safeHtml">
           </ion-avatar>
           <h3 (click)="goToChurch(item.churchId)">
             {{item.churchName}}

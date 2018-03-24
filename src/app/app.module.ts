@@ -7,19 +7,19 @@ import { IonicStorageModule } from "@ionic/storage";
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { ReactiveFormsModule } from '@angular/forms';
-// import { Network } from "@ionic-native/network";
+import { Network } from "@ionic-native/network";
+import { Camera } from '@ionic-native/camera';
 
 import { AuthService } from '../services/auth';
 import { ChurchService } from '../services/church';
-import { ActivitiesService } from '../services/activities';
+// import { ActivitiesService } from '../services/activities';
 import { MemberService } from '../services/member';
 import { PrayerService } from '../services/prayer';
-import { safeHtml } from '../pipes/safe-html';
+import { SocialSharing } from '@ionic-native/social-sharing';
 
 @NgModule({
   declarations: [
     MyApp
-
   ],
   imports: [
     BrowserModule,
@@ -37,10 +37,12 @@ import { safeHtml } from '../pipes/safe-html';
   providers: [
     StatusBar,
     SplashScreen,
-    // Network,
+    SocialSharing,
+    Network,
+    Camera,
     AuthService,
     ChurchService,
-    ActivitiesService,
+    // ActivitiesService,
     MemberService,
     PrayerService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}

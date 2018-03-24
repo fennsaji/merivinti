@@ -1,7 +1,7 @@
 <ion-header>
 
     <ion-navbar hideBackButton color="navbar">
-      <ion-title text-center>Add New Post</ion-title>
+      <ion-title text-center>Add New Notification</ion-title>
     </ion-navbar>
 
   </ion-header>
@@ -11,7 +11,7 @@
     <form #f="ngForm" (ngSubmit)="onSubmit(f)">
         <ion-list >
             <ion-item>
-              <ion-textarea required name="body"autofocus ngModel placeholder="Write your Prayer Request here...">
+              <ion-textarea required name="body" autofocus ngModel placeholder="Write your notification here...">
               </ion-textarea>
             </ion-item>
             <div *ngIf="isLoading" class="spinner">

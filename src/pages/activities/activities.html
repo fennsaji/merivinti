@@ -27,30 +27,31 @@
       <div *ngIf="isLoading" class="spinner">
         <ion-spinner icon="android"></ion-spinner>
       </div>
-      <ion-list-header *ngIf="isLeader && followReq">Church</ion-list-header>
+      <ion-list-header *ngIf="isLeader && !noFoR">Church</ion-list-header>
       <ion-list>
         <ion-item *ngFor="let user of followReq; let i = index;">
           <ion-avatar item-start>
-            <img src="">
+            <!-- <img [src]="membSer.getProPicUser(user.username) | safeHtml"> -->
           </ion-avatar>
           <h2>{{ user.username }}</h2>
-          <h3>wants to follow your church</h3>
+          <h3 *ngIf="user.desig == 'Follower'">wants to follow your church</h3>
+          <h3 *ngIf="user.desig == 'Member'">want to be a member of church</h3>
           <button color="secondary" ion-button item-end icon-only padding-horizontal
-            (tap)="handlefollowReq(user.username, true, i)">
+            (tap)="handleReq(user.username, user.desig, true, i)">
             <ion-icon name="checkmark" large>
             </ion-icon>
           </button>
           <button color="danger" ion-button item-end padding-horizontal icon-only
-            (tap)="handlefollowReq(user.username, false, i)">
+            (tap)="handleReq(user.username,user.desig, false, i)">
             <ion-icon name="close" large>
             </ion-icon>
           </button>
         </ion-item>
 
-        <ion-list-header *ngIf="isLeader && requests">You</ion-list-header>
+        <ion-list-header *ngIf="isLeader && !noFrR">You</ion-list-header>
         <ion-item *ngFor="let user of requests; let i = index;">
           <ion-avatar item-start>
-            <img src="">
+            <img [src]="">
           </ion-avatar>
           <h2>{{ user }}</h2>
           <h3>sent you friend Request</h3>
@@ -66,9 +67,9 @@
           </button>
         </ion-item>
       </ion-list>
-      <ion-title *ngIf="!followReq && !requests">
+      <p padding text-center *ngIf="noFoR && noFrR">
         You have no pending requests
-      </ion-title>
+      </p>
     </div>
 
     <div *ngSwitchCase="'notification'">
@@ -76,17 +77,17 @@
         <ion-spinner icon="android"></ion-spinner>
       </div>
       <ion-list>
-        <ion-item *ngFor="let item of notifications">
+        <ion-item text-wrap *ngFor="let item of notifications">
           <ion-avatar item-start>
-            <img src="">
+            <!-- <img [src]="item.proPic || membSer.getProPicUser(item.who)| safeHtml"> -->
           </ion-avatar>
           <h3>
-            <span (click)="goToProfile(item.by, item.who)">{{ item.who }} </span> {{ item.body }}</h3>
+            <span (click)="goToProfile(item.by, item.who)"><b>{{ item.who }} </b></span> {{ item.body }}</h3><p>{{item.date | timeAgo}}</p>
         </ion-item>
       </ion-list>
-      <ion-title *ngIf="!notifications">
-        You have no pending requests
-      </ion-title>
+      <p padding text-center *ngIf="noNotify && !isLoading">
+        You have no Notifications
+      </p>
     </div>
   </div>
   <ion-fab *ngIf="authSer.isLeader()">

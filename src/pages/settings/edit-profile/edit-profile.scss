@@ -1,3 +1,17 @@
 page-edit-profile {
-
+  .header-avatar {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    overflow: hidden;
+    position: relative;
+    margin: auto;
+    img {
+      position: absolute;
+      top:0;
+      bottom: 0;
+      margin: auto;
+      width: 100%;
+    }
+  }
 }

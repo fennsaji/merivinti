@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { AuthService } from '../../services/auth';
+import { MemberService } from '../../services/member';
 
 @IonicPage()
 @Component({
@@ -12,7 +13,9 @@ export class SettingsPage {
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
-    private authSer: AuthService) {
+    private authSer: AuthService,
+    public toastCtrl: ToastController,
+    private membSer: MemberService) {
   }
 
   ionViewDidLoad() {
@@ -25,6 +28,11 @@ export class SettingsPage {
       .subscribe(() => {
         this.navCtrl.setRoot('HomePage');
       }, err => {
+        var toast = this.toastCtrl.create({
+          message: "Could not Connect to Server",
+          duration: 3000
+        });
+        toast.present();
         console.log('Error');
       });
   }

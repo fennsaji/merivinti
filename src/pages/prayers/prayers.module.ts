@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { PrayersPage } from './prayers';
-import { safeHtml } from '../../pipes/safe-html';
+import { PipesModule } from '../../pipes/pipes.module';
 
 @NgModule({
   declarations: [
-    PrayersPage,
-    safeHtml
+    PrayersPage
   ],
   imports: [
     IonicPageModule.forChild(PrayersPage),
+    PipesModule
   ],
 })
 export class PrayersPageModule {}

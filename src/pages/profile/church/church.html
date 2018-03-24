@@ -23,15 +23,14 @@
   </ion-refresher>
 
   <div *ngIf="isLoading" class="spinner">
-      <ion-spinner icon="android"></ion-spinner>
+      <ion-spinner></ion-spinner>
   </div>
 
   <ion-list no-lines *ngIf="!noChurch && !isLoading">
     <ion-item padding-horizontal padding-top>
       <div item-start class="header-avatar">
-        <img [src]="church.proPic">
+        <img [src]="church.proPic | safeHtml">
       </div>
-      <ion-grid>
         <ion-row>
           <ion-col>
             <h6 text-center>{{church.noOfPost}}</h6>
@@ -46,22 +45,31 @@
             <h6 text-center>Prayees</h6>
           </ion-col>
         </ion-row>
+
         <ion-row>
-          <button ion-button outline small block *ngIf="isMyChurch && isLeader" (tap)="goToEditProfile()">Edit Profile</button>
-          <div *ngIf="!isMyChurch && !hasRequested()">
-            <button ion-button outline small block *ngIf="!following(churchId) && !pendingFollowReq(churchId)" (tap)="followChurch()">Follow</button>
-            <button ion-button outline small block *ngIf="!following(churchId) && pendingFollowReq(churchId)" (tap)="cancelfollow()">Requested</button>
-            <button ion-button outline small block *ngIf="following()" (tap)="unfollow()">Unfollow</button>
-          </div>
-          <div *ngIf="!isMyChurch && hasRequested">
-            <button ion-button outline small block *ngIf="!following(churchId) && hasRequested() !== churchId" (tap)="sendMembReq()">Join</button>
-            <button ion-button outline small block *ngIf="!following(churchId) && hasRequested() === churchId" (tap)="cancelMembReq()">Requested</button>
-          </div>
-          <div *ngIf="isMyChurch && !isLeader">
-            <button ion-button outline small block (tap)="unmember()">Leave</button>
-          </div>
+          <ion-col *ngIf="isMyChurch && isLeader">
+              <button ion-button outline small block  (tap)="goToEditProfile()">Edit Profile</button>
+          </ion-col>
+
+            <ion-col *ngIf="hasRequested() !== churchId && !isMyChurch">
+                <button ion-button small block *ngIf="!following(churchId) && !pendingFollowReq(churchId)"
+                  (tap)="followChurch()">Follow</button>
+                <button ion-button outline small block *ngIf="!following(churchId) && pendingFollowReq(churchId)"
+                  (tap)="cancelfollow()">Follow Requested</button>
+                <button ion-button outline small block *ngIf="following(churchId)" (tap)="unfollow()">Unfollow</button>
+            </ion-col>
+
+            <ion-col *ngIf="!isMyChurch && !authSer.getChurchId() && !pendingFollowReq(churchId)">
+                <button ion-button small block *ngIf="!following(churchId) && hasRequested() !== churchId"
+                  (tap)="sendMembReq()">Join</button>
+                <button ion-button outline small block *ngIf="!following(churchId) && hasRequested() === churchId"
+                  (tap)="cancelMembReq()">Member Requested</button>
+            </ion-col>
+
+              <ion-col *ngIf="isMyChurch && !isLeader">
+                <button ion-button outline small block (tap)="unmember()">Leave</button>
+              </ion-col>
         </ion-row>
-      </ion-grid>
 
     </ion-item>
     <ion-item>
@@ -79,7 +87,7 @@
     <ion-card *ngFor="let item of prayerReq">
       <ion-item>
         <ion-avatar item-start>
-          <img [src]="item.proPic">
+          <img [src]="item.proPic | safeHtml">
         </ion-avatar>
         <h3>{{item.username}}</h3>
         <p>
@@ -102,7 +110,7 @@
   </ion-list>
   <ion-list no-lines class="centeralize" *ngIf="noChurch && hasRequested() && !isLoading">
       <ion-item>
-        <h2>Your request to {{ hasRequested }} is pending</h2>
+        <h2>Your request to {{ hasRequested() }} is pending</h2>
         <h3>Click below to search for another church</h3>
       </ion-item>
       <ion-item>

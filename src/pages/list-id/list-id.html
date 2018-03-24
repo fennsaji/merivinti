@@ -12,18 +12,18 @@
         <ion-spinner icon="android"></ion-spinner>
     </div>
   <ion-list>
-    <ion-title *ngIf="lists2 && !lists">Members</ion-title>
+    <ion-title *ngIf="lists == undefined || lists2 == undefined">Members</ion-title>
     <ion-item *ngFor="let item of lists; let i = index">
       <ion-avatar item-start (tap)="goToProfile(item.username)">
-        <img [src]="item.proPic">
+        <img [src]="item.proPic | safeHtml">
       </ion-avatar>
       <h2 (tap)="goToProfile(item.username)">
-        {{item.name}}
+        {{item.name || item.churchName}}
       </h2>
       <ion-note (tap)="goToProfile(item.username)">
-        {{item.username}}
+        {{item.username || item.churchId}}
       </ion-note>
-      <button ion-button item-end color="secondary" *ngIf="isMyChurchAndLeader"
+      <button ion-button item-end color="secondary" *ngIf="isMyChurchAndLeader && notMe(item.username)"
         (tap)="remove('Member', item.username, i)">
         <ion-icon name="remove-circle" item-start></ion-icon>
         &nbsp;Remove
@@ -31,10 +31,10 @@
     </ion-item>
 
     <div *ngIf="lists2">
-      <ion-title>Followers</ion-title>
+      <ion-title *ngIf="lists2 == undefined">Followers</ion-title>
       <ion-item *ngFor="let item of lists2; let i= index">
         <ion-avatar item-start (tap)="goToProfile(item.username)">
-          <img [src]="item.proPic">
+          <img [src]="item.proPic | safeHtml">
         </ion-avatar>
         <h2 (tap)="goToProfile(item.username)">
           {{item.name}}

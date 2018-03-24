@@ -7,12 +7,13 @@ import { IMembers } from "../models/member.model";
 import "rxjs/add/operator/map";
 // import { IChurch } from "../models/church.model";
 import { Storage } from "@ionic/storage";
+import { Network } from '@ionic-native/network';
 import { Platform, ToastController } from "ionic-angular";
 import { FormControl } from "@angular/forms";
 
 @Injectable()
 export class AuthService {
-  url: string = 'http://192.168.43.54:8080/auth';
+  url: string = 'http://192.168.1.35:8080/auth';
   // url: string = 'http://192.168.43.54:8080/auth';
   myInfo: {
     token: string,
@@ -23,7 +24,7 @@ export class AuthService {
   onDevice: boolean;
 
   constructor(private http: HttpClient,
-    // private network: Network,
+    private network: Network,
     private storage: Storage,
     public platform: Platform,
     public toastCtrl: ToastController) {
@@ -48,7 +49,7 @@ export class AuthService {
   checkUsername(control: FormControl): Promise<any> {
     console.log(control.value);
     return new Promise<any>(res => {
-      this.http.post<any>('http://192.168.1.34:8080/auth/checkUname', {username: control.value})
+      this.http.post<any>('http://192.168.1.35:8080/auth/checkUname', {username: control.value})
         .subscribe((doc) =>{
           console.log(doc);
           if(doc.success) {
@@ -70,7 +71,7 @@ export class AuthService {
   checkChurchId(control: FormControl): Promise<any> {
     console.log(control.value);
     return new Promise<any>(res => {
-      this.http.post<any>('http://192.168.1.34:8080/auth/checkChurch', {churchId: control.value})
+      this.http.post<any>('http://192.168.1.35:8080/auth/checkChurch', {churchId: control.value})
         .subscribe((doc) =>{
           console.log(doc);
           if(doc.success) {
@@ -112,6 +113,7 @@ export class AuthService {
         churchId: data.churchId,
         isLeader: data.desig === 'Leader' ? true: false
       };
+      console.log(this.myInfo);
       this.saveData(this.myInfo);
       return data.memb;
     });
@@ -138,6 +140,18 @@ export class AuthService {
     this.storage.set('events', '');
     this.storage.set('myProfile', '');
     this.storage.set('myChurch', '');
+  }
+
+  saveNewInfo(churchId, isLeader) {
+    this.myInfo.churchId = churchId;
+    this.myInfo.isLeader = isLeader;
+    var myInfo = {
+      token: this.myInfo.token,
+      username: this.myInfo.username,
+      churchId,
+      isLeader
+    }
+    this.storage.set('myInfo', myInfo);
   }
 
   logout(): Observable<any> {
@@ -176,16 +190,21 @@ export class AuthService {
     return this.myInfo.username;
   }
 
-  getChurchId(): string {
-    return this.myInfo.churchId;
-  }
-
-  isLeader(): boolean {
+  isLeader() {
     return this.myInfo.isLeader;
   }
 
-  isOnline() {
-    // if(this.onDevice && Network.type)
+  getChurchId() {
+    return this.myInfo.churchId;
   }
+
+  isOnline(): boolean {
+    if(this.onDevice && this.network.type) {
+      return this.network.type !== 'none';
+    } else {
+      return navigator.onLine;
+    }
+  }
+
 }
 // headers.append('Content-Type', 'application/json');

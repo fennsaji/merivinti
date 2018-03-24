@@ -1,33 +1,41 @@
 import { HttpHeaders, HttpClient } from "@angular/common/http";
 import { Injectable, EventEmitter } from "@angular/core";
-import { FormControl } from "@angular/forms";
+// import { FormControl } from "@angular/forms";
 import { Storage } from "@ionic/storage";
 import { AuthService } from "./auth";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/do";
+import "rxjs/Rx";
+import "rxjs/add/observable/of";
+import { PrayerService } from "./prayer";
+import { Events } from "ionic-angular";
 
 @Injectable()
 export class MemberService {
   token: string;
   username: string;
+  isLeader: boolean;
+  name: string;
+  proPic: string;
+  churchId: string;
   httpOptions : Object;
-  friends: string[];
-  pendingReq: any[];
+  friends: string[] = [];
+  pendingReq: any[] = [];
   pendingMemb: string;
-  requests: string[];
-  following: string[];
+  requests: string[] = [];
+  following: string[] = [];
   newNotifications: number;
-  notifications: any[];
+  notifications: any[] = [];
 
-  public newNotify = new EventEmitter<number>();
   public notify = new EventEmitter<any[]>();
   public friendReq = new EventEmitter<string[]>();
 
-  url : string = 'http://192.168.43.54:8080/member/';
+  url : string = 'http://192.168.1.35:8080/member/';
 
 
   constructor(private authSer: AuthService,
     private http: HttpClient,
+    public events: Events,
     private storage: Storage) {}
 
   initialize() {
@@ -65,13 +73,20 @@ export class MemberService {
     this.http.get<any>(this.url + 'getbasicinfo', this.httpOptions)
       .subscribe(res => {
         console.log('list', res);
+        this.name = res.list.name;
+        this.proPic = res.list.proPic;
         this.friends = res.list.friends;
         this.pendingReq = res.list.pendingReq;
+        this.churchId = res.list.churchId;
         this.pendingMemb = res.list.pendingMemb;
+        this.isLeader = res.list.isLeader;
         this.requests = res.list.requests;
         this.following = res.list.following;
+        this.newNotifications = res.list.newNotifications;
         this.friendReq.emit(this.requests);
-        this.newNotify.emit(this.newNotifications);
+        this.authSer.saveNewInfo(this.churchId, this.isLeader);
+        this.events.publish('profileNotify:updated', this.newNotifications);
+        console.log('New Not', this.newNotifications)
       }, err => {
         console.log('Errorr1');
       });
@@ -80,7 +95,7 @@ export class MemberService {
   getNotifications() {
     this.http.get<any>(this.url + 'getNotifications', this.httpOptions)
     .subscribe(res => {
-      this.notifications = res.list.notifications;
+      this.notifications = res.list.notifications.reverse();
       this.requests = res.list.requests;
       this.friendReq.emit(this.requests);
       this.notify.emit(this.notifications);
@@ -92,6 +107,8 @@ export class MemberService {
   clearNewNotify() {
     this.http.delete<any>(this.url + 'newNotifications', this.httpOptions)
     .subscribe(res => {
+      this.newNotifications = 0;
+      this.events.publish('profileNotify:updated', this.newNotifications);
       console.log('successss');
     }, err => {
       console.log('Errorr1');
@@ -100,6 +117,10 @@ export class MemberService {
 
   getInfoFriends(username: string) {
     return this.http.post<any>(this.url + 'getInfoFriends', {username}, this.httpOptions);
+  }
+
+  getProPicUser(username: string) {
+    return this.http.post<string>(this.url + 'getProPic', {username}, this.httpOptions)
   }
 
   getInfoFollowings(username: string) {
@@ -114,13 +135,48 @@ export class MemberService {
       });
   }
 
-  getMembProfile(username: string) {
+  getMembProfile(username: string, isMyProfile: boolean) {
     return this.http.post<any>(this.url + 'getDetails', {username}, this.httpOptions)
-    .do(Pro => {
-      this.storage.set('myProfile', Pro);
+    .map(Pro => {
+      console.log(Pro, this.name);
+      if(isMyProfile) {
+        this.isLeader = Pro.member.isLeader;
+        this.storage.set('myProfile', Pro);
+      }
+      // Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, [{
+      //   name: this.name,
+      //   proPic: this.proPic,
+      //   username: this.username
+      // }]);
       return Pro;
     });
   }
+
+  updateProfile(updatedPro) {
+    return this.http.put<any>(this.url + 'updatePro', {updatedPro}, this.httpOptions);
+  }
+
+  getName() {
+    return this.name;
+  }
+
+  getProPic() {
+    return this.proPic;
+  }
+
+  // getChurchId(): string {
+  //   console.log(this.churchId, '1234');
+  //   return this.churchId;
+  // }
+
+  // checkChurcId() {
+  //   return this.churchId? Rx.Observable.of(this.churchId) : this.http.get(this.url+ 'getChurchId', this.httpOptions)
+  // }
+
+  // ifLeader() {
+  //   console.log('isleader', this.isLeader)
+  //   return this.isLeader;
+  // }
 
   addAsFriend(username: string) {
     return this.http.post<any>(this.url + 'sendfriendReq', {username}, this.httpOptions)

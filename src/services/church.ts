@@ -6,28 +6,32 @@ import { Storage } from "@ionic/storage";
 import { AuthService } from "./auth";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/do";
+import { PrayerService } from "./prayer";
+import { Events } from "ionic-angular";
 
 @Injectable()
 export class ChurchService {
   token: string;
   httpOptions : Object;
-  leaders: any[];
-  requests: any[];
-  families: any[];
+  churchName: string;
+  proPic: string;
+  leaders: any[] = [];
+  requests: any[] = [];
+  families: any[] = [];
   members: string;
-  followers: string[];
+  followers: string[] = [];
   newNotifications: number;
 
-  public newNotify = new  EventEmitter<number>();
   public notify = new  EventEmitter<any[]>();
   public followReq = new  EventEmitter<any[]>();
 
   // url : string = 'http://192.168.43.54:8080/church/';
-  url: string = 'http://192.168.43.54:8080/church/';
+  url: string = 'http://192.168.1.35:8080/church/';
 
   constructor(private authSer: AuthService,
     private http: HttpClient,
     private storage: Storage,
+    public events: Events,
     private membSer: MemberService) {}
 
   initialize() {
@@ -38,21 +42,26 @@ export class ChurchService {
         'Content-type': 'application/json'
       })
     }
+    console.log('church initializes');
     this.getbasicinfo();
     this.getNotifications();
   }
 
   getbasicinfo() {
     if(this.authSer.isLeader()) {
+      console.log('church initilizes leader');
       return this.http.get<any>(this.url + 'getbasicinfo', this.httpOptions)
         .subscribe(res => {
           console.log('list23', res);
           this.leaders = res.list.leaders;
           this.requests = res.list.requests;
           this.members = res.list.members;
+          this.churchName = res.list.churchName;
+          this.proPic = res.list.proPic;
           this.followers = res.list.followers;
           this.newNotifications = res.list.newNotifications;
-          this.newNotify.emit(this.newNotifications);
+          console.log('1233', this.newNotifications);
+          this.events.publish('churchNotify:updated', this.newNotifications);
           this.followReq.emit(this.requests);
           return Promise.resolve();
         }, err => {
@@ -61,14 +70,17 @@ export class ChurchService {
     }
   }
 
+  updateProfile(updatedPro) {
+    return this.http.put<any>(this.url + 'updatePro', {updatedPro}, this.httpOptions);
+  }
+
   getNotifications() {
     if(this.authSer.isLeader()) {
       this.http.get<any>(this.url + 'getNotifications', this.httpOptions)
       .subscribe(res => {
-        this.newNotifications = res.list.newNotifications;
         this.requests = res.list.requests;
+        console.log(this.requests);
         this.followReq.emit(this.requests);
-        this.newNotify.emit(this.newNotifications);
       }, err => {
         console.log('Errorr1');
       });
@@ -76,6 +88,7 @@ export class ChurchService {
   }
 
   pushNotifications(newNotify) {
+    console.log(newNotify);
     if(this.authSer.isLeader()) {
       return this.http.post<any>(this.url + 'pushNotifications', {newNotify}, this.httpOptions)
         .map(res => {
@@ -92,6 +105,8 @@ export class ChurchService {
       this.http.delete<any>(this.url + 'newNotifications', this.httpOptions)
         .subscribe(res => {
           console.log('successss');
+          this.newNotifications = 0;
+          this.events.publish('churchNotify:updated', this.newNotifications);
         }, err => {
           console.log('Errorr1');
         });
@@ -108,6 +123,14 @@ export class ChurchService {
 
   getInfoLeaders(churchId: string) {
     return this.http.post<any>(this.url + 'getInfoLeaders', {churchId}, this.httpOptions);
+  }
+
+  getChurchName() {
+    return this.churchName;
+  }
+
+  getProPic() {
+    return this.proPic;
   }
 
   getPrStorage() {
@@ -130,13 +153,23 @@ export class ChurchService {
       .map(data => data.churches);
   }
 
-  getChurchProfile(churchId: string): Observable<any> {
+  getChurchProfile(churchId: string, isMyChurch: boolean): Observable<any> {
     return this.http.post<any>(this.url + 'getDetails', {churchId}, this.httpOptions)
-      .do(Pro => {
-        this.storage.set('myChurch', Pro);
+      .map(Pro => {
+        if(isMyChurch) {
+            this.churchName = Pro.church.churchName;
+            this.proPic = Pro.church.proPic;
+            this.storage.set('myChurch', Pro);
+        }
+        // Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, [...Pro.basicInfo,{
+        //   // name: this.membSer.getName(),
+        //   // proPic: this.membSer.getProPic(), //Leaders Info
+        //   // username: this.authSer.getUsername()
+        // }]);
         return Pro;
       });
   }
+
 
   // Church
   followChurch(churchId: string) {
@@ -171,8 +204,8 @@ export class ChurchService {
       });
   }
 
-  removefollower(churchId: string) {
-    return this.http.post<any>(this.url + 'removefollower', {churchId}, this.httpOptions)
+  removefollower(username: string) {
+    return this.http.post<any>(this.url + 'removefollower', {username}, this.httpOptions)
     .do(res => {
       this.getbasicinfo();
       return res;

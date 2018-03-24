@@ -20,27 +20,32 @@
       <ion-spinner icon="android"></ion-spinner>
   </div>
 
-  <ion-card *ngFor="let item of prayerReq" color="card">
-    <ion-item color="card">
-      <ion-avatar item-start>
-        <!-- <img [src]="item.proPic"> -->
-      </ion-avatar>
-      <h3>{{item.username}}</h3>
-      <p>{{ item.date | date}}</p>
-      <ion-icon name="more" small item-end (click)="loadPrayerOptions($event, item._id)"></ion-icon>
-    </ion-item>
-    <ion-card-content id="card-content">
-      <h2>{{item.body}}</h2>
-    </ion-card-content>
-      <ion-row no-padding>
-        <ion-col text-end>
-          <button ion-button clear small color="primary" icon-start>
-              <ion-icon class="share" name="share-alt"></ion-icon>
-              Share
-          </button>
-        </ion-col>
-      </ion-row>
-  </ion-card>
+  <div>
+      <ion-card *ngFor="let item of prayerReq; let i = index" color="card">
+          <ion-item color="card">
+            <ion-avatar item-start>
+              <img [src]="'http://192.168.1.35:8080/member/getProPic/fennsaji' | safeHtml">
+            </ion-avatar>
+            <h3>{{item.username}}</h3>
+            <p class="date">{{ item.date | timeAgo}}</p>
+            <ion-icon name="more" small item-end
+            *ngIf="item.username === username"
+            (tap)="loadPrayerOptions(item._id, i)"></ion-icon>
+          </ion-item>
+          <ion-card-content id="card-content">
+            <h2>{{item.body}}</h2>
+          </ion-card-content>
+            <ion-row no-padding>
+              <ion-col text-end>
+                <button ion-button clear small color="primary" icon-start (tap)="sharePrayerReq(i)">
+                    <ion-icon class="share" name="share-alt"></ion-icon>
+                    Share
+                </button>
+              </ion-col>
+            </ion-row>
+        </ion-card>
+  </div>
+
 
   <ion-infinite-scroll (ionInfinite)="loadOldPrayers($event)">
     <ion-infinite-scroll-content></ion-infinite-scroll-content>
