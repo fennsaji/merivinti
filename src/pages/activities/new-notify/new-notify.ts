@@ -18,12 +18,8 @@ export class NewNotifyPage {
     public toastCtrl: ToastController) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad NewNotifyPage');
-
-  }
-
   onSubmit(form: NgForm) {
+    this.isLoading = true;
     var newNotify = {
       body: form.value.body,
       by: 'church',
@@ -36,6 +32,7 @@ export class NewNotifyPage {
       .subscribe(res => {
         this.navCtrl.pop();
       }, err => {
+        this.isLoading = false;
         var toast = this.toastCtrl.create({
           message: "Unable to Connect to Server",
           duration: 3000
@@ -43,6 +40,7 @@ export class NewNotifyPage {
         toast.present();
       });
     } else {
+      this.isLoading = false;
       var toast = this.toastCtrl.create({
         message: "No internet Connection",
         duration: 3000

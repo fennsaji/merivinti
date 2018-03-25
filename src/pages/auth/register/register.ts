@@ -45,7 +45,7 @@ export class RegisterPage implements OnInit{
       'churchName': new FormControl(null, Validators.required),
       'churchId': new FormControl(null,
         [Validators.required, Validators.minLength(6), Validators.pattern('^[a-zA-Z0-9]+$')],
-        this.authSer.checkChurchId.bind(this)),
+        this.checkChurchId.bind(this)),
     });
   }
 
@@ -60,6 +60,39 @@ export class RegisterPage implements OnInit{
     });
   }
 
+  // Async Validator
+  checkChurchId(control: FormControl): Promise<any> {
+    console.log(control.value);
+    return new Promise<any>(res => {
+      if(this.authSer.isOnline()){
+        this.http.post<any>('http://192.168.1.35:8080/auth/checkChurch', {churchId: control.value})
+        .subscribe((doc) =>{
+          console.log(doc);
+          if(doc.success) {
+            let toast = this.toastCtrl.create({
+              message: 'ChurchId already exists',
+              duration: 3000
+            });
+            toast.present();
+            res({"ChurchId already exists": true})
+          } else {
+            res(null);
+          }
+        }, err => {
+          console.log(err);
+          res(null);
+        })
+      } else {
+        res(null);
+        let toast = this.toastCtrl.create({
+          message: 'No Internet Connection',
+          duration: 3000
+        });
+        toast.present();
+      }
+    })
+  }
+
   onRegister(type: String): void {
     this.isLoading = true;
     if(this.authSer.isOnline()) {
@@ -67,7 +100,6 @@ export class RegisterPage implements OnInit{
         console.log(this.churchForm.value);
         this.authSer.regChurch(this.churchForm.value).subscribe(data => {
           console.log('data1', data);
-          this.isLoading = false;
           this.navCtrl.setRoot('TabsPage');
         }, err => {
           this.isLoading = false;
@@ -83,7 +115,6 @@ export class RegisterPage implements OnInit{
         console.log(this.membForm.value);
         this.authSer.regMember(this.membForm.value).subscribe(data => {
           console.log('data' ,data);
-          this.isLoading = false;
           this.navCtrl.setRoot('TabsPage');
         }, err => {
           this.isLoading = false;
@@ -104,6 +135,7 @@ export class RegisterPage implements OnInit{
         });
       }
     } else {
+      this.isLoading = false;
       var toast = this.toastCtrl.create({
         message: "No internet Connection",
         duration: 3000

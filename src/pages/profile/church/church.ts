@@ -3,12 +3,15 @@ import {
   NavController,
   NavParams,
   IonicPage,
-  ToastController
+  ToastController,
+  ActionSheetController,
+  Platform
 } from "ionic-angular";
 import { ChurchService } from "../../../services/church";
 import { AuthService } from "../../../services/auth";
 import { MemberService } from "../../../services/member";
 import { IPrayerReq } from "../../../models/prayerReq.model";
+import { PrayerService } from "../../../services/prayer";
 
 @IonicPage()
 @Component({
@@ -38,6 +41,9 @@ export class ChurchPage {
     public navParams: NavParams,
     private churchSer: ChurchService,
     public authSer: AuthService,
+    public actionSheet: ActionSheetController,
+    public platform: Platform,
+    private prayerSer: PrayerService,
     private membSer: MemberService,
     private toastCtrl: ToastController
   ) {}
@@ -87,6 +93,8 @@ export class ChurchPage {
                 message: "Unable to connect to server",
                 duration: 3000
               });
+              toast.present();
+              this.loadFromStorage();
             this.isLoading = false;
             if (refresher) refresher.complete();
           }
@@ -96,26 +104,34 @@ export class ChurchPage {
         if (refresher) refresher.complete();
       }
     } else if(this.isMyChurch){
-      this.churchSer
-        .getPrStorage()
-        .then(Pro => {
-          console.log('from storage', Pro)
-          this.church = Pro.church;
-          this.prayerReq = Pro.prayerReq;
-        })
-        .catch(err => {});
+      this.loadFromStorage();
       toast = this.toastCtrl.create({
         message: "No internet Connection",
         duration: 3000
       });
       toast.present();
     } else {
+      this.isLoading = false;
       toast = this.toastCtrl.create({
         message: "No internet Connection",
         duration: 3000
       });
       toast.present();
     }
+  }
+
+  loadFromStorage() {
+    this.churchSer
+        .getPrStorage()
+        .then(Pro => {
+          console.log('from storage', Pro)
+          this.church = Pro.church;
+          this.prayerReq = Pro.prayerReq;
+          this.isLoading = false;
+          this.isLoading = false;
+          this.noChurch = false;
+        })
+        .catch(err => {});
   }
 
   search() {
@@ -253,5 +269,71 @@ export class ChurchPage {
 
   goToOptions() {
     this.navCtrl.push("SettingsPage");
+  }
+
+  getMyUsername() {
+    return this.authSer.getUsername();
+  }
+
+  loadPrayerOptions(prayerId: string, index: number) {
+    const options = this.actionSheet.create(
+      {
+        title: 'Prayer Request',
+        cssClass: 'action-sheets-basic-page',
+        buttons: [
+          {
+            text: 'Delete',
+            role: 'destructive',
+            icon: !this.platform.is('ios') ? 'trash' : null,
+            handler: () => {
+              console.log('Delete clicked');
+              this.prayerSer.deletePr(prayerId)
+                .subscribe(doc => {
+                  this.prayerReq.splice(index, 1);
+                })
+            }
+          },
+          {
+            text: 'Share',
+            icon: !this.platform.is('ios') ? 'share' : null,
+            handler: () => {
+              this.sharePrayerReq(index);
+            }
+          },
+          {
+            text: 'Edit',
+            icon: !this.platform.is('ios') ? 'hammer' : null,
+            handler: () => {
+              console.log('Play clicked');
+            }
+          },
+          {
+            text: 'Report',
+            icon: !this.platform.is('ios') ? 'alert' : null,
+            handler: () => {
+              console.log('Play clicked');
+            }
+          },
+          {
+            text: 'Cancel',
+            role: 'cancel', // will always sort to be on the bottom
+            icon: !this.platform.is('ios') ? 'close' : null,
+            handler: () => {
+              console.log('Cancel clicked');
+            }
+          }
+        ]
+      }
+    );
+    options.present();
+  }
+
+  sharePrayerReq(index: number) {
+    console.log(this.prayerReq[index]);
+    var subject = "Prayer Request by " + this.prayerReq[index].username;
+    var mssg = this.prayerReq[index].body;
+    var url = '';
+
+    this.prayerSer.sharePr(mssg, subject, url);
   }
 }

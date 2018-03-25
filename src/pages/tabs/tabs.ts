@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { IonicPage, Events } from 'ionic-angular';
 import { ChurchService } from '../../services/church';
 import { MemberService } from '../../services/member';
-import { AuthService } from '../../services/auth';
-
 @IonicPage()
 @Component({
   templateUrl: 'tabs.html'
@@ -21,8 +19,7 @@ export class TabsPage implements OnInit{
 
   constructor(private churchSer: ChurchService,
       private membSer: MemberService,
-      public events: Events,
-      private authSer: AuthService) {}
+      public events: Events) {}
 
   ngOnInit() {
     this.initializePages();
@@ -43,17 +40,5 @@ export class TabsPage implements OnInit{
 
     this.churchSer.initialize();
     this.membSer.initialize();
-    // notifications
-    // this.membSer.newNotify.subscribe(data => {
-    //   console.log('new norifu',data);
-    //   this.newNotify = 1;
-
-    // });
-    // if(this.membSer.ifLeader()) {
-    //   this.churchSer.newNotify.subscribe(data => {
-    //     this.newChurchNotify = +data;
-    //     console.log('new norifu',data);
-    //   });
-    // }
   }
 }

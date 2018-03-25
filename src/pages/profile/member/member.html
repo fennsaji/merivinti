@@ -102,16 +102,19 @@
         </p>
       </div>
     </ion-item>
-    <ion-card *ngFor="let item of prayerReq">
+    <ion-card *ngFor="let item of prayerReq; let i = index">
       <ion-item>
         <ion-avatar item-start>
           <img [src]="item.proPic | safeHtml">
         </ion-avatar>
         <h3>{{item.username}}</h3>
-        <p>
-          {{item.churchId}}
-        </p>
+        <p class="date">{{ item.date | timeAgo}}</p>
+        <button ion-button icon-only item-end clear
+        (tap)="loadPrayerOptions(item._id, i)">
+        <ion-icon name="more"></ion-icon>
+      </button>
       </ion-item>
+
       <ion-card-content>
         <h2>{{item.body}}</h2>
       </ion-card-content>

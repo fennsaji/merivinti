@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, IonicPage } from 'ionic-angular';
+import { NavController, IonicPage } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -9,12 +9,7 @@ import { NavController, NavParams, IonicPage } from 'ionic-angular';
 export class HomePage {
   Title: String = 'Vinti';
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-  }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad HomePage');
-  }
+  constructor(public navCtrl: NavController) {}
 
   toRegister(): void {
     this.navCtrl.push('RegisterPage');

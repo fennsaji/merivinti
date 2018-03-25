@@ -6,7 +6,6 @@ import { Storage } from "@ionic/storage";
 import { AuthService } from "./auth";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/do";
-import { PrayerService } from "./prayer";
 import { Events } from "ionic-angular";
 
 @Injectable()
@@ -25,8 +24,8 @@ export class ChurchService {
   public notify = new  EventEmitter<any[]>();
   public followReq = new  EventEmitter<any[]>();
 
-  // url : string = 'http://192.168.43.54:8080/church/';
-  url: string = 'http://192.168.1.35:8080/church/';
+  url : string = 'http://192.168.43.54:8080/church/';
+  // url: string = 'http://192.168.1.35:8080/church/';
 
   constructor(private authSer: AuthService,
     private http: HttpClient,
@@ -160,6 +159,7 @@ export class ChurchService {
             this.churchName = Pro.church.churchName;
             this.proPic = Pro.church.proPic;
             this.storage.set('myChurch', Pro);
+            console.log('saved');
         }
         // Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, [...Pro.basicInfo,{
         //   // name: this.membSer.getName(),

@@ -19,10 +19,6 @@ export class LoginPage {
       public toastCtrl: ToastController) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad LoginPage');
-  }
-
   onLogin(f: NgForm): void {
     this.isLoading = true;
     if(this.authSer.isOnline()) {
@@ -31,7 +27,7 @@ export class LoginPage {
         this.isLoading = false;
         this.navCtrl.setRoot('TabsPage');
       }, err => {
-        this.isLoading = false;;
+        this.isLoading = false;
         let toast;
         if(err.error.msgObj) {
           var msg;
@@ -51,6 +47,7 @@ export class LoginPage {
               message: msg,
               duration: 3000
             });
+            toast.present();
           }
           else {
             toast = this.toastCtrl.create({
@@ -69,6 +66,7 @@ export class LoginPage {
         console.log('error', err.error, this.username);
       });
     } else {
+      this.isLoading = false;
       var toast = this.toastCtrl.create({
         message: "No internet Connection",
         duration: 3000

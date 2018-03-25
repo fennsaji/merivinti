@@ -24,17 +24,22 @@ export class MyApp implements OnInit{
         console.log(auth);
         if(auth) {
           this.navCtrl.setRoot('TabsPage');
+          splashScreen.hide();
         } else {
           this.navCtrl.setRoot('HomePage');
+          splashScreen.hide();
         }
       }).catch(e => {
         console.log('error');
+        this.navCtrl.setRoot('HomePage');
+        splashScreen.hide();
       });
       statusBar.styleDefault();
-      splashScreen.hide();
+      statusBar.backgroundColorByHexString('#263238');
     });
   }
 
   ngOnInit() {
+
   }
 }

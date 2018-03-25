@@ -45,6 +45,11 @@ export class NewPrayerPage {
         this.viewCtrl.dismiss(res.newPr);
       }, err => {
         this.isLoading = false;
+        var toast = this.toastCtrl.create({
+          message: "Unable to connect to Server",
+          duration: 3000
+        });
+        toast.present();
         console.log('Error', err);
       });
     } else {
@@ -52,6 +57,7 @@ export class NewPrayerPage {
         message: "No internet Connection",
         duration: 3000
       });
+      toast.present();
     }
 
   }

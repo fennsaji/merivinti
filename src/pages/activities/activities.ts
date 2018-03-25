@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, ToastController } from 'ionic-angular';
 import { MemberService } from '../../services/member';
 import { ChurchService } from '../../services/church';
 import { AuthService } from '../../services/auth';
@@ -21,7 +21,6 @@ export class ActivitiesPage {
   isLoading: boolean;
 
   constructor(public navCtrl: NavController,
-    public navParams: NavParams,
     private membSer: MemberService,
     public toastCtrl: ToastController,
     private churchSer: ChurchService,
@@ -33,22 +32,22 @@ export class ActivitiesPage {
     console.log('Enter ActivitiesPage');
 
     this.membSer.friendReq.subscribe((data) => {
-    if(data.length == 0)
-      this.noFrR = true;
-    else
-      this.noFrR = false;
-    console.log('32',this.noFrR);
-    this.requests = data.reverse();
+      if(data.length == 0)
+        this.noFrR = true;
+      else
+        this.noFrR = false;
+      console.log('32',this.noFrR);
+      this.requests = data.reverse();
     });
 
     this.churchSer.followReq.subscribe((data) => {
-    if(data.length == 0)
-      this.noFoR = true;
-    else
-      this.noFoR = false;
-    console.log('45', this.noFoR, data);
-    this.followReq = data;
-    console.log(this.followReq);
+      if(data.length == 0)
+        this.noFoR = true;
+      else
+        this.noFoR = false;
+      console.log('45', this.noFoR, data);
+      this.followReq = data;
+      console.log(this.followReq);
     });
 
     this.membSer.notify.subscribe(doc => {
@@ -63,12 +62,9 @@ export class ActivitiesPage {
       this.isLoading = false;
     });
     this.isLeader = this.authSer.isLeader();
-    this.getNotifications(null);
-  }
-
-  ionViewDidEnter() {
     this.membSer.clearNewNotify();
     this.churchSer.deleteNewNotify();
+    this.getNotifications(null);
   }
 
   getNotifications(refresher) {
@@ -76,6 +72,7 @@ export class ActivitiesPage {
       this.membSer.getNotifications();
       this.churchSer.getNotifications();
     } else {
+      this.membSer.notificationFromStorage();
       var toast = this.toastCtrl.create({
         message: "No internet Connection",
         duration: 3000

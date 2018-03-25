@@ -9,13 +9,15 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Network } from "@ionic-native/network";
 import { Camera } from '@ionic-native/camera';
+import { AppUpdate } from '@ionic-native/app-update';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 
 import { AuthService } from '../services/auth';
 import { ChurchService } from '../services/church';
-// import { ActivitiesService } from '../services/activities';
 import { MemberService } from '../services/member';
 import { PrayerService } from '../services/prayer';
 import { SocialSharing } from '@ionic-native/social-sharing';
+// import { ActivitiesService } from '../services/activities';
 
 @NgModule({
   declarations: [
@@ -39,12 +41,14 @@ import { SocialSharing } from '@ionic-native/social-sharing';
     SplashScreen,
     SocialSharing,
     Network,
+    AppUpdate,
     Camera,
+    LocalNotifications,
     AuthService,
     ChurchService,
-    // ActivitiesService,
     MemberService,
     PrayerService,
+    // ActivitiesService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

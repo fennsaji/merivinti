@@ -1,8 +1,9 @@
 import { Component } from "@angular/core";
-import { NavController, NavParams, IonicPage, ToastController } from "ionic-angular";
+import { NavController, NavParams, IonicPage, ToastController, ActionSheetController, Platform } from "ionic-angular";
 import { AuthService } from "../../../services/auth";
 import { MemberService } from "../../../services/member";
 import { IPrayerReq } from "../../../models/prayerReq.model";
+import { PrayerService } from "../../../services/prayer";
 
 @IonicPage()
 @Component({
@@ -28,9 +29,12 @@ export class MemberPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
+    public platform: Platform,
+    private prayerSer: PrayerService,
     private authSer: AuthService,
     private membSer: MemberService,
-    public toastCtrl: ToastController
+    public toastCtrl: ToastController,
+    public actionSheet: ActionSheetController,
   ) {}
 
   ionViewDidLoad() {
@@ -49,6 +53,7 @@ export class MemberPage {
 
   getProfile(refresher) {
     var toast;
+
     if(this.authSer.isOnline()) {
       this.membSer.getMembProfile(this.username, this.isMyProfile)
     .subscribe(doc => {
@@ -58,6 +63,7 @@ export class MemberPage {
       console.log('doc', this.profile);
       if(refresher)
         refresher.complete();
+
     }, err => {
       console.log('Something went wrong');
       var toast = this.toastCtrl.create({
@@ -65,30 +71,20 @@ export class MemberPage {
         duration: 3000
       });
       toast.present();
+      this.loadFromStorage();
       this.isLoading = false;
       if(refresher)
         refresher.complete();
     });
+
     } else if(this.isMyProfile){
-      this.membSer
-        .getPrStorage()
-        .then(Pro => {
-          console.log('proifil', Pro);
-          this.profile = Pro.member;
-          this.prayerReq = Pro.prayerReq;
-        })
-        .catch(err => {
-          toast = this.toastCtrl.create({
-            message: "Unable to read from Storage",
-            duration: 3000
-          });
-          toast.present();
-        });
+      this.loadFromStorage();
       toast = this.toastCtrl.create({
         message: "No internet Connection",
         duration: 3000
       });
       toast.present();
+
     } else {
       toast = this.toastCtrl.create({
         message: "No internet Connection",
@@ -96,6 +92,23 @@ export class MemberPage {
       });
       toast.present();
     }
+  }
+
+  loadFromStorage() {
+    this.membSer
+    .getPrStorage()
+    .then(Pro => {
+      console.log('proifil', Pro);
+      this.profile = Pro.member;
+      this.prayerReq = Pro.prayerReq;
+    })
+    .catch(err => {
+      var toast = this.toastCtrl.create({
+        message: "Unable to read from Storage",
+        duration: 3000
+      });
+      toast.present();
+    });
   }
 
   gotoInfoPrayees() {
@@ -202,5 +215,67 @@ export class MemberPage {
 
   onEditProfile() {
     this.navCtrl.push('EditProfilePage');
+  }
+
+  loadPrayerOptions(prayerId: string, index: number) {
+    const options = this.actionSheet.create(
+      {
+        title: 'Prayer Request',
+        cssClass: 'action-sheets-basic-page',
+        buttons: [
+          {
+            text: 'Delete',
+            role: 'destructive',
+            icon: !this.platform.is('ios') ? 'trash' : null,
+            handler: () => {
+              console.log('Delete clicked');
+              this.prayerSer.deletePr(prayerId)
+                .subscribe(doc => {
+                  this.prayerReq.splice(index, 1);
+                })
+            }
+          },
+          {
+            text: 'Share',
+            icon: !this.platform.is('ios') ? 'share' : null,
+            handler: () => {
+              this.sharePrayerReq(index);
+            }
+          },
+          {
+            text: 'Edit',
+            icon: !this.platform.is('ios') ? 'hammer' : null,
+            handler: () => {
+              console.log('Play clicked');
+            }
+          },
+          {
+            text: 'Report',
+            icon: !this.platform.is('ios') ? 'alert' : null,
+            handler: () => {
+              console.log('Play clicked');
+            }
+          },
+          {
+            text: 'Cancel',
+            role: 'cancel', // will always sort to be on the bottom
+            icon: !this.platform.is('ios') ? 'close' : null,
+            handler: () => {
+              console.log('Cancel clicked');
+            }
+          }
+        ]
+      }
+    );
+    options.present();
+  }
+
+  sharePrayerReq(index: number) {
+    console.log(this.prayerReq[index]);
+    var subject = "Prayer Request by " + this.prayerReq[index].username;
+    var mssg = this.prayerReq[index].body;
+    var url = '';
+
+    this.prayerSer.sharePr(mssg, subject, url);
   }
 }

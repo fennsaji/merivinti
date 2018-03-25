@@ -3,9 +3,7 @@ import { NavController, NavParams, IonicPage, ModalController, ActionSheetContro
 import { IPrayerReq } from '../../models/prayerReq.model';
 import { PrayerService } from '../../services/prayer';
 import { AuthService } from '../../services/auth';
-import { SocialSharing } from '@ionic-native/social-sharing';
 import { MemberService } from '../../services/member';
-import { DomSanitizer } from "@angular/platform-browser";
 
 @IonicPage()
 @Component({
@@ -25,9 +23,7 @@ export class PrayersPage {
       public toastCtrl: ToastController,
       private authSer: AuthService,
       private membSer: MemberService,
-      public actionSheet: ActionSheetController,
-      private socialSharing: SocialSharing,
-      public sanitizer: DomSanitizer) {}
+      public actionSheet: ActionSheetController) {}
 
   ionViewDidLoad() {
     this.isLoading = true;
@@ -55,7 +51,7 @@ export class PrayersPage {
   loadPrayers(refresher): void {
     if(this.authSer.isOnline()) {
       this.prayerSer.loadPrayerReq()
-      .subscribe(doc => {
+      .subscribe((doc: IPrayerReq[]) => {
         console.log('fromdB', doc);
         this.prayerReq = [...doc];
         if(refresher) {
@@ -168,6 +164,13 @@ export class PrayersPage {
             }
           },
           {
+            text: 'Report',
+            icon: !this.platform.is('ios') ? 'alert' : null,
+            handler: () => {
+              console.log('Play clicked');
+            }
+          },
+          {
             text: 'Cancel',
             role: 'cancel', // will always sort to be on the bottom
             icon: !this.platform.is('ios') ? 'close' : null,
@@ -186,12 +189,7 @@ export class PrayersPage {
     var subject = "Prayer Request by " + this.prayerReq[index].username;
     var mssg = this.prayerReq[index].body;
     var url = '';
-    this.socialSharing.share(mssg, subject, null, null)
-      .then(() => {
-        console.log('shared');
-      })
-      .catch(err => {
-        console.log('not shared');
-      });
+
+    this.prayerSer.sharePr(mssg, subject, url);
   }
 }

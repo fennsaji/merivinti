@@ -7,7 +7,6 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/do";
 import "rxjs/Rx";
 import "rxjs/add/observable/of";
-import { PrayerService } from "./prayer";
 import { Events } from "ionic-angular";
 
 @Injectable()
@@ -30,7 +29,8 @@ export class MemberService {
   public notify = new EventEmitter<any[]>();
   public friendReq = new EventEmitter<string[]>();
 
-  url : string = 'http://192.168.1.35:8080/member/';
+  // url : string = 'http://192.168.1.35:8080/member/';
+  url: string = 'http://192.168.43.54:8080/member/';
 
 
   constructor(private authSer: AuthService,
@@ -77,9 +77,9 @@ export class MemberService {
         this.proPic = res.list.proPic;
         this.friends = res.list.friends;
         this.pendingReq = res.list.pendingReq;
-        this.churchId = res.list.churchId;
         this.pendingMemb = res.list.pendingMemb;
         this.isLeader = res.list.isLeader;
+        this.churchId = res.list.churchId;
         this.requests = res.list.requests;
         this.following = res.list.following;
         this.newNotifications = res.list.newNotifications;
@@ -93,14 +93,32 @@ export class MemberService {
   }
 
   getNotifications() {
-    this.http.get<any>(this.url + 'getNotifications', this.httpOptions)
-    .subscribe(res => {
-      this.notifications = res.list.notifications.reverse();
-      this.requests = res.list.requests;
-      this.friendReq.emit(this.requests);
+    if(this.authSer.isOnline()) {
+      this.http.get<any>(this.url + 'getNotifications', this.httpOptions)
+      .subscribe(res => {
+        this.notifications = res.list.notifications.reverse();
+        this.requests = res.list.requests;
+        this.friendReq.emit(this.requests);
+        this.notify.emit(this.notifications);
+        this.storage.set('userEvents', {notifications: this.notifications});
+      }, err => {
+        console.log('Errorr1');
+        this.notificationFromStorage();
+      });
+    } else {
+      this.notificationFromStorage();
+    }
+  }
+
+  notificationFromStorage() {
+    this.storage.ready()
+    .then(() => {
+      return this.storage.get('userEvents')
+    })
+    .then((Notify) => {
+      console.log('1', Notify);
+      this.notifications = Notify.notifications;
       this.notify.emit(this.notifications);
-    }, err => {
-      console.log('Errorr1');
     });
   }
 
@@ -141,7 +159,10 @@ export class MemberService {
       console.log(Pro, this.name);
       if(isMyProfile) {
         this.isLeader = Pro.member.isLeader;
+        this.churchId = Pro.member.churchId;
+        console.log('saved1234');
         this.storage.set('myProfile', Pro);
+        this.authSer.saveNewInfo(this.churchId, this.isLeader);
       }
       // Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, [{
       //   name: this.name,

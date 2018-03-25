@@ -142,6 +142,7 @@ export class ListIdPage {
         duration: 3000
       });
       toast.present();
+      this.isLoading = false;
     }
   }
 

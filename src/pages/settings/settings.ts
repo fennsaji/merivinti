@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
 import { AuthService } from '../../services/auth';
-import { MemberService } from '../../services/member';
+import { AppUpdate } from '@ionic-native/app-update';
 
 @IonicPage()
 @Component({
@@ -13,9 +13,9 @@ export class SettingsPage {
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
+    private appUpdate: AppUpdate,
     private authSer: AuthService,
-    public toastCtrl: ToastController,
-    private membSer: MemberService) {
+    public toastCtrl: ToastController) {
   }
 
   ionViewDidLoad() {
@@ -46,6 +46,14 @@ export class SettingsPage {
   }
 
   onUpdate() {
-
+    const updateUrl = 'https://your-remote-api.com/update.xml';
+    this.appUpdate.checkAppUpdate(updateUrl).then(() => {
+      var toast = this.toastCtrl.create({
+        message: "Update Available",
+        duration: 3000
+      });
+      toast.present();
+      console.log('Update available')
+    });
   }
 }

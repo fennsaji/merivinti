@@ -28,9 +28,11 @@
             </ion-avatar>
             <h3>{{item.username}}</h3>
             <p class="date">{{ item.date | timeAgo}}</p>
-            <ion-icon name="more" small item-end
+            <button ion-button icon-only item-end clear
             *ngIf="item.username === username"
-            (tap)="loadPrayerOptions(item._id, i)"></ion-icon>
+            (tap)="loadPrayerOptions(item._id, i)">
+              <ion-icon name="more"></ion-icon>
+            </button>
           </ion-item>
           <ion-card-content id="card-content">
             <h2>{{item.body}}</h2>

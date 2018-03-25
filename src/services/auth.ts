@@ -3,18 +3,18 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs/Observable";
 import { ILoginUser } from "../models/loginUser.model";
 import { IRegChurch } from "../models/regChurch.model";
-import { IMembers } from "../models/member.model";
 import "rxjs/add/operator/map";
 // import { IChurch } from "../models/church.model";
 import { Storage } from "@ionic/storage";
 import { Network } from '@ionic-native/network';
 import { Platform, ToastController } from "ionic-angular";
 import { FormControl } from "@angular/forms";
+import { LocalNotifications } from "@ionic-native/local-notifications";
 
 @Injectable()
 export class AuthService {
-  url: string = 'http://192.168.1.35:8080/auth';
-  // url: string = 'http://192.168.43.54:8080/auth';
+  // url: string = 'http://192.168.1.35:8080/auth';
+  url: string = 'http://192.168.43.54:8080/auth';
   myInfo: {
     token: string,
     username: string,
@@ -26,6 +26,7 @@ export class AuthService {
   constructor(private http: HttpClient,
     private network: Network,
     private storage: Storage,
+    private localNotifications: LocalNotifications,
     public platform: Platform,
     public toastCtrl: ToastController) {
       this.onDevice = this.platform.is('cordova');
@@ -41,6 +42,7 @@ export class AuthService {
         churchId: data.churchId,
         isLeader: data.desig === 'Leader' ? true: false
       };
+      this.scheduleNotification();
       this.saveData(this.myInfo);
       return data.memb;
     });
@@ -68,31 +70,10 @@ export class AuthService {
     })
   }
 
-  checkChurchId(control: FormControl): Promise<any> {
-    console.log(control.value);
-    return new Promise<any>(res => {
-      this.http.post<any>('http://192.168.1.35:8080/auth/checkChurch', {churchId: control.value})
-        .subscribe((doc) =>{
-          console.log(doc);
-          if(doc.success) {
-            let toast = this.toastCtrl.create({
-              message: 'ChurchId already exists',
-              duration: 3000
-            });
-            toast.present();
-            res({"ChurchId already exists": true})
-          } else {
-            res(null)
-          }
-        }, err => {
-          console.log(err);
-        })
-    })
-  }
-
   regChurch(regChurch: IRegChurch): Observable<any> {
     return this.http.post<any>(this.url + '/regChurch', regChurch).map(data => {
       console.log('response', data);
+      this.scheduleNotification();
       this.myInfo = {
         token: data.token,
         username: data.username,
@@ -107,6 +88,7 @@ export class AuthService {
   regMember(regMemb: IRegChurch): Observable<any> {
     return this.http.post<any>(this.url + '/regMemb', regMemb).map(data => {
       console.log('response', data);
+      this.scheduleNotification();
       this.myInfo = {
         token: data.token,
         username: data.username,
@@ -118,6 +100,29 @@ export class AuthService {
       return data.memb;
     });
   }
+
+  scheduleNotification() {
+    var date = new Date()
+    date.setDate(date.getDate()+1);
+    date.setHours(20);
+    date.setMinutes(0);
+    date.setSeconds(0);
+    let notification = {
+      id: 1,
+      title: 'Praise the Lord!',
+      text: 'Don\'t forget to pray today',
+      at: date,
+      every: 'day'
+    };
+    this.localNotifications.schedule(notification);
+  }
+
+  unscheduleNotification() {
+    this.localNotifications.cancelAll()
+      .then()
+      .catch();
+  }
+
 
   isAuthenticated(): Promise<boolean> {
     return this.storage.ready().then(() => {
@@ -137,7 +142,8 @@ export class AuthService {
     console.log('myInfo ', myInfo);
     this.storage.set('myInfo', myInfo);
     this.storage.set('prayerReq', '');
-    this.storage.set('events', '');
+    this.storage.set('churchEvents', '');
+    this.storage.set('userEvents', '');
     this.storage.set('myProfile', '');
     this.storage.set('myChurch', '');
   }
@@ -160,6 +166,7 @@ export class AuthService {
         'x-auth': this.myInfo.token
       })
     }
+    this.unscheduleNotification();
     this.removeData();
     if(this.myInfo.isLeader) {
       return this.http.delete(this.url + '/logoutLead', httpOptions);

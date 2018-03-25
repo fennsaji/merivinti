@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ActionSheetController, Platform, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, ActionSheetController, Platform, ToastController } from 'ionic-angular';
 import { ChurchService } from '../../../services/church';
 import { NgForm } from '@angular/forms';
 import { Camera, CameraOptions } from '@ionic-native/camera';

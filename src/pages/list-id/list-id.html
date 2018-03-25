@@ -12,7 +12,7 @@
         <ion-spinner icon="android"></ion-spinner>
     </div>
   <ion-list>
-    <ion-title *ngIf="lists == undefined || lists2 == undefined">Members</ion-title>
+    <!-- <ion-title *ngIf="lists == undefined || lists2 == undefined">Members</ion-title> -->
     <ion-item *ngFor="let item of lists; let i = index">
       <ion-avatar item-start (tap)="goToProfile(item.username)">
         <img [src]="item.proPic | safeHtml">
@@ -31,7 +31,7 @@
     </ion-item>
 
     <div *ngIf="lists2">
-      <ion-title *ngIf="lists2 == undefined">Followers</ion-title>
+      <!-- <ion-title *ngIf="lists2 == undefined">Followers</ion-title> -->
       <ion-item *ngFor="let item of lists2; let i= index">
         <ion-avatar item-start (tap)="goToProfile(item.username)">
           <img [src]="item.proPic | safeHtml">
