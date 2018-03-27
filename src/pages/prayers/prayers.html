@@ -17,35 +17,34 @@
   </ion-refresher>
 
   <div *ngIf="isLoading" class="spinner">
-      <ion-spinner icon="android"></ion-spinner>
+    <ion-spinner icon="android"></ion-spinner>
   </div>
 
   <div>
-      <ion-card *ngFor="let item of prayerReq; let i = index" color="card">
-          <ion-item color="card">
-            <ion-avatar item-start>
-              <img [src]="'http://192.168.1.35:8080/member/getProPic/fennsaji' | safeHtml">
-            </ion-avatar>
-            <h3>{{item.username}}</h3>
-            <p class="date">{{ item.date | timeAgo}}</p>
-            <button ion-button icon-only item-end clear
-            *ngIf="item.username === username"
-            (tap)="loadPrayerOptions(item._id, i)">
-              <ion-icon name="more"></ion-icon>
-            </button>
-          </ion-item>
-          <ion-card-content id="card-content">
-            <h2>{{item.body}}</h2>
-          </ion-card-content>
-            <ion-row no-padding>
-              <ion-col text-end>
-                <button ion-button clear small color="primary" icon-start (tap)="sharePrayerReq(i)">
-                    <ion-icon class="share" name="share-alt"></ion-icon>
-                    Share
-                </button>
-              </ion-col>
-            </ion-row>
-        </ion-card>
+    <ion-card *ngFor="let item of prayerReq; let i = index" color="card">
+      <ion-item color="card">
+        <ion-avatar item-start (tap)="goToProfile(item.username)">
+          <!-- <img [src]="url + item.username + '.jpg'"> -->
+          <img [src]="item.proPic | safeHtml">
+        </ion-avatar>
+        <h3 (tap)="goToProfile(item.username)">{{item.name}}</h3>
+        <p class="date">{{ item.date | timeAgo}}</p>
+        <button ion-button icon-only item-end clear *ngIf="item.username === username" (tap)="loadPrayerOptions(item._id, i)">
+          <ion-icon name="more"></ion-icon>
+        </button>
+      </ion-item>
+      <ion-card-content id="card-content">
+        <h2>{{item.body}}</h2>
+      </ion-card-content>
+      <ion-row no-padding>
+        <ion-col text-end>
+          <button ion-button clear small color="primary" icon-start (tap)="sharePrayerReq(i)">
+            <ion-icon class="share" name="share-alt"></ion-icon>
+            Share
+          </button>
+        </ion-col>
+      </ion-row>
+    </ion-card>
   </div>
 
 

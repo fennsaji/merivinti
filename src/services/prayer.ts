@@ -14,23 +14,24 @@ export class PrayerService {
   token: string;
   httpOptions: Object;
   // url: string = 'http://192.168.1.35:8080/prayer/';
-  url: string = 'http://192.168.43.54:8080/prayer/';
+  url: string;
 
   constructor(private storage: Storage,
       private http: HttpClient,
-      private auth: AuthService,
+      private authSer: AuthService,
       public actionSheet: ActionSheetController,
       private socialSharing: SocialSharing,
       public platform: Platform) {}
 
   initializeAndGetPr(): Promise<IPrayerReq[]> {
-    this.token = this.auth.getToken();
+    this.token = this.authSer.getToken();
     this.httpOptions = {
       headers : new HttpHeaders({
         'x-auth': this.token,
         'Content-type': 'application/json'
       })
     }
+    this.url = this.authSer.globalUrl + 'prayer/';
     return this.storage.ready()
       .then(() => {
         return this.storage.get('prayerReq')
@@ -51,26 +52,26 @@ export class PrayerService {
     return this.http.get<any>(this.url + 'getAllPr', this.httpOptions)
       .map(doc => {
         console.log('loading....', doc.prayers);
-        // doc.prayers = this.mapInfoPr(doc.prayers, doc.basicInfo);
+        doc.prayers = this.mapInfoPr(doc.prayers, doc.basicInfo);
         this.storage.set('prayerReq', doc.prayers);
         return doc.prayers;
       })
   }
 
 
-  // mapInfoPr(prayers, basicInfo) {
-  //   prayers = prayers.map(pr => {
-  //     var ind = basicInfo.findIndex(bu => {
-  //         return pr.username === bu.username;
-  //     });
-  //     console.log(ind);
-  //     pr = { ...basicInfo[ind],...pr}
-  //     console.log('pr1', pr);
-  //     return pr;
-  //   });
-  //   console.log('mappped', prayers);
-  //   return prayers;
-  // }
+  mapInfoPr(prayers, basicInfo) {
+    prayers = prayers.map(pr => {
+      var ind = basicInfo.findIndex(bu => {
+          return pr.username === bu.username;
+      });
+      console.log(ind);
+      pr = { ...basicInfo[ind],...pr}
+      console.log('pr1', pr);
+      return pr;
+    });
+    console.log('mappped', prayers);
+    return prayers;
+  }
 
   sharePr(mssg, subject, url) {
     const options = this.actionSheet.create(
@@ -139,7 +140,7 @@ export class PrayerService {
     return this.http.post<any>(this.url + 'getByDate', {date}, this.httpOptions)
     .map(doc => {
       console.log(doc);
-      // doc.prayers = this.mapInfoPr(doc.prayers, doc.basicInfo);
+      doc.prayers = this.mapInfoPr(doc.prayers, doc.basicInfo);
       return doc.prayers;
     })
   }

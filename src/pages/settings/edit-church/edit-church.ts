@@ -43,8 +43,8 @@ export class EditChurchPage {
                 quality: 40,
                 destinationType: this.camera.DestinationType.DATA_URL,
                 encodingType: this.camera.EncodingType.JPEG,
-                targetWidth: 130,
-                targetHeight: 130
+                targetWidth: 300,
+                targetHeight: 300
               }
               this.takePic();
             }
@@ -59,8 +59,8 @@ export class EditChurchPage {
                 encodingType: this.camera.EncodingType.JPEG,
                 mediaType: this.camera.MediaType.PICTURE,
                 sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
-                targetWidth: 130,
-                targetHeight: 130
+                targetWidth: 300,
+                targetHeight: 300
               }
               this.takePic();
             }

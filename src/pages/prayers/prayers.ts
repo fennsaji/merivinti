@@ -14,6 +14,7 @@ export class PrayersPage {
   prayerReq : IPrayerReq[] = [];
   isLoading: boolean;
   username: string;
+  url: string;
 
   constructor(public navCtrl: NavController,
       public navParams: NavParams,
@@ -27,6 +28,7 @@ export class PrayersPage {
 
   ionViewDidLoad() {
     this.isLoading = true;
+    this.url = this.authSer.globalUrl + 'profile/';
     this.username = this.authSer.getUsername();
     console.log('ionViewDidLoad PrayersPage');
     this.prayerSer.initializeAndGetPr()
@@ -191,5 +193,10 @@ export class PrayersPage {
     var url = '';
 
     this.prayerSer.sharePr(mssg, subject, url);
+  }
+
+  goToProfile(username: string) {
+    console.log("pro");
+    this.navCtrl.push("MemberPage", { username });
   }
 }

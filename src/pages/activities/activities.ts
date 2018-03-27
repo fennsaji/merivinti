@@ -11,12 +11,14 @@ import { AuthService } from '../../services/auth';
 })
 export class ActivitiesPage {
   event: string = 'notification';
-  requests: string[];
+  myChurchProPic: string;
+  requests: any[];
   followReq: any[];
   isLeader: boolean;
   noNotify: boolean;
+  url: string;
   noFoR: boolean = true;
-  noFrR: boolean;
+  noFrR: boolean = true;
   notifications: any[];
   isLoading: boolean;
 
@@ -30,6 +32,7 @@ export class ActivitiesPage {
   ionViewDidLoad() {
     this.isLoading = true;
     console.log('Enter ActivitiesPage');
+    this.url = this.authSer.globalUrl + 'profile/';
 
     this.membSer.friendReq.subscribe((data) => {
       if(data.length == 0)
@@ -61,6 +64,7 @@ export class ActivitiesPage {
       console.log(this.notifications);
       this.isLoading = false;
     });
+
     this.isLeader = this.authSer.isLeader();
     this.membSer.clearNewNotify();
     this.churchSer.deleteNewNotify();
@@ -141,8 +145,13 @@ export class ActivitiesPage {
     console.log(type);
     if(type === 'user')
       this.navCtrl.push('MemberPage', {username: id});
-    else if(type === 'church')
-      this.navCtrl.push('ChurchPage', {churchId: id});
+    else if(type === 'church') {
+      if(id === this.authSer.getChurchId()) {
+        this.navCtrl.parent.select(3);
+      } else {
+        this.navCtrl.push('ChurchPage', {churchId: id});
+      }
+    }
   }
 
   createNewNotify() {

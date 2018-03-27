@@ -8,6 +8,7 @@ import "rxjs/add/operator/do";
 import "rxjs/Rx";
 import "rxjs/add/observable/of";
 import { Events } from "ionic-angular";
+import { PrayerService } from "./prayer";
 
 @Injectable()
 export class MemberService {
@@ -30,12 +31,13 @@ export class MemberService {
   public friendReq = new EventEmitter<string[]>();
 
   // url : string = 'http://192.168.1.35:8080/member/';
-  url: string = 'http://192.168.43.54:8080/member/';
+  url: string;
 
 
   constructor(private authSer: AuthService,
     private http: HttpClient,
     public events: Events,
+    private prayerSer: PrayerService,
     private storage: Storage) {}
 
   initialize() {
@@ -46,10 +48,31 @@ export class MemberService {
         'Content-type': 'application/json'
       })
     }
+    this.url = this.authSer.globalUrl + 'member/';
     this.username = this.authSer.getUsername();
     this.getbasicinfo();
     this.getNotifications();
     console.log('initiated member');
+  }
+
+  getMembProfile(username: string, isMyProfile: boolean) {
+    return this.http.post<any>(this.url + 'getDetails', {username}, this.httpOptions)
+    .map(Pro => {
+      console.log(Pro, this.name);
+      if(isMyProfile) {
+        this.isLeader = Pro.member.isLeader;
+        this.churchId = Pro.member.churchId;
+        console.log('saved1234');
+        this.storage.set('myProfile', Pro);
+        this.authSer.saveNewInfo(this.churchId, this.isLeader);
+      }
+      Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, [{
+        name: this.name,
+        proPic: this.proPic,
+        username: this.username
+      }]);
+      return Pro;
+    });
   }
 
   getPrStorage() {
@@ -96,9 +119,11 @@ export class MemberService {
     if(this.authSer.isOnline()) {
       this.http.get<any>(this.url + 'getNotifications', this.httpOptions)
       .subscribe(res => {
+        console.log('response list', res.list, res.basicInfo);
         this.notifications = res.list.notifications.reverse();
         this.requests = res.list.requests;
-        this.friendReq.emit(this.requests);
+        var request = this.mapRequests(res.list.requests, res.basicInfo);
+        this.friendReq.emit(request);
         this.notify.emit(this.notifications);
         this.storage.set('userEvents', {notifications: this.notifications});
       }, err => {
@@ -108,6 +133,21 @@ export class MemberService {
     } else {
       this.notificationFromStorage();
     }
+  }
+
+  mapRequests(requests, basicInfo) {
+    requests = requests.map(o => {
+      console.log('object',o)
+      var ind = basicInfo.findIndex(obj => obj.username === o);
+      console.log('index', ind);
+      var obj = {
+        username: o,
+        proPic: basicInfo[ind].proPic
+      }
+      return obj;
+    })
+    console.log(requests);
+    return requests;
   }
 
   notificationFromStorage() {
@@ -153,28 +193,13 @@ export class MemberService {
       });
   }
 
-  getMembProfile(username: string, isMyProfile: boolean) {
-    return this.http.post<any>(this.url + 'getDetails', {username}, this.httpOptions)
-    .map(Pro => {
-      console.log(Pro, this.name);
-      if(isMyProfile) {
-        this.isLeader = Pro.member.isLeader;
-        this.churchId = Pro.member.churchId;
-        console.log('saved1234');
-        this.storage.set('myProfile', Pro);
-        this.authSer.saveNewInfo(this.churchId, this.isLeader);
-      }
-      // Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, [{
-      //   name: this.name,
-      //   proPic: this.proPic,
-      //   username: this.username
-      // }]);
-      return Pro;
-    });
-  }
-
   updateProfile(updatedPro) {
-    return this.http.put<any>(this.url + 'updatePro', {updatedPro}, this.httpOptions);
+    return this.http.put<any>(this.url + 'updatePro', {updatedPro}, this.httpOptions)
+      .map(res => {
+        this.proPic = updatedPro.proPic;
+        this.name = updatedPro.name;
+        return res;
+      });
   }
 
   getName() {
@@ -209,7 +234,7 @@ export class MemberService {
 
   handleFriendReq(username: string, approval: boolean) {
     console.log(username, approval);
-    return this.http.post<any>(this.url + 'handleFriendReq', {username, approval}, this.httpOptions)
+    return this.http.post<any>(this.url + 'handleFriendReq', {username, approval, proPic: this.proPic}, this.httpOptions)
       .do(doc => {
         this.getbasicinfo();
         return doc;

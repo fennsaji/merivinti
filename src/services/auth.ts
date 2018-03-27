@@ -8,13 +8,13 @@ import "rxjs/add/operator/map";
 import { Storage } from "@ionic/storage";
 import { Network } from '@ionic-native/network';
 import { Platform, ToastController } from "ionic-angular";
-import { FormControl } from "@angular/forms";
 import { LocalNotifications } from "@ionic-native/local-notifications";
 
 @Injectable()
 export class AuthService {
-  // url: string = 'http://192.168.1.35:8080/auth';
-  url: string = 'http://192.168.43.54:8080/auth';
+  // public globalUrl: string = 'https://vinti-app.herokuapp.com/';
+  public globalUrl: string = 'http://192.168.1.37:8080/';
+  url: string = this.globalUrl + 'auth';
   myInfo: {
     token: string,
     username: string,
@@ -22,6 +22,9 @@ export class AuthService {
     isLeader: boolean
   };
   onDevice: boolean;
+  settings: {
+    notify: boolean
+  }
 
   constructor(private http: HttpClient,
     private network: Network,
@@ -42,37 +45,17 @@ export class AuthService {
         churchId: data.churchId,
         isLeader: data.desig === 'Leader' ? true: false
       };
+      if(this.onDevice)
       this.scheduleNotification();
       this.saveData(this.myInfo);
       return data.memb;
     });
   }
 
-  checkUsername(control: FormControl): Promise<any> {
-    console.log(control.value);
-    return new Promise<any>(res => {
-      this.http.post<any>('http://192.168.1.35:8080/auth/checkUname', {username: control.value})
-        .subscribe((doc) =>{
-          console.log(doc);
-          if(doc.success) {
-            let toast = this.toastCtrl.create({
-              message: 'Username already exists',
-              duration: 3000
-            });
-            toast.present();
-            res({"Username already exists": true})
-          } else {
-            res(null)
-          }
-        }, err => {
-          console.log(err);
-        })
-    })
-  }
-
   regChurch(regChurch: IRegChurch): Observable<any> {
     return this.http.post<any>(this.url + '/regChurch', regChurch).map(data => {
       console.log('response', data);
+      if(this.onDevice)
       this.scheduleNotification();
       this.myInfo = {
         token: data.token,
@@ -88,6 +71,7 @@ export class AuthService {
   regMember(regMemb: IRegChurch): Observable<any> {
     return this.http.post<any>(this.url + '/regMemb', regMemb).map(data => {
       console.log('response', data);
+      if(this.onDevice)
       this.scheduleNotification();
       this.myInfo = {
         token: data.token,
@@ -115,14 +99,28 @@ export class AuthService {
       every: 'day'
     };
     this.localNotifications.schedule(notification);
+    this.storage.set('settings', {notify: true});
+    this.settings.notify = true;
   }
 
   unscheduleNotification() {
     this.localNotifications.cancelAll()
-      .then()
+      .then(d => {
+        this.storage.set('settings', {notify: false});
+      })
       .catch();
   }
 
+  getSettings() {
+    this.storage.get('settings')
+      .then(settings => {
+        this.settings = settings;
+      })
+  }
+
+  isNotifyEnabled() {
+    return this.settings.notify;
+  }
 
   isAuthenticated(): Promise<boolean> {
     return this.storage.ready().then(() => {
@@ -130,6 +128,7 @@ export class AuthService {
         console.log('isAUth', data);
         this.myInfo = data;
         console.log('isAUth', this.myInfo);
+        this.getSettings();
         return data? true: false;
       }).catch(err => {
         console.log('errror', err);
@@ -166,6 +165,7 @@ export class AuthService {
         'x-auth': this.myInfo.token
       })
     }
+    if(this.onDevice)
     this.unscheduleNotification();
     this.removeData();
     if(this.myInfo.isLeader) {
@@ -184,9 +184,10 @@ export class AuthService {
     };
     this.storage.remove('myInfo');
     this.storage.remove('prayerReq');
-    this.storage.remove('events');
+    this.storage.remove('userEvents');
     this.storage.remove('myProfile');
     this.storage.remove('myChurch');
+    this.storage.remove('settings');
   }
 
   getToken(): string {
@@ -211,6 +212,10 @@ export class AuthService {
     } else {
       return navigator.onLine;
     }
+  }
+
+  ifonDevice() {
+    return this.onDevice;
   }
 
 }

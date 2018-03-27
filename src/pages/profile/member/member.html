@@ -16,7 +16,7 @@
 
 </ion-header>
 
-<ion-content class="cardbg">
+<ion-content class="background">
 
   <ion-refresher (ionRefresh)="getProfile($event)">
     <ion-refresher-content></ion-refresher-content>
@@ -27,7 +27,7 @@
   </div>
 
   <ion-list *ngIf="!isLoading && profile.name" no-lines>
-    <ion-item  color="card" padding-horizontal padding-top>
+    <ion-item  color="background" padding-horizontal padding-top>
       <div item-start class="header-avatar">
         <img [src]="profile.proPic | safeHtml">
       </div>
@@ -105,9 +105,9 @@
     <ion-card *ngFor="let item of prayerReq; let i = index">
       <ion-item>
         <ion-avatar item-start>
-          <img [src]="item.proPic | safeHtml">
+          <img [src]="profile.proPic | safeHtml">
         </ion-avatar>
-        <h3>{{item.username}}</h3>
+        <h3>{{profile.name}}</h3>
         <p class="date">{{ item.date | timeAgo}}</p>
         <button ion-button icon-only item-end clear
         (tap)="loadPrayerOptions(item._id, i)">

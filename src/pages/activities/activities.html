@@ -4,7 +4,7 @@
     <ion-title text-center>Activities</ion-title>
   </ion-navbar>
 
-  <ion-segment [(ngModel)]="event">
+  <ion-segment [(ngModel)]="event" padding-top>
     <ion-segment-button value="request">
       Requests
     </ion-segment-button>
@@ -27,41 +27,39 @@
       <div *ngIf="isLoading" class="spinner">
         <ion-spinner icon="android"></ion-spinner>
       </div>
-      <ion-list-header *ngIf="isLeader && !noFoR">Church</ion-list-header>
+      <h3 *ngIf="isLeader && !noFoR">Church</h3>
       <ion-list>
         <ion-item *ngFor="let user of followReq; let i = index;">
           <ion-avatar item-start>
-            <!-- <img [src]="membSer.getProPicUser(user.username) | safeHtml"> -->
+            <!-- <img [src]="url + user.username + '.jpg'"> -->
+            <img [src]="user.proPic | safeHtml">
           </ion-avatar>
-          <h2>{{ user.username }}</h2>
+          <h2 >{{ user.username }}</h2>
           <h3 *ngIf="user.desig == 'Follower'">wants to follow your church</h3>
           <h3 *ngIf="user.desig == 'Member'">want to be a member of church</h3>
-          <button color="secondary" ion-button item-end icon-only padding-horizontal
-            (tap)="handleReq(user.username, user.desig, true, i)">
+          <button color="secondary" ion-button item-end icon-only padding-horizontal (tap)="handleReq(user.username, user.desig, true, i)">
             <ion-icon name="checkmark" large>
             </ion-icon>
           </button>
-          <button color="danger" ion-button item-end padding-horizontal icon-only
-            (tap)="handleReq(user.username,user.desig, false, i)">
+          <button color="danger" ion-button item-end padding-horizontal icon-only (tap)="handleReq(user.username,user.desig, false, i)">
             <ion-icon name="close" large>
             </ion-icon>
           </button>
         </ion-item>
 
-        <ion-list-header *ngIf="isLeader && !noFrR">You</ion-list-header>
+        <h3 *ngIf="isLeader && !noFrR">You</h3>
         <ion-item *ngFor="let user of requests; let i = index;">
           <ion-avatar item-start>
-            <img [src]="">
+            <!-- <img [src]="url + user + '.jpg'"> -->
+            <img [src]="user.proPic | safeHtml">
           </ion-avatar>
-          <h2>{{ user }}</h2>
+          <h2>{{ user.username }}</h2>
           <h3>sent you friend Request</h3>
-          <button color="secondary" ion-button item-end icon-only padding-horizontal
-            (tap)="handleFriendReq(user, true, i)">
+          <button color="secondary" ion-button item-end icon-only padding-horizontal (tap)="handleFriendReq(user.username, true, i)">
             <ion-icon name="checkmark" large>
             </ion-icon>
           </button>
-          <button color="danger" ion-button item-end padding-horizontal icon-only
-            (tap)="handleFriendReq(user, false, i)">
+          <button color="danger" ion-button item-end padding-horizontal icon-only (tap)="handleFriendReq(user.username, false, i)">
             <ion-icon name="close" large>
             </ion-icon>
           </button>
@@ -78,11 +76,15 @@
       </div>
       <ion-list>
         <ion-item text-wrap *ngFor="let item of notifications">
-          <ion-avatar item-start>
-            <!-- <img [src]="item.proPic || membSer.getProPicUser(item.who)| safeHtml"> -->
+          <ion-avatar item-start (click)="goToProfile(item.by, item.who)">
+            <!-- <img [src]="url + item.who + '.jpg'"> -->
+            <img [src]="item.proPic | safeHtml">
           </ion-avatar>
           <h3>
-            <span (click)="goToProfile(item.by, item.who)"><b>{{ item.who }} </b></span> {{ item.body }}</h3><p>{{item.date | timeAgo}}</p>
+            <span (click)="goToProfile(item.by, item.who)">
+              <b>{{ item.who }} </b>
+            </span> {{ item.body }}</h3>
+          <p>{{item.date | timeAgo}}</p>
         </ion-item>
       </ion-list>
       <p padding text-center *ngIf="noNotify && !isLoading">
@@ -91,8 +93,8 @@
     </div>
   </div>
   <ion-fab *ngIf="authSer.isLeader()">
-      <button ion-fab color="secondary" mini (click)="createNewNotify()">
-        <ion-icon name="create"></ion-icon>
-      </button>
-    </ion-fab>
+    <button ion-fab color="secondary" mini (click)="createNewNotify()">
+      <ion-icon name="create"></ion-icon>
+    </button>
+  </ion-fab>
 </ion-content>

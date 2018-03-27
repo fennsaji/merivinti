@@ -1,7 +1,7 @@
 <ion-header>
 
   <ion-navbar color="navbar">
-    <ion-title>settings</ion-title>
+    <ion-title>Settings</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -11,19 +11,24 @@
   <ion-list>
     <button ion-item (tap)="onEditProfile()">
       <ion-icon name="person" item-start></ion-icon>
-      <p>Edit Profile</p>
+      <ion-label>Edit Profile</ion-label>
     </button>
     <button ion-item *ngIf="isLeader" (tap)="onEditChurch()">
       <ion-icon name="build" item-start></ion-icon>
-      <p>Edit Church</p>
+      <ion-label>Edit Church</ion-label>
     </button>
     <button ion-item (tap)="onUpdate()">
-        <ion-icon name="download" item-start></ion-icon>
-        <p>Check for Update</p>
-      </button>
+      <ion-icon name="download" item-start></ion-icon>
+      <ion-label>Check for Update</ion-label>
+    </button>
+    <ion-item>
+      <ion-icon name="alert" item-start></ion-icon>
+      <ion-label>Local Notifications</ion-label>
+      <ion-toggle [(ngModel)]="notify" (ionChange)="onToggleNotify()"></ion-toggle>
+    </ion-item>
     <button ion-item (tap)="onLogout()">
       <ion-icon name="log-out" item-start></ion-icon>
-      <p>Logout</p>
+      <ion-label>Logout</ion-label>
     </button>
   </ion-list>
 </ion-content>

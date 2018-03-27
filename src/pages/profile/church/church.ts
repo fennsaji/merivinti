@@ -20,6 +20,7 @@ import { PrayerService } from "../../../services/prayer";
 })
 export class ChurchPage {
   churchId: string;
+  url: string;
   isMyChurch: boolean;
   isLeader: boolean;
   noChurch: boolean;
@@ -50,6 +51,7 @@ export class ChurchPage {
 
   ionViewDidLoad() {
     this.isLoading = true;
+    this.url = this.authSer.globalUrl + 'profile/';
     console.log("ngoninit church");
 
     if (this.navParams.get("churchId")) {
@@ -76,6 +78,7 @@ export class ChurchPage {
     console.log(this.churchId);
     if(this.authSer.isOnline()) {
       if (this.churchId) {
+        console.log('church ex', this.churchId);
         this.churchSer
           .getChurchProfile(this.churchId, this.isMyChurch)
           .subscribe(
@@ -103,7 +106,7 @@ export class ChurchPage {
         this.isLoading = false;
         if (refresher) refresher.complete();
       }
-    } else if(this.isMyChurch){
+    } else if(this.isMyChurch && this.churchId){
       this.loadFromStorage();
       toast = this.toastCtrl.create({
         message: "No internet Connection",
@@ -144,6 +147,16 @@ export class ChurchPage {
 
   gotoInfoPrayees() {
     this.navCtrl.push("ListIdPage", { type: "Members", id: this.churchId });
+  }
+
+
+  goToProfile(username: string) {
+    console.log("pro");
+    if(username == this.authSer.getUsername()) {
+      this.navCtrl.parent.select(2);
+    } else {
+      this.navCtrl.push("MemberPage", { username });
+    }
   }
 
   // church

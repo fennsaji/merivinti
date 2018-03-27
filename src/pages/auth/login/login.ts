@@ -29,7 +29,7 @@ export class LoginPage {
       }, err => {
         this.isLoading = false;
         let toast;
-        if(err.error.msgObj) {
+        if(err.error) {
           var msg;
           if(!err.error.msgObj)
             msg = 'Unknown Error';

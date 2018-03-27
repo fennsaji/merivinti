@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ToastController, App } from 'ionic-angular';
 import { AuthService } from '../../services/auth';
 import { AppUpdate } from '@ionic-native/app-update';
 
@@ -10,10 +10,12 @@ import { AppUpdate } from '@ionic-native/app-update';
 })
 export class SettingsPage {
   isLeader: boolean;
+  notify: boolean;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     private appUpdate: AppUpdate,
+    private app: App,
     private authSer: AuthService,
     public toastCtrl: ToastController) {
   }
@@ -21,12 +23,17 @@ export class SettingsPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad SettingsPage');
     this.isLeader = this.authSer.isLeader();
+
+    if(this.authSer.ifonDevice())
+    this.notify = this.authSer.isNotifyEnabled();
   }
 
   onLogout() {
     this.authSer.logout()
       .subscribe(() => {
-        this.navCtrl.setRoot('HomePage');
+        this.app.getRootNav().setRoot('HomePage');
+        // this.navCtrl.g
+        // setRoot('HomePage');
       }, err => {
         var toast = this.toastCtrl.create({
           message: "Could not Connect to Server",
@@ -46,14 +53,25 @@ export class SettingsPage {
   }
 
   onUpdate() {
-    const updateUrl = 'https://your-remote-api.com/update.xml';
-    this.appUpdate.checkAppUpdate(updateUrl).then(() => {
-      var toast = this.toastCtrl.create({
-        message: "Update Available",
-        duration: 3000
+    if(this.authSer.ifonDevice()) {
+      const updateUrl = this.authSer.globalUrl + 'update.xml';
+      this.appUpdate.checkAppUpdate(updateUrl).then(() => {
+        var toast = this.toastCtrl.create({
+          message: "Update Available",
+          duration: 3000
+        });
+        toast.present();
+        console.log('Update available')
       });
-      toast.present();
-      console.log('Update available')
-    });
+    }
+
+  }
+
+  onToggleNotify() {
+    if(this.notify == false) {
+      this.authSer.unscheduleNotification();
+    } else {
+      this.authSer.scheduleNotification();
+    }
   }
 }

@@ -7,6 +7,7 @@ import { AuthService } from "./auth";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/do";
 import { Events } from "ionic-angular";
+import { PrayerService } from "./prayer";
 
 @Injectable()
 export class ChurchService {
@@ -24,12 +25,12 @@ export class ChurchService {
   public notify = new  EventEmitter<any[]>();
   public followReq = new  EventEmitter<any[]>();
 
-  url : string = 'http://192.168.43.54:8080/church/';
-  // url: string = 'http://192.168.1.35:8080/church/';
+  url : string ;
 
   constructor(private authSer: AuthService,
     private http: HttpClient,
     private storage: Storage,
+    private prayerSer: PrayerService,
     public events: Events,
     private membSer: MemberService) {}
 
@@ -41,6 +42,7 @@ export class ChurchService {
         'Content-type': 'application/json'
       })
     }
+    this.url = this.authSer.globalUrl + 'church/';
     console.log('church initializes');
     this.getbasicinfo();
     this.getNotifications();
@@ -66,18 +68,45 @@ export class ChurchService {
         }, err => {
           console.log('Errorr');
         });
+    } else {
+      this.http.post<any>(this.url + 'getProfilePic', {churchId:this.authSer.getChurchId()}, this.httpOptions)
+        .subscribe(d => {
+          this.proPic = d.proPic;
+          console.log(this.proPic, 'got the prPix');
+        }, err => {
+          console.log('errror getting pixcc');
+        })
     }
   }
 
+  getChurchProfile(churchId: string, isMyChurch: boolean): Observable<any> {
+    return this.http.post<any>(this.url + 'getDetails', {churchId}, this.httpOptions)
+      .map(Pro => {
+        if(isMyChurch) {
+            this.churchName = Pro.church.churchName;
+            this.proPic = Pro.church.proPic;
+            this.storage.set('myChurch', Pro);
+            console.log('saved');
+        }
+        Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, Pro.basicInfo);
+        return Pro;
+      });
+  }
+
   updateProfile(updatedPro) {
-    return this.http.put<any>(this.url + 'updatePro', {updatedPro}, this.httpOptions);
+    return this.http.put<any>(this.url + 'updatePro', {updatedPro}, this.httpOptions)
+    .map(res => {
+      this.proPic = updatedPro.proPic;
+      this.churchName = updatedPro.churchName;
+      return res;
+    });
   }
 
   getNotifications() {
     if(this.authSer.isLeader()) {
       this.http.get<any>(this.url + 'getNotifications', this.httpOptions)
       .subscribe(res => {
-        this.requests = res.list.requests;
+        this.requests = this.mapRequests(res.list.requests, res.basicInfo);
         console.log(this.requests);
         this.followReq.emit(this.requests);
       }, err => {
@@ -86,8 +115,20 @@ export class ChurchService {
     }
   }
 
+  mapRequests(requests, basicInfo) {
+    requests = requests.map(o => {
+      var ind = basicInfo.findIndex(obj => obj.username == o.username);
+      o = { ...basicInfo[ind],...o}
+      // console.log('pr1', o);
+      return o;
+    })
+    console.log(requests);
+    return requests;
+  }
+
   pushNotifications(newNotify) {
     console.log(newNotify);
+    newNotify.proPic = this.proPic;
     if(this.authSer.isLeader()) {
       return this.http.post<any>(this.url + 'pushNotifications', {newNotify}, this.httpOptions)
         .map(res => {
@@ -110,6 +151,14 @@ export class ChurchService {
           console.log('Errorr1');
         });
     }
+  }
+
+  isMainLeader(leadId: string) {
+    var index = this.leaders.findIndex(o => o.leadId === leadId && o.type === 'main');
+    if(index > -1 )
+      return true;
+    else
+      return false;
   }
 
   getInfoFollowers(churchId: string) {
@@ -152,25 +201,6 @@ export class ChurchService {
       .map(data => data.churches);
   }
 
-  getChurchProfile(churchId: string, isMyChurch: boolean): Observable<any> {
-    return this.http.post<any>(this.url + 'getDetails', {churchId}, this.httpOptions)
-      .map(Pro => {
-        if(isMyChurch) {
-            this.churchName = Pro.church.churchName;
-            this.proPic = Pro.church.proPic;
-            this.storage.set('myChurch', Pro);
-            console.log('saved');
-        }
-        // Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, [...Pro.basicInfo,{
-        //   // name: this.membSer.getName(),
-        //   // proPic: this.membSer.getProPic(), //Leaders Info
-        //   // username: this.authSer.getUsername()
-        // }]);
-        return Pro;
-      });
-  }
-
-
   // Church
   followChurch(churchId: string) {
     return this.http.post<any>(this.url + 'followReq', {churchId}, this.httpOptions)
@@ -189,7 +219,7 @@ export class ChurchService {
   }
 
   handlefollowReq(username: string, approval: boolean) {
-    return this.http.post<any>(this.url + 'handlefollowReq', {username, approval}, this.httpOptions)
+    return this.http.post<any>(this.url + 'handlefollowReq', {username, approval, proPic: this.proPic}, this.httpOptions)
       .do(res => {
         this.getbasicinfo();
         return res;
@@ -222,7 +252,7 @@ export class ChurchService {
   }
 
   handleMembReq(username: string, approval: boolean) {
-    return this.http.post<any>(this.url + 'handleMembReq', {username, approval}, this.httpOptions)
+    return this.http.post<any>(this.url + 'handleMembReq', {username, approval, proPic: this.proPic}, this.httpOptions)
     .do(res => {
       this.getbasicinfo();
       return res;
@@ -255,7 +285,7 @@ export class ChurchService {
 
   // Leader
   addAsLeader(username: string) {
-    return this.http.post<any>(this.url + 'addAsLeader', {username}, this.httpOptions)
+    return this.http.post<any>(this.url + 'addAsLeader', {username, proPic: this.proPic}, this.httpOptions)
       .do(res => {
         this.getbasicinfo();
         return res;
@@ -271,7 +301,7 @@ export class ChurchService {
   }
 
   promoteLeader(username: string) {
-    return this.http.post<any>(this.url + 'promoteLeader', {username}, this.httpOptions)
+    return this.http.post<any>(this.url + 'promoteLeader', {username, proPic: this.proPic}, this.httpOptions)
       .do(res => {
         this.getbasicinfo();
         return res;

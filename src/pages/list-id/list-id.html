@@ -7,7 +7,7 @@
 </ion-header>
 
 
-<ion-content padding class="background">
+<ion-content class="background">
     <div *ngIf="isLoading" class="spinner">
         <ion-spinner icon="android"></ion-spinner>
     </div>
@@ -15,6 +15,7 @@
     <!-- <ion-title *ngIf="lists == undefined || lists2 == undefined">Members</ion-title> -->
     <ion-item *ngFor="let item of lists; let i = index">
       <ion-avatar item-start (tap)="goToProfile(item.username)">
+        <!-- <img [src]="url + item.username + '.jpg'"> -->
         <img [src]="item.proPic | safeHtml">
       </ion-avatar>
       <h2 (tap)="goToProfile(item.username)">
@@ -23,17 +24,24 @@
       <ion-note (tap)="goToProfile(item.username)">
         {{item.username || item.churchId}}
       </ion-note>
-      <button ion-button item-end color="secondary" *ngIf="isMyChurchAndLeader && notMe(item.username)"
-        (tap)="remove('Member', item.username, i)">
-        <ion-icon name="remove-circle" item-start></ion-icon>
-        &nbsp;Remove
+      <button ion-button item-end color="secondary" *ngIf="isMyChurchAndLeader && notMe(item.username) && type!=='Leaders'"
+        (tap)="options('Member', item.username, i)">
+        <ion-icon name="options" item-start></ion-icon>
+        &nbsp;<span *ngIf="!isMyChurchAndMainLeader">Remove</span>
+        <span *ngIf="isMyChurchAndMainLeader">Options</span>
       </button>
+      <button ion-button item-end color="secondary" *ngIf="isMyChurchAndMainLeader && notMe(item.username) && type==='Leaders'"
+      (tap)="options('Leader', item.username, i)">
+      <ion-icon name="options" item-start></ion-icon>
+      &nbsp;Options
+    </button>
     </ion-item>
-
+    <hr>
     <div *ngIf="lists2">
       <!-- <ion-title *ngIf="lists2 == undefined">Followers</ion-title> -->
       <ion-item *ngFor="let item of lists2; let i= index">
         <ion-avatar item-start (tap)="goToProfile(item.username)">
+          <!-- <img [src]="url + item.username + '.jpg'"> -->
           <img [src]="item.proPic | safeHtml">
         </ion-avatar>
         <h2 (tap)="goToProfile(item.username)">
@@ -43,12 +51,11 @@
           {{item.username}}
         </ion-note>
         <button ion-button item-end color="secondary" *ngIf="isMyChurchAndLeader"
-          (tap)="remove('Follower', item.username, i)">
+          (tap)="options('Follower', item.username, i)">
           <ion-icon name="remove-circle" item-start></ion-icon>
           &nbsp;Remove
         </button>
       </ion-item>
     </div>
   </ion-list>
-
 </ion-content>

@@ -15,6 +15,7 @@ export class RegisterPage implements OnInit{
   churchForm: FormGroup;
   membForm: FormGroup;
   isLoading: boolean;
+  url: string;
 
   constructor(public navCtrl: NavController,
     private http: HttpClient,
@@ -24,6 +25,7 @@ export class RegisterPage implements OnInit{
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad RegisterPage');
+    this.url = this.authSer.globalUrl + 'auth/';
     // this.initChurch();
     // this.initMember();
   }
@@ -39,7 +41,7 @@ export class RegisterPage implements OnInit{
         'leadName': new FormControl(null, Validators.required),
         'leadId': new FormControl(null,
           [Validators.required, Validators.minLength(6), Validators.pattern('^[a-zA-Z0-9]+$')],
-          this.authSer.checkUsername.bind(this)),
+          this.checkUsername.bind(this)),
         'password': new FormControl(null, [Validators.required,  Validators.minLength(6)])
       }),
       'churchName': new FormControl(null, Validators.required),
@@ -54,10 +56,33 @@ export class RegisterPage implements OnInit{
       'name': new FormControl(null, Validators.required),
       'username': new FormControl(null,
         [Validators.required, Validators.minLength(6), Validators.pattern('^[a-zA-Z0-9]+$')],
-        this.authSer.checkUsername.bind(this)),
+        this.checkUsername.bind(this)),
       'churchId': new FormControl(null),
       'password': new FormControl(null, [Validators.required, Validators.minLength(6)])
     });
+  }
+
+
+  checkUsername(control: FormControl): Promise<any> {
+    console.log(control.value);
+    return new Promise<any>(res => {
+      this.http.post<any>(this.url + 'checkUname', {username: control.value})
+        .subscribe((doc) =>{
+          console.log(doc);
+          if(doc.success) {
+            let toast = this.toastCtrl.create({
+              message: 'Username already exists',
+              duration: 3000
+            });
+            toast.present();
+            res({"Username already exists": true})
+          } else {
+            res(null)
+          }
+        }, err => {
+          console.log(err);
+        })
+    })
   }
 
   // Async Validator
@@ -65,7 +90,7 @@ export class RegisterPage implements OnInit{
     console.log(control.value);
     return new Promise<any>(res => {
       if(this.authSer.isOnline()){
-        this.http.post<any>('http://192.168.1.35:8080/auth/checkChurch', {churchId: control.value})
+        this.http.post<any>(this.url + 'checkChurch', {churchId: control.value})
         .subscribe((doc) =>{
           console.log(doc);
           if(doc.success) {

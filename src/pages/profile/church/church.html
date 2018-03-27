@@ -86,10 +86,11 @@
 
     <ion-card *ngFor="let item of prayerReq; let i = index">
       <ion-item>
-        <ion-avatar item-start>
+        <ion-avatar item-start (tap)="goToProfile(item.username)">
+          <!-- <img [src]="url + item.username + '.jpg'"> -->
           <img [src]="item.proPic | safeHtml">
         </ion-avatar>
-        <h3>{{item.username}}</h3>
+        <h3 (tap)="goToProfile(item.username)">{{item.name}}</h3>
         <p class="date">{{ item.date | timeAgo}}</p>
         <button ion-button icon-only item-end clear
           *ngIf="item.username === getMyUsername() || (isMyChurch && isLeader)"
