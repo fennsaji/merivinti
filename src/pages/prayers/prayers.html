@@ -21,6 +21,15 @@
   </div>
 
   <div>
+      <ion-list no-lines class="centeralize" *ngIf="prayerReq.length == 0 && !isLoading">
+          <ion-item>
+            <h2><b>No Prayer Requests was Found</b></h2>
+            <h3>Follow Churches or add Friends</h3>
+          </ion-item>
+          <ion-item>
+            <button ion-button block (tap)="search()">Search</button>
+          </ion-item>
+        </ion-list>
     <ion-card *ngFor="let item of prayerReq; let i = index" color="card">
       <ion-item color="card">
         <ion-avatar item-start (tap)="goToProfile(item.username)">

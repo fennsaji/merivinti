@@ -1,13 +1,17 @@
 page-church {
   .centeralize {
     position: fixed;
-    top: 45%;
+    top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
   }
 
   .date{
     font-size: 10px;
+  }
+
+  #card-content {
+    padding: 0px 15px;
   }
 
   .header-avatar {
@@ -24,6 +28,7 @@ page-church {
       width: 100%;
     }
   }
+
   ion-spinner * {
     width: 38px;
     height: 38px;

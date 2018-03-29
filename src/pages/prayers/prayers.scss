@@ -20,6 +20,13 @@ page-prayers {
     font-size: 10px;
   }
 
+  .centeralize {
+    position: fixed;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
   .share{
     margin: auto;
   }

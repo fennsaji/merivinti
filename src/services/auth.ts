@@ -12,8 +12,8 @@ import { LocalNotifications } from "@ionic-native/local-notifications";
 
 @Injectable()
 export class AuthService {
-  // public globalUrl: string = 'https://vinti-app.herokuapp.com/';
-  public globalUrl: string = 'http://192.168.1.37:8080/';
+  public globalUrl: string = 'https://vinti-app.herokuapp.com/';
+  // public globalUrl: string = 'http://192.168.1.37:8080/';
   url: string = this.globalUrl + 'auth';
   myInfo: {
     token: string,
@@ -98,17 +98,23 @@ export class AuthService {
       at: date,
       every: 'day'
     };
-    this.localNotifications.schedule(notification);
-    this.storage.set('settings', {notify: true});
-    this.settings.notify = true;
+    this.localNotifications.requestPermission().then(d => {
+      this.localNotifications.hasPermission().then(d => {
+        this.localNotifications.schedule(notification);
+        this.storage.set('settings', {notify: true});
+        this.settings.notify = true;
+      })
+    }).catch();
   }
 
   unscheduleNotification() {
-    this.localNotifications.cancelAll()
+    this.localNotifications.hasPermission().then(d => {
+      this.localNotifications.cancelAll()
       .then(d => {
         this.storage.set('settings', {notify: false});
       })
       .catch();
+    })
   }
 
   getSettings() {
@@ -166,12 +172,20 @@ export class AuthService {
       })
     }
     if(this.onDevice)
-    this.unscheduleNotification();
-    this.removeData();
     if(this.myInfo.isLeader) {
-      return this.http.delete(this.url + '/logoutLead', httpOptions);
+      return this.http.delete(this.url + '/logoutLead', httpOptions)
+      .map(doc => {
+        this.removeData();
+        this.unscheduleNotification();
+        return doc;
+      });
     } else {
-      return this.http.delete(this.url + '/logoutMemb', httpOptions);
+      return this.http.delete(this.url + '/logoutMemb', httpOptions)
+      .map(doc => {
+        this.removeData();
+        this.unscheduleNotification();
+        return doc;
+      });
     }
   }
 

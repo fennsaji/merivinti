@@ -33,15 +33,15 @@
       </div>
         <ion-row>
           <ion-col>
-            <h6 text-center>{{profile.noOfPost}}</h6>
+            <h4 text-center><b>{{profile.noOfPost}}</b></h4>
             <h6 text-center>Posts</h6>
           </ion-col>
           <ion-col (tap)="gotoInfoPrayees()">
-            <h6 text-center>{{profile.noOfFriends}}</h6>
+            <h4 text-center><b>{{profile.noOfFriends}}</b></h4>
             <h6 text-center>Prayees</h6>
           </ion-col>
           <ion-col (tap)="gotoInfoFollowing()">
-            <h6 text-center>{{profile.noOfFollowing}}</h6>
+            <h4 text-center><b>{{profile.noOfFollowing}}</b></h4>
             <h6 text-center>Following</h6>
           </ion-col>
         </ion-row>
@@ -92,16 +92,25 @@
         </ion-row>
 
     </ion-item>
-    <ion-item  color="card">
+    <ion-item  color="background">
       <div padding-horizontal>
-        <h3>
-          {{profile.name}}
-        </h3>
-        <p *ngIf="profile.churchId">
-          Attends: {{profile.churchId}}
+        <h2>
+          <b>{{profile.name}}</b>
+        </h2>
+        <p *ngIf="profile.churchId" (tap)="goToChurch(profile.churchId)">
+          {{profile.churchId}}
         </p>
       </div>
     </ion-item>
+    <hr>
+    <ion-list no-lines class="centeralize" *ngIf="prayerReq.length == 0 && !isLoading">
+        <ion-item>
+          <h2>No Prayer Requests was Found</h2>
+        </ion-item>
+        <ion-item *ngIf="isMyProfile">
+          <button ion-button block (tap)="createNewPrayer()">Add</button>
+        </ion-item>
+      </ion-list>
     <ion-card *ngFor="let item of prayerReq; let i = index">
       <ion-item>
         <ion-avatar item-start>
@@ -114,10 +123,17 @@
         <ion-icon name="more"></ion-icon>
       </button>
       </ion-item>
-
-      <ion-card-content>
+      <ion-card-content id="card-content">
         <h2>{{item.body}}</h2>
       </ion-card-content>
+      <ion-row no-padding>
+          <ion-col text-end>
+            <button ion-button clear small color="primary" icon-start (tap)="sharePrayerReq(i)">
+              <ion-icon class="share" name="share-alt"></ion-icon>
+              Share
+            </button>
+          </ion-col>
+        </ion-row>
     </ion-card>
   </ion-list>
 </ion-content>

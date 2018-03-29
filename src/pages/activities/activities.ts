@@ -12,8 +12,8 @@ import { AuthService } from '../../services/auth';
 export class ActivitiesPage {
   event: string = 'notification';
   myChurchProPic: string;
-  requests: any[];
-  followReq: any[];
+  requests: any[] = [];
+  followReq: any[] =[];
   isLeader: boolean;
   noNotify: boolean;
   url: string;
@@ -40,7 +40,7 @@ export class ActivitiesPage {
       else
         this.noFrR = false;
       console.log('32',this.noFrR);
-      this.requests = data.reverse();
+      this.requests = data?data:[];
     });
 
     this.churchSer.followReq.subscribe((data) => {
@@ -49,7 +49,7 @@ export class ActivitiesPage {
       else
         this.noFoR = false;
       console.log('45', this.noFoR, data);
-      this.followReq = data;
+      this.followReq = data? data: [];
       console.log(this.followReq);
     });
 
@@ -60,7 +60,7 @@ export class ActivitiesPage {
       else
         this.noNotify = false;
       console.log('123',this.noNotify);
-      this.notifications = doc;
+      this.notifications = doc?doc:[];
       console.log(this.notifications);
       this.isLoading = false;
     });

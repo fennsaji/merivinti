@@ -7,6 +7,7 @@
   <ion-segment [(ngModel)]="event" padding-top>
     <ion-segment-button value="request">
       Requests
+      <ion-badge color="secondary" item-end *ngIf="requests.length + followReq.length !==0">{{requests.length + followReq.length}}</ion-badge>
     </ion-segment-button>
     <ion-segment-button value="notification">
       Notifications
@@ -27,16 +28,16 @@
       <div *ngIf="isLoading" class="spinner">
         <ion-spinner icon="android"></ion-spinner>
       </div>
-      <h3 *ngIf="isLeader && !noFoR">Church</h3>
+      <h6 padding-horizontal *ngIf="isLeader && !noFoR">Church</h6>
       <ion-list>
         <ion-item *ngFor="let user of followReq; let i = index;">
-          <ion-avatar item-start>
+          <ion-avatar item-start (tap)="goToProfile('church', user.username)">
             <!-- <img [src]="url + user.username + '.jpg'"> -->
             <img [src]="user.proPic | safeHtml">
           </ion-avatar>
-          <h2 >{{ user.username }}</h2>
+          <h2 (tap)="goToProfile('church', user.username)">{{ user.username }}</h2>
           <h3 *ngIf="user.desig == 'Follower'">wants to follow your church</h3>
-          <h3 *ngIf="user.desig == 'Member'">want to be a member of church</h3>
+          <h3 *ngIf="user.desig == 'Member'">want to be a member of your church</h3>
           <button color="secondary" ion-button item-end icon-only padding-horizontal (tap)="handleReq(user.username, user.desig, true, i)">
             <ion-icon name="checkmark" large>
             </ion-icon>
@@ -47,13 +48,13 @@
           </button>
         </ion-item>
 
-        <h3 *ngIf="isLeader && !noFrR">You</h3>
+        <h6 padding-horizontal *ngIf="isLeader && !noFrR">You</h6>
         <ion-item *ngFor="let user of requests; let i = index;">
-          <ion-avatar item-start>
+          <ion-avatar item-start (tap)="goToProfile('user', user.username)">
             <!-- <img [src]="url + user + '.jpg'"> -->
             <img [src]="user.proPic | safeHtml">
           </ion-avatar>
-          <h2>{{ user.username }}</h2>
+          <h2 (tap)="goToProfile('church', user.username)">{{ user.username }}</h2>
           <h3>sent you friend Request</h3>
           <button color="secondary" ion-button item-end icon-only padding-horizontal (tap)="handleFriendReq(user.username, true, i)">
             <ion-icon name="checkmark" large>
@@ -82,9 +83,9 @@
           </ion-avatar>
           <h3>
             <span (click)="goToProfile(item.by, item.who)">
-              <b>{{ item.who }} </b>
+              <b>{{ item.name || item.churchName }} </b>
             </span> {{ item.body }}</h3>
-          <p>{{item.date | timeAgo}}</p>
+          <p class="date">{{item.date | timeAgo}}</p>
         </ion-item>
       </ion-list>
       <p padding text-center *ngIf="noNotify && !isLoading">

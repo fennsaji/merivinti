@@ -68,14 +68,6 @@ export class ChurchService {
         }, err => {
           console.log('Errorr');
         });
-    } else {
-      this.http.post<any>(this.url + 'getProfilePic', {churchId:this.authSer.getChurchId()}, this.httpOptions)
-        .subscribe(d => {
-          this.proPic = d.proPic;
-          console.log(this.proPic, 'got the prPix');
-        }, err => {
-          console.log('errror getting pixcc');
-        })
     }
   }
 
@@ -128,7 +120,6 @@ export class ChurchService {
 
   pushNotifications(newNotify) {
     console.log(newNotify);
-    newNotify.proPic = this.proPic;
     if(this.authSer.isLeader()) {
       return this.http.post<any>(this.url + 'pushNotifications', {newNotify}, this.httpOptions)
         .map(res => {
@@ -219,7 +210,7 @@ export class ChurchService {
   }
 
   handlefollowReq(username: string, approval: boolean) {
-    return this.http.post<any>(this.url + 'handlefollowReq', {username, approval, proPic: this.proPic}, this.httpOptions)
+    return this.http.post<any>(this.url + 'handlefollowReq', {username, approval}, this.httpOptions)
       .do(res => {
         this.getbasicinfo();
         return res;
@@ -252,7 +243,7 @@ export class ChurchService {
   }
 
   handleMembReq(username: string, approval: boolean) {
-    return this.http.post<any>(this.url + 'handleMembReq', {username, approval, proPic: this.proPic}, this.httpOptions)
+    return this.http.post<any>(this.url + 'handleMembReq', {username, approval}, this.httpOptions)
     .do(res => {
       this.getbasicinfo();
       return res;
@@ -285,7 +276,7 @@ export class ChurchService {
 
   // Leader
   addAsLeader(username: string) {
-    return this.http.post<any>(this.url + 'addAsLeader', {username, proPic: this.proPic}, this.httpOptions)
+    return this.http.post<any>(this.url + 'addAsLeader', {username}, this.httpOptions)
       .do(res => {
         this.getbasicinfo();
         return res;
@@ -301,7 +292,7 @@ export class ChurchService {
   }
 
   promoteLeader(username: string) {
-    return this.http.post<any>(this.url + 'promoteLeader', {username, proPic: this.proPic}, this.httpOptions)
+    return this.http.post<any>(this.url + 'promoteLeader', {username}, this.httpOptions)
       .do(res => {
         this.getbasicinfo();
         return res;

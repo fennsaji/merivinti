@@ -13,6 +13,16 @@ page-member {
       width: 100%;
     }
   }
+  .centeralize {
+    position: fixed;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  #card-content {
+    padding: 0px 15px;
+  }
 
   .date{
     font-size: 10px;

@@ -39,8 +39,22 @@
           <ion-input type="password" formControlName="password"></ion-input>
         </ion-item>
         <br>
+        <div *ngIf="!membForm.get('username').valid && membForm.get('username').touched" class="help-box">
+          <li>
+            <ul>Minimum length of Username is 6</ul>
+            <ul>No Caps and special characters are allowed in Username</ul>
+          </li>
+        </div>
+        <div *ngIf="!membForm.get('password').valid && membForm.get('password').touched" class="help-box">
+            <li>
+              <ul>Minimum length of Password is 6</ul>
+            </li>
+          </div>
         <button *ngIf="!isLoading" ion-button [disabled]="!membForm.valid" type="submit" block>Register
         </button>
+        <div padding-horizontal>
+          <p>* - Not Required</p>
+        </div>
       </ion-list>
     </form>
 
@@ -75,6 +89,23 @@
           </ion-input>
         </ion-item>
         <br>
+        <div *ngIf="!churchForm.get('churchId').valid && churchForm.get('churchId').touched" class="help-box">
+            <li>
+              <ul>Minimum length of Church Id is 6</ul>
+              <ul>No Caps and special characters are allowed in Church Id</ul>
+            </li>
+          </div>
+          <div *ngIf="!churchForm.get('leaders.leadId').valid && churchForm.get('leaders.leadId').touched" class="help-box">
+              <li>
+                <ul>Minimum length of Leader Id is 6</ul>
+                <ul>No Caps and special characters are allowed in Leader Id</ul>
+              </li>
+            </div>
+          <div *ngIf="!churchForm.get('leaders.password').valid && churchForm.get('leaders.password').touched" class="help-box">
+              <li>
+                <ul>Minimum length of Password is 6</ul>
+              </li>
+            </div>
         <button *ngIf="!isLoading" ion-button type="submit" [disabled]="!churchForm.valid" block>Register
         </button>
       </ion-list>

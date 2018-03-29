@@ -15,6 +15,9 @@
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
 
+ion-avatar img {
+  object-fit: cover;
+}
 
 .background {
   background-color: color($colors, background);
@@ -23,5 +26,4 @@
 .cardbg{
   background-color: color($colors, card);
 }
-
 

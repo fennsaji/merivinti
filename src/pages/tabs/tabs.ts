@@ -32,6 +32,7 @@ export class TabsPage implements OnInit{
       this.newProfileNotify = data;
       this.newNotify = this.newChurchNotify + this.newProfileNotify;
     });
+
     this.events.subscribe('churchNotify:updated', data => {
       console.log('notifudac', data);
       this.newChurchNotify = data;

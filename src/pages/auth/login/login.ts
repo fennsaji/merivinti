@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, IonicPage, ToastController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
 import { AuthService } from '../../../services/auth';
+import { AppVersion } from '@ionic-native/app-version';
 
 @IonicPage()
 @Component({
@@ -16,7 +17,19 @@ export class LoginPage {
   constructor(public navCtrl: NavController,
       public navParams: NavParams,
       private authSer: AuthService,
+      private app: AppVersion,
       public toastCtrl: ToastController) {
+        // this.getVersion();
+  }
+
+  async getVersion() {
+    const versionNumber = await this.app.getVersionCode();
+    console.log(versionNumber);
+    var toast = this.toastCtrl.create({
+      message: versionNumber,
+      duration: 3000
+    });
+    toast.present();
   }
 
   onLogin(f: NgForm): void {

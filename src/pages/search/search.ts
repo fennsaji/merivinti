@@ -26,6 +26,13 @@ export class SearchPage implements OnInit {
 
   ngOnInit() {
     this.profile = this.navParams.get("profile");
+    if(!this.authSer.isOnline()) {
+      var toast = this.toastCtrl.create({
+        message: "No Internet Connection!!",
+        duration: 3000
+      });
+      toast.present();
+    }
   }
 
   // Add spinner
@@ -37,7 +44,7 @@ export class SearchPage implements OnInit {
       this.membSer.searchUsers(val).subscribe(
         data => {
           this.isLoading = false;
-          if (!data) {
+          if (data.length === 0) {
             var toast = this.toastCtrl.create({
               message: "No hits!!",
               duration: 3000
@@ -61,7 +68,7 @@ export class SearchPage implements OnInit {
       this.churchSer.searchChurch(val).subscribe(
         data => {
           this.isLoading = false;
-          if (!data) {
+          if (data.length === 0) {
             var toast = this.toastCtrl.create({
               message: "No hits!!",
               duration: 3000

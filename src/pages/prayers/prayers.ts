@@ -33,11 +33,11 @@ export class PrayersPage {
     console.log('ionViewDidLoad PrayersPage');
     this.prayerSer.initializeAndGetPr()
       .then((pr: IPrayerReq[]) => {
-        this.isLoading = false;
         console.log('prr', pr)
         this.prayerReq = [...pr];
         this.loadPrayers(null);
         console.log('2', this.prayerReq)
+        this.isLoading = false;
       })
       .catch(e => {
         this.isLoading = false;
@@ -100,11 +100,6 @@ export class PrayersPage {
       });
     } else {
       infinitescroll.complete();
-      var toast = this.toastCtrl.create({
-        message: "No internet Connection",
-        duration: 3000
-      });
-      toast.present();
     }
   }
 
@@ -190,13 +185,17 @@ export class PrayersPage {
     console.log(this.prayerReq[index]);
     var subject = "Prayer Request by " + this.prayerReq[index].username;
     var mssg = this.prayerReq[index].body;
-    var url = '';
+    var url = 'https://vinti-app.herokuapp.com/vinti.apk';
 
-    this.prayerSer.sharePr(mssg, subject, url);
+    this.prayerSer.sharePr(mssg, subject, url, this.prayerReq[index].proPic);
   }
 
   goToProfile(username: string) {
     console.log("pro");
-    this.navCtrl.push("MemberPage", { username });
+    if(username === this.authSer.getUsername()) {
+      this.navCtrl.parent.select(2);
+    } else {
+      this.navCtrl.push("MemberPage", { username });
+    }
   }
 }

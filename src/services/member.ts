@@ -120,10 +120,11 @@ export class MemberService {
       this.http.get<any>(this.url + 'getNotifications', this.httpOptions)
       .subscribe(res => {
         console.log('response list', res.list, res.basicInfo);
-        this.notifications = res.list.notifications.reverse();
         this.requests = res.list.requests;
         var request = this.mapRequests(res.list.requests, res.basicInfo);
+        this.notifications = this.mapNotifications(res.list.notifications, res.basicInfo, res.churchInfo).reverse();
         this.friendReq.emit(request);
+        console.log('mapped', this.notifications);
         this.notify.emit(this.notifications);
         this.storage.set('userEvents', {notifications: this.notifications});
       }, err => {
@@ -133,6 +134,20 @@ export class MemberService {
     } else {
       this.notificationFromStorage();
     }
+  }
+
+  mapNotifications(notifications, basicInfo, churchInfo) {
+    notifications = notifications.map(o => {
+      if(o.by === 'church') {
+        var ind = churchInfo.findIndex(obj => obj.churchId === o.who);
+        return {...o, ...churchInfo[ind]};
+      } else if(o.by === 'user') {
+        var index = basicInfo.findIndex(obj => obj.username === o.who);
+        return {...o, ...basicInfo[index]};
+      }
+    })
+    console.log('notificTIONS Mapped', notifications);
+    return notifications;
   }
 
   mapRequests(requests, basicInfo) {
@@ -234,7 +249,7 @@ export class MemberService {
 
   handleFriendReq(username: string, approval: boolean) {
     console.log(username, approval);
-    return this.http.post<any>(this.url + 'handleFriendReq', {username, approval, proPic: this.proPic}, this.httpOptions)
+    return this.http.post<any>(this.url + 'handleFriendReq', {username, approval}, this.httpOptions)
       .do(doc => {
         this.getbasicinfo();
         return doc;

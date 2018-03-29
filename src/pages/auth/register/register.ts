@@ -40,13 +40,13 @@ export class RegisterPage implements OnInit{
       'leaders': new FormGroup({
         'leadName': new FormControl(null, Validators.required),
         'leadId': new FormControl(null,
-          [Validators.required, Validators.minLength(6), Validators.pattern('^[a-zA-Z0-9]+$')],
+          [Validators.required, Validators.minLength(6), Validators.pattern('^[a-z0-9]+$')],
           this.checkUsername.bind(this)),
         'password': new FormControl(null, [Validators.required,  Validators.minLength(6)])
       }),
       'churchName': new FormControl(null, Validators.required),
       'churchId': new FormControl(null,
-        [Validators.required, Validators.minLength(6), Validators.pattern('^[a-zA-Z0-9]+$')],
+        [Validators.required, Validators.minLength(6), Validators.pattern('^[a-z0-9]+$')],
         this.checkChurchId.bind(this)),
     });
   }
@@ -55,7 +55,7 @@ export class RegisterPage implements OnInit{
     this.membForm = new FormGroup({
       'name': new FormControl(null, Validators.required),
       'username': new FormControl(null,
-        [Validators.required, Validators.minLength(6), Validators.pattern('^[a-zA-Z0-9]+$')],
+        [Validators.required, Validators.minLength(6), Validators.pattern('^[a-z0-9]+$')],
         this.checkUsername.bind(this)),
       'churchId': new FormControl(null),
       'password': new FormControl(null, [Validators.required, Validators.minLength(6)])

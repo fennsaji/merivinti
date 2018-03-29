@@ -35,7 +35,7 @@ export class ChurchPage {
     noOfMembers: null,
     noOfPost: null
   };
-  prayerReq: IPrayerReq[];
+  prayerReq: IPrayerReq[] = [];
 
   constructor(
     public navCtrl: NavController,
@@ -61,6 +61,7 @@ export class ChurchPage {
       console.log(this.churchId);
     } else {
       console.log(this.churchId);
+      this.churchId = this.authSer.getChurchId();
       if (!this.churchId) this.noChurch = true;
       else this.noChurch = false;
       this.isMyChurch = true;
@@ -74,6 +75,7 @@ export class ChurchPage {
     if (this.isMyChurch) {
       console.log('12');
       this.churchId = this.authSer.getChurchId();
+      if (!this.churchId) this.noChurch = true;
     }
     console.log(this.churchId);
     if(this.authSer.isOnline()) {
@@ -83,12 +85,13 @@ export class ChurchPage {
           .getChurchProfile(this.churchId, this.isMyChurch)
           .subscribe(
             Pro => {
-              this.church = Pro.church;
-              this.prayerReq = Pro.prayerReq;
+              this.church = Pro.church?Pro.church:this.church;
+              this.prayerReq = Pro.prayerReq? Pro.prayerReq: [];
               console.log("doc", Pro);
-              this.isLoading = false;
               this.noChurch = false;
               if (refresher) refresher.complete();
+              this.isLoading = false;
+
             },
             err => {
               console.log("Something went wrong");
@@ -102,24 +105,30 @@ export class ChurchPage {
             if (refresher) refresher.complete();
           }
         );
+
       } else {
         this.isLoading = false;
         if (refresher) refresher.complete();
       }
+
     } else if(this.isMyChurch && this.churchId){
       this.loadFromStorage();
       toast = this.toastCtrl.create({
-        message: "No internet Connection",
+        message: "No Internet Connection",
         duration: 3000
       });
       toast.present();
-    } else {
+      if (refresher) refresher.complete();
       this.isLoading = false;
+
+    } else {
       toast = this.toastCtrl.create({
-        message: "No internet Connection",
+        message: "No Internet Connection",
         duration: 3000
       });
       toast.present();
+      this.isLoading = false;
+      if (refresher) refresher.complete();
     }
   }
 
@@ -128,10 +137,8 @@ export class ChurchPage {
         .getPrStorage()
         .then(Pro => {
           console.log('from storage', Pro)
-          this.church = Pro.church;
-          this.prayerReq = Pro.prayerReq;
-          this.isLoading = false;
-          this.isLoading = false;
+          this.church = Pro.church?Pro.church:this.church;
+          this.prayerReq = Pro.prayerReq? Pro.prayerReq: [];
           this.noChurch = false;
         })
         .catch(err => {});
@@ -345,8 +352,8 @@ export class ChurchPage {
     console.log(this.prayerReq[index]);
     var subject = "Prayer Request by " + this.prayerReq[index].username;
     var mssg = this.prayerReq[index].body;
-    var url = '';
+    var url = 'https://vinti-app.herokuapp.com/vinti.apk';
 
-    this.prayerSer.sharePr(mssg, subject, url);
+    this.prayerSer.sharePr(mssg, subject, url, this.prayerReq[index].proPic);
   }
 }

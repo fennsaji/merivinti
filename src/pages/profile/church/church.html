@@ -33,15 +33,15 @@
       </div>
         <ion-row>
           <ion-col>
-            <h6 text-center>{{church.noOfPost}}</h6>
+            <h4 text-center><b>{{church.noOfPost}}</b></h4>
             <h6 text-center>Posts</h6>
           </ion-col>
           <ion-col (tap)="gotoInfoLeaders()">
-            <h6 text-center>{{church.noOfLeaders}}</h6>
+            <h4 text-center><b>{{church.noOfLeaders}}</b></h4>
             <h6 text-center>Leaders</h6>
           </ion-col>
           <ion-col (tap)="gotoInfoPrayees()">
-            <h6 text-center>{{church.noOfMembers + church.noOfFollowers}}</h6>
+            <h4 text-center><b>{{church.noOfMembers + church.noOfFollowers}}</b></h4>
             <h6 text-center>Prayees</h6>
           </ion-col>
         </ion-row>
@@ -74,15 +74,15 @@
     </ion-item>
     <ion-item>
       <div padding-horizontal>
-        <h3>
-          {{church.churchName}}
-        </h3>
+        <h2>
+          <b>{{church.churchName}}</b>
+        </h2>
         <p>
           {{church.churchId}}
         </p>
       </div>
     </ion-item>
-
+    <hr>
 
     <ion-card *ngFor="let item of prayerReq; let i = index">
       <ion-item>
@@ -98,23 +98,38 @@
           <ion-icon name="more"></ion-icon>
         </button>
       </ion-item>
-      <ion-card-content>
+      <ion-card-content id="card-content">
         <h2>{{item.body}}</h2>
       </ion-card-content>
+      <ion-row no-padding>
+          <ion-col text-end>
+            <button ion-button clear small color="primary" icon-start (tap)="sharePrayerReq(i)">
+              <ion-icon class="share" name="share-alt"></ion-icon>
+              Share
+            </button>
+          </ion-col>
+        </ion-row>
     </ion-card>
   </ion-list>
+  <ion-list no-lines class="centeralize" *ngIf="prayerReq.length == 0 && !isLoading">
+      <ion-item>
+        <h2>No Prayer Requests was Found</h2>
+      </ion-item>
+    </ion-list>
+
   <ion-list class="centeralize" no-lines *ngIf="noChurch && !hasRequested() && !isLoading">
     <ion-item>
-      <h2>You are not a member of any church</h2>
+      <h2><b>You are not a member of any church</b></h2>
       <h3>Click below to search for your church</h3>
     </ion-item>
     <ion-item>
       <button ion-button block (tap)="searchMyChurch()">Search for Church</button>
     </ion-item>
   </ion-list>
+
   <ion-list no-lines class="centeralize" *ngIf="noChurch && hasRequested() && !isLoading">
       <ion-item>
-        <h2>Your request to {{ hasRequested() }} is pending</h2>
+        <h2><b>Your request to {{ hasRequested() }} is pending</b></h2>
         <h3>Click below to search for another church</h3>
       </ion-item>
       <ion-item>

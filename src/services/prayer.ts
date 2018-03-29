@@ -1,12 +1,12 @@
+import { ActionSheetController, Platform } from "ionic-angular";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { SocialSharing } from "@ionic-native/social-sharing"
 import { Injectable } from "@angular/core";
 import { IPrayerReq } from "../models/prayerReq.model";
 import { Storage } from "@ionic/storage";
 import { Observable } from "rxjs/Observable";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { AuthService } from "./auth";
 import "rxjs/add/operator/map";
-import { ActionSheetController, Platform } from "ionic-angular";
-import { SocialSharing } from "@ionic-native/social-sharing"
 
 @Injectable()
 export class PrayerService {
@@ -73,7 +73,7 @@ export class PrayerService {
     return prayers;
   }
 
-  sharePr(mssg, subject, url) {
+  sharePr(mssg, subject, url, proPic) {
     const options = this.actionSheet.create(
       {
         title: 'Prayer Request',
@@ -83,7 +83,7 @@ export class PrayerService {
             text: 'Whatsapp',
             icon: !this.platform.is('ios') ? 'logo-whatsapp' : null,
             handler: () => {
-              this.socialSharing.shareViaWhatsApp(mssg + ' : '+ subject, null, null)
+              this.socialSharing.shareViaWhatsApp(mssg + ' : '+ subject, proPic, url)
               .then(() => {
                 console.log('shared');
               })
@@ -97,7 +97,7 @@ export class PrayerService {
             icon: !this.platform.is('ios') ? 'logo-facebook' : null,
             handler: () => {
               console.log('Play clicked');
-              this.socialSharing.shareViaFacebook(mssg + ' : '+ subject, null, null)
+              this.socialSharing.shareViaFacebook(mssg + ' : '+ subject, proPic, url)
               .then(() => {
                 console.log('shared');
               })
@@ -111,7 +111,7 @@ export class PrayerService {
             text: 'Others',
             icon: !this.platform.is('ios') ? 'share' : null,
             handler: () => {
-              this.socialSharing.share(mssg, subject, null, null)
+              this.socialSharing.share(mssg, subject, proPic, url)
               .then(() => {
                 console.log('shared');
               })

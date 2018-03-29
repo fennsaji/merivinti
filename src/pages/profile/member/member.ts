@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { NavController, NavParams, IonicPage, ToastController, ActionSheetController, Platform } from "ionic-angular";
+import { NavController, NavParams, IonicPage, ToastController, ActionSheetController, Platform, ModalController } from "ionic-angular";
 import { AuthService } from "../../../services/auth";
 import { MemberService } from "../../../services/member";
 import { IPrayerReq } from "../../../models/prayerReq.model";
@@ -24,11 +24,12 @@ export class MemberPage {
     noOfPost: null,
     churchId: ""
   };
-  prayerReq: IPrayerReq[];
+  prayerReq: IPrayerReq[] = [];
 
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
+    public modalCtrl: ModalController,
     public platform: Platform,
     private prayerSer: PrayerService,
     private authSer: AuthService,
@@ -57,10 +58,10 @@ export class MemberPage {
     if(this.authSer.isOnline()) {
       this.membSer.getMembProfile(this.username, this.isMyProfile)
     .subscribe(doc => {
-      this.isLoading = false;
-      this.profile = doc.member;
-      this.prayerReq = doc.prayerReq;
+      this.profile = doc.member?doc.member:this.profile;
+      this.prayerReq = doc.prayerReq? doc.prayerReq: [];
       console.log('doc', this.profile);
+      this.isLoading = false;
       if(refresher)
         refresher.complete();
 
@@ -80,17 +81,23 @@ export class MemberPage {
     } else if(this.isMyProfile){
       this.loadFromStorage();
       toast = this.toastCtrl.create({
-        message: "No internet Connection",
+        message: "No Internet Connection",
         duration: 3000
       });
       toast.present();
+      this.isLoading = false;
+      if(refresher)
+      refresher.complete();
 
     } else {
       toast = this.toastCtrl.create({
-        message: "No internet Connection",
+        message: "No Internet Connection",
         duration: 3000
       });
       toast.present();
+      this.isLoading = false;
+      if(refresher)
+      refresher.complete();
     }
   }
 
@@ -99,8 +106,8 @@ export class MemberPage {
     .getPrStorage()
     .then(Pro => {
       console.log('proifil', Pro);
-      this.profile = Pro.member;
-      this.prayerReq = Pro.prayerReq;
+      this.profile = Pro.member?Pro.member:this.profile;
+      this.prayerReq = Pro.prayerReq? Pro.prayerReq: [];
     })
     .catch(err => {
       var toast = this.toastCtrl.create({
@@ -108,6 +115,19 @@ export class MemberPage {
         duration: 3000
       });
       toast.present();
+    });
+  }
+
+  createNewPrayer(): void {
+    // this.navCtrl.push('NewPrayerPage');
+    const modal = this.modalCtrl.create('NewPrayerPage');
+    modal.present();
+    modal.onDidDismiss((newPr) => {
+      console.log(newPr);
+      if(!newPr) {
+        return;
+      }
+      this.prayerReq.unshift(newPr);
     });
   }
 
@@ -274,8 +294,16 @@ export class MemberPage {
     console.log(this.prayerReq[index]);
     var subject = "Prayer Request by " + this.prayerReq[index].username;
     var mssg = this.prayerReq[index].body;
-    var url = '';
+    var url = 'https://vinti-app.herokuapp.com/vinti.apk';
 
-    this.prayerSer.sharePr(mssg, subject, url);
+    this.prayerSer.sharePr(mssg, subject, url, this.prayerReq[index].proPic);
+  }
+
+  goToChurch(churchId) {
+    if(churchId === this.authSer.getChurchId()) {
+      this.navCtrl.parent.select(3);
+    } else {
+      this.navCtrl.push('ChurchPage', {churchId});
+    }
   }
 }

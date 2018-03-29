@@ -18,6 +18,7 @@ export class MyApp implements OnInit{
               splashScreen: SplashScreen,
               private authser: AuthService) {
     platform.ready().then(() => {
+
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       this.authser.isAuthenticated().then(auth => {
@@ -36,6 +37,7 @@ export class MyApp implements OnInit{
       });
       statusBar.backgroundColorByHexString('#263238');
       statusBar.styleDefault();
+      statusBar.styleLightContent();
     });
   }
 

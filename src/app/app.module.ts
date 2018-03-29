@@ -11,6 +11,7 @@ import { Network } from "@ionic-native/network";
 import { Camera } from '@ionic-native/camera';
 import { AppUpdate } from '@ionic-native/app-update';
 import { LocalNotifications } from '@ionic-native/local-notifications';
+import { AppVersion } from '@ionic-native/app-version';
 
 import { AuthService } from '../services/auth';
 import { ChurchService } from '../services/church';
@@ -43,6 +44,7 @@ import { SocialSharing } from '@ionic-native/social-sharing';
     Network,
     AppUpdate,
     Camera,
+    AppVersion,
     LocalNotifications,
     AuthService,
     ChurchService,

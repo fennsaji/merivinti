@@ -13,6 +13,14 @@ page-activities {
     text-align: center;
   }
 
+  ion-avatar img {
+    object-fit: cover;
+  }
+
+  .date{
+    font-size: 10px;
+  }
+
   ion-fab {
     position: fixed;
     bottom: 54px;
