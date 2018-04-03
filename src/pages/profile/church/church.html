@@ -48,26 +48,31 @@
 
         <ion-row>
           <ion-col *ngIf="isMyChurch && isLeader">
-              <button ion-button outline small block  (tap)="goToEditProfile()">Edit Profile</button>
+              <button ion-button outline small block  [disabled]="isButtonDisabled" (tap)="goToEditProfile()">Edit Profile</button>
           </ion-col>
 
             <ion-col *ngIf="hasRequested() !== churchId && !isMyChurch">
-                <button ion-button small block *ngIf="!following(churchId) && !pendingFollowReq(churchId)"
+                <button ion-button small block [disabled]="isButtonDisabled"
+                  *ngIf="!following(churchId) && !pendingFollowReq(churchId)"
                   (tap)="followChurch()">Follow</button>
-                <button ion-button outline small block *ngIf="!following(churchId) && pendingFollowReq(churchId)"
+                <button ion-button outline small block [disabled]="isButtonDisabled"
+                  *ngIf="!following(churchId) && pendingFollowReq(churchId)"
                   (tap)="cancelfollow()">Follow Requested</button>
-                <button ion-button outline small block *ngIf="following(churchId)" (tap)="unfollow()">Unfollow</button>
+                <button ion-button outline small block [disabled]="isButtonDisabled"
+                  *ngIf="following(churchId)" (tap)="unfollow()">Unfollow</button>
             </ion-col>
 
             <ion-col *ngIf="!isMyChurch && !authSer.getChurchId() && !pendingFollowReq(churchId)">
-                <button ion-button small block *ngIf="!following(churchId) && hasRequested() !== churchId"
+                <button ion-button small block [disabled]="isButtonDisabled"
+                  *ngIf="!following(churchId) && hasRequested() !== churchId"
                   (tap)="sendMembReq()">Join</button>
-                <button ion-button outline small block *ngIf="!following(churchId) && hasRequested() === churchId"
+                <button ion-button outline small block [disabled]="isButtonDisabled"
+                  *ngIf="!following(churchId) && hasRequested() === churchId"
                   (tap)="cancelMembReq()">Member Requested</button>
             </ion-col>
 
               <ion-col *ngIf="isMyChurch && !isLeader">
-                <button ion-button outline small block (tap)="unmember()">Leave</button>
+                <button ion-button outline small block [disabled]="isButtonDisabled" (tap)="unmember()">Leave</button>
               </ion-col>
         </ion-row>
 

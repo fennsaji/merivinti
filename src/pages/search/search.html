@@ -42,13 +42,14 @@
             </ion-note>
             <div *ngIf="!isFriend(item.username)" item-end>
               <button
-                ion-button item-end color="secondary"
+                ion-button item-end color="secondary" [disabled]="isButtonDisabled"
                 *ngIf="!isPendingFriend(item.username) && !hasRequested(item.username)"
                 (tap)="addAsFriend(item.username)">
                 <ion-icon name="person-add" item-start></ion-icon>
                 &nbsp;Befriend
               </button>
               <button
+              [disabled]="isButtonDisabled"
                 *ngIf="isPendingFriend(item.username)"
                 (tap)="cancelFriendReq(item.username)"
                 ion-button item-end color="dark">
@@ -56,12 +57,14 @@
                 &nbsp;Requested
               </button>
               <button
+              [disabled]="isButtonDisabled"
                 no-margin ion-button item-end color="secondary"
                 *ngIf="hasRequested(item.username)"
                 (tap)="handlefriendReq(item.username, true)">
                 &nbsp;Accept
               </button>
               <button
+              [disabled]="isButtonDisabled"
                 no-margin ion-button item-end color="danger"
                 *ngIf="hasRequested(item.username)"
                 (tap)="handlefriendReq(item.username, false)">
@@ -92,6 +95,7 @@
           <div *ngIf="!following(item.churchId) && authSer.getChurchId()" item-end>
             <button
               ion-button
+              [disabled]="isButtonDisabled"
               item-end
               color="secondary"
               *ngIf="!pendingFollowReq(item.churchId)"
@@ -100,6 +104,7 @@
               &nbsp;Follow
             </button>
             <button
+            [disabled]="isButtonDisabled"
               *ngIf="pendingFollowReq(item.churchId)"
               (tap)="cancelfollow(item.churchId)"
               ion-button item-end color="dark">

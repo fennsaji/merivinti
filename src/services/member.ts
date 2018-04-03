@@ -66,11 +66,11 @@ export class MemberService {
         this.storage.set('myProfile', Pro);
         this.authSer.saveNewInfo(this.churchId, this.isLeader);
       }
-      Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, [{
-        name: this.name,
-        proPic: this.proPic,
-        username: this.username
-      }]);
+      // Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, [{
+      //   name: this.name,
+      //   proPic: this.proPic,
+      //   username: this.username
+      // }]);
       return Pro;
     });
   }

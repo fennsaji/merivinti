@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { IonicPage, Events } from 'ionic-angular';
 import { ChurchService } from '../../services/church';
 import { MemberService } from '../../services/member';
+import { Network } from '@ionic-native/network';
+
 @IonicPage()
 @Component({
   templateUrl: 'tabs.html'
@@ -19,6 +21,7 @@ export class TabsPage implements OnInit{
 
   constructor(private churchSer: ChurchService,
       private membSer: MemberService,
+      private network: Network,
       public events: Events) {}
 
   ngOnInit() {
@@ -39,6 +42,11 @@ export class TabsPage implements OnInit{
       this.newNotify = this.newChurchNotify + this.newProfileNotify;
     });
 
+    this.network.onConnect().subscribe(ev => {
+      this.churchSer.initialize();
+      this.membSer.initialize();
+    });
+    
     this.churchSer.initialize();
     this.membSer.initialize();
   }

@@ -14,6 +14,7 @@ export class SearchPage implements OnInit {
   People: Array<any>;
   isLoading: boolean;
   profile: string = "people";
+  isButtonDisabled = false;
 
   constructor(
     public navCtrl: NavController,
@@ -38,11 +39,13 @@ export class SearchPage implements OnInit {
   // Add spinner
   onSearch(ev: any, profile: string) {
     this.isLoading = true;
+    this.isButtonDisabled = true;
     let val = ev.target.value;
     console.log(val, profile);
     if (profile === "people" && val && val.trim() != "") {
       this.membSer.searchUsers(val).subscribe(
         data => {
+          this.isButtonDisabled = false;
           this.isLoading = false;
           if (data.length === 0) {
             var toast = this.toastCtrl.create({
@@ -55,6 +58,7 @@ export class SearchPage implements OnInit {
           this.People = data;
         },
         err => {
+          this.isButtonDisabled = false;
           this.isLoading = false;
           var toast = this.toastCtrl.create({
             message: "Unable to connect to server",
@@ -67,6 +71,7 @@ export class SearchPage implements OnInit {
     } else if (profile === "church" && val && val.trim() != "") {
       this.churchSer.searchChurch(val).subscribe(
         data => {
+          this.isButtonDisabled = false;
           this.isLoading = false;
           if (data.length === 0) {
             var toast = this.toastCtrl.create({
@@ -84,10 +89,14 @@ export class SearchPage implements OnInit {
             duration: 3000
           });
           toast.present();
+          this.isButtonDisabled = false;
           this.isLoading = false;
           console.log("Something went wrong");
         }
       );
+    } else {
+      this.isLoading = false;
+      this.isButtonDisabled = false;
     }
   }
 
@@ -106,13 +115,16 @@ export class SearchPage implements OnInit {
 
   // member
   addAsFriend(username: string) {
+    this.isButtonDisabled = true;
     console.log("added", username);
     this.membSer.addAsFriend(username).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
         // change icon
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "Could not connect to Server",
           duration: 3000
@@ -124,12 +136,15 @@ export class SearchPage implements OnInit {
   }
 
   cancelFriendReq(username: string) {
+    this.isButtonDisabled = true;
     this.membSer.cancelFriendReq(username).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
         // change icon
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "Could not connect to Server",
           duration: 3000
@@ -141,13 +156,16 @@ export class SearchPage implements OnInit {
   }
 
   handlefriendReq(username: string, approval: boolean) {
+    this.isButtonDisabled = true;
     console.log(approval, username);
     this.membSer.handleFriendReq(username, approval).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
         // change icon
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "Could not connect to Server",
           duration: 3000
@@ -172,12 +190,15 @@ export class SearchPage implements OnInit {
 
   // church
   followChurch(churchId: string) {
+    this.isButtonDisabled = true;
     this.churchSer.followChurch(churchId).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
         // change icon
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "Could not connect to Server",
           duration: 3000
@@ -189,12 +210,15 @@ export class SearchPage implements OnInit {
   }
 
   cancelfollow(churchId: string) {
+    this.isButtonDisabled = true;
     this.churchSer.cancelfollowReq(churchId).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
         // change icon
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "Could not connect to Server",
           duration: 3000

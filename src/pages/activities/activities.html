@@ -38,11 +38,13 @@
           <h2 (tap)="goToProfile('church', user.username)">{{ user.username }}</h2>
           <h3 *ngIf="user.desig == 'Follower'">wants to follow your church</h3>
           <h3 *ngIf="user.desig == 'Member'">want to be a member of your church</h3>
-          <button color="secondary" ion-button item-end icon-only padding-horizontal (tap)="handleReq(user.username, user.desig, true, i)">
+          <button [disabled]="isButtonDisabled" color="secondary" ion-button item-end icon-only padding-horizontal
+            (tap)="handleReq(user.username, user.desig, true, i)">
             <ion-icon name="checkmark" large>
             </ion-icon>
           </button>
-          <button color="danger" ion-button item-end padding-horizontal icon-only (tap)="handleReq(user.username,user.desig, false, i)">
+          <button [disabled]="isButtonDisabled" color="danger" ion-button item-end padding-horizontal icon-only
+            (tap)="handleReq(user.username,user.desig, false, i)">
             <ion-icon name="close" large>
             </ion-icon>
           </button>
@@ -56,11 +58,13 @@
           </ion-avatar>
           <h2 (tap)="goToProfile('church', user.username)">{{ user.username }}</h2>
           <h3>sent you friend Request</h3>
-          <button color="secondary" ion-button item-end icon-only padding-horizontal (tap)="handleFriendReq(user.username, true, i)">
+          <button [disabled]="isButtonDisabled" color="secondary" ion-button item-end icon-only padding-horizontal
+            (tap)="handleFriendReq(user.username, true, i)">
             <ion-icon name="checkmark" large>
             </ion-icon>
           </button>
-          <button color="danger" ion-button item-end padding-horizontal icon-only (tap)="handleFriendReq(user.username, false, i)">
+          <button [disabled]="isButtonDisabled" color="danger" ion-button item-end padding-horizontal icon-only
+            (tap)="handleFriendReq(user.username, false, i)">
             <ion-icon name="close" large>
             </ion-icon>
           </button>

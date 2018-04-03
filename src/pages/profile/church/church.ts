@@ -36,6 +36,7 @@ export class ChurchPage {
     noOfPost: null
   };
   prayerReq: IPrayerReq[] = [];
+  isButtonDisabled = false;
 
   constructor(
     public navCtrl: NavController,
@@ -56,7 +57,11 @@ export class ChurchPage {
 
     if (this.navParams.get("churchId")) {
       this.churchId = this.navParams.get("churchId");
-      this.isMyChurch = false;
+      if(this.churchId === this.authSer.getChurchId()) {
+        this.isMyChurch = true;
+      } else {
+        this.isMyChurch = false;
+      }
       this.noChurch = false;
       console.log(this.churchId);
     } else {
@@ -71,6 +76,7 @@ export class ChurchPage {
   }
 
   getProfile(refresher) {
+    this.isButtonDisabled = true;
     var toast;
     if (this.isMyChurch) {
       console.log('12');
@@ -91,9 +97,10 @@ export class ChurchPage {
               this.noChurch = false;
               if (refresher) refresher.complete();
               this.isLoading = false;
-
+              this.isButtonDisabled = false;
             },
             err => {
+              this.isButtonDisabled = false;
               console.log("Something went wrong");
               var toast = this.toastCtrl.create({
                 message: "Unable to connect to server",
@@ -107,12 +114,14 @@ export class ChurchPage {
         );
 
       } else {
+        this.isButtonDisabled = false;
         this.isLoading = false;
         if (refresher) refresher.complete();
       }
 
     } else if(this.isMyChurch && this.churchId){
       this.loadFromStorage();
+      this.isButtonDisabled = false;
       toast = this.toastCtrl.create({
         message: "No Internet Connection",
         duration: 3000
@@ -122,6 +131,7 @@ export class ChurchPage {
       this.isLoading = false;
 
     } else {
+      this.isButtonDisabled = false;
       toast = this.toastCtrl.create({
         message: "No Internet Connection",
         duration: 3000
@@ -168,12 +178,15 @@ export class ChurchPage {
 
   // church
   followChurch() {
+    this.isButtonDisabled = true;
     this.churchSer.followChurch(this.churchId).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
         // change icon
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "No internet Connection",
           duration: 3000
@@ -185,12 +198,15 @@ export class ChurchPage {
   }
 
   cancelfollow() {
+    this.isButtonDisabled = true;
     this.churchSer.cancelfollowReq(this.churchId).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
         // change icon
       },
       err => {
+        this.isButtonDisabled = false;
         console.log("Error");
         var toast = this.toastCtrl.create({
           message: "No internet Connection",
@@ -202,12 +218,15 @@ export class ChurchPage {
   }
 
   unfollow() {
+    this.isButtonDisabled = true;
     this.churchSer.unfollowChurch(this.churchId).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
         // change icon
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "No internet Connection",
           duration: 3000
@@ -232,11 +251,14 @@ export class ChurchPage {
 
   //Member
   sendMembReq() {
+    this.isButtonDisabled = true;
     this.churchSer.sendMembReq(this.churchId).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "No internet Connection",
           duration: 3000
@@ -248,11 +270,14 @@ export class ChurchPage {
   }
 
   cancelMembReq() {
+    this.isButtonDisabled = true;
     this.churchSer.cancelMembReq(this.churchId).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "No internet Connection",
           duration: 3000
@@ -264,11 +289,14 @@ export class ChurchPage {
   }
 
   unmember() {
+    this.isButtonDisabled = true;
     this.churchSer.unmember().subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "No internet Connection",
           duration: 3000

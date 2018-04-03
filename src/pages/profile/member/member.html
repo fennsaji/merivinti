@@ -47,15 +47,17 @@
         </ion-row>
         <ion-row>
           <ion-col>
-              <button ion-button outline small block *ngIf="isMyProfile" (tap)="onEditProfile()">Edit Profile</button>
+              <button ion-button outline small block [disabled]="isButtonDisabled"
+                *ngIf="isMyProfile" (tap)="onEditProfile()">Edit Profile</button>
               <div *ngIf="!isFriend(username) && !isMyProfile" item-end>
                 <button
-                  ion-button item-end small block color="secondary"
+                  ion-button item-end small block color="secondary" [disabled]="isButtonDisabled"
                   *ngIf="!isPendingFriend(username) && !hasRequested(username)"
                   (tap)="addAsFriend(username)">
                   Befriend
                 </button>
                 <button
+                [disabled]="isButtonDisabled"
                   *ngIf="isPendingFriend(username)"
                   (tap)="cancelFriendReq(username)"
                   ion-button item-end small block color="dark">
@@ -65,6 +67,7 @@
                 <ion-row>
                   <ion-col>
                       <button
+                      [disabled]="isButtonDisabled"
                       no-margin ion-button small block item-end color="secondary"
                       *ngIf="hasRequested(username)"
                       (tap)="handlefriendReq(username, true)">
@@ -73,6 +76,7 @@
                   </ion-col>
                   <ion-col>
                       <button
+                      [disabled]="isButtonDisabled"
                       no-margin ion-button small block item-end color="danger"
                       *ngIf="hasRequested(username)"
                       (tap)="handlefriendReq(username, false)">
@@ -82,6 +86,7 @@
                 </ion-row>
               </div>
               <button
+              [disabled]="isButtonDisabled"
                 ion-button block item-end small outline color="secondary"
                 *ngIf="isFriend(username)"
                 (tap)="unfriend(username)">

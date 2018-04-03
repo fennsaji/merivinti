@@ -55,16 +55,8 @@ export class SettingsPage {
   onUpdate() {
     if(this.authSer.ifonDevice()) {
       const updateUrl = this.authSer.globalUrl + 'update.xml';
-      this.appUpdate.checkAppUpdate(updateUrl).then(() => {
-        var toast = this.toastCtrl.create({
-          message: "Update Available",
-          duration: 3000
-        });
-        toast.present();
-        console.log('Update available')
-      });
+      this.appUpdate.checkAppUpdate(updateUrl).then(() => {});
     }
-
   }
 
   onToggleNotify() {

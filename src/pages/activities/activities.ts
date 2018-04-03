@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth';
   templateUrl: 'activities.html',
 })
 export class ActivitiesPage {
+  isButtonDisabled = false;
   event: string = 'notification';
   myChurchProPic: string;
   requests: any[] = [];
@@ -88,15 +89,18 @@ export class ActivitiesPage {
   }
 
   handleFriendReq(username: string, approval: boolean, i: number) {
+    this.isButtonDisabled = true;
     this.membSer.handleFriendReq(username, approval)
       .subscribe(doc => {
         console.log('success');
         this.requests.splice(i, 1);
+        this.isButtonDisabled = false;
         if(!this.requests)
         this.noFrR = true;
       },  err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
-          message: "Could Not connect to Server",
+          message: "Could'nt connect to Server",
           duration: 3000
         });
         toast.present();
@@ -105,15 +109,18 @@ export class ActivitiesPage {
   }
 
   handleReq(username: string, desig: string, approval: boolean, i: number) {
+    this.isButtonDisabled = true;
     if(desig == 'Follower') {
       this.churchSer.handlefollowReq(username, approval)
       .subscribe(doc => {
         console.log('success');
         this.followReq.splice(i, 1);
+        this.isButtonDisabled = false;
         if(!this.followReq)
           this.noFoR = true;
         // change icon
       },  err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "Could Not connect to Server",
           duration: 3000
@@ -126,10 +133,12 @@ export class ActivitiesPage {
       .subscribe(doc => {
         console.log('success');
         this.followReq.splice(i, 1);
+        this.isButtonDisabled = false;
         if(!this.followReq)
           this.noFoR = true;
         // change icon
       },  err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "Could Not connect to Server",
           duration: 3000

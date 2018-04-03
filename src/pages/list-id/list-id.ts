@@ -311,8 +311,12 @@ export class ListIdPage {
     );
   }
 
-  goToProfile(username: string) {
-    this.navCtrl.push("MemberPage", { username });
+  goToProfile(id: string) {
+    if(this.type === 'Following') {
+      this.navCtrl.push("ChurchPage", { churchId: id });
+    } else {
+      this.navCtrl.push("MemberPage", { username: id });
+    }
   }
 
   notMe(username: string) {

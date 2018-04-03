@@ -11,7 +11,7 @@ import { MemberService } from '../../../services/member';
   templateUrl: 'new-prayer.html',
 })
 export class NewPrayerPage {
-  default = 'church';
+  default = 'followers';
   isLoading: boolean;
 
   constructor(public navCtrl: NavController,

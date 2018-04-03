@@ -14,6 +14,7 @@ export class MemberPage {
   isMyProfile: boolean;
   isLoading: boolean;
   username: string;
+  isButtonDisabled = false;
 
   profile = {
     name: "",
@@ -32,7 +33,7 @@ export class MemberPage {
     public modalCtrl: ModalController,
     public platform: Platform,
     private prayerSer: PrayerService,
-    private authSer: AuthService,
+    public authSer: AuthService,
     private membSer: MemberService,
     public toastCtrl: ToastController,
     public actionSheet: ActionSheetController,
@@ -43,7 +44,11 @@ export class MemberPage {
     console.log('enter');
     if(this.navParams.get('username')) {
       this.username = this.navParams.get('username');
-      this.isMyProfile = false;
+      if(this.username === this.authSer.getUsername()) {
+        this.isMyProfile = true;
+      } else {
+        this.isMyProfile = false;
+      }
       console.log(this.username, this.isMyProfile);
     } else {
       this.username = this.authSer.getUsername();
@@ -54,10 +59,12 @@ export class MemberPage {
 
   getProfile(refresher) {
     var toast;
+    this.isButtonDisabled = true;
 
     if(this.authSer.isOnline()) {
       this.membSer.getMembProfile(this.username, this.isMyProfile)
     .subscribe(doc => {
+      this.isButtonDisabled = false;
       this.profile = doc.member?doc.member:this.profile;
       this.prayerReq = doc.prayerReq? doc.prayerReq: [];
       console.log('doc', this.profile);
@@ -66,6 +73,7 @@ export class MemberPage {
         refresher.complete();
 
     }, err => {
+      this.isButtonDisabled = false;
       console.log('Something went wrong');
       var toast = this.toastCtrl.create({
         message: "Unable to connect to server",
@@ -80,6 +88,7 @@ export class MemberPage {
 
     } else if(this.isMyProfile){
       this.loadFromStorage();
+      this.isButtonDisabled = false;
       toast = this.toastCtrl.create({
         message: "No Internet Connection",
         duration: 3000
@@ -90,6 +99,7 @@ export class MemberPage {
       refresher.complete();
 
     } else {
+      this.isButtonDisabled = false;
       toast = this.toastCtrl.create({
         message: "No Internet Connection",
         duration: 3000
@@ -148,13 +158,16 @@ export class MemberPage {
   }
 
   addAsFriend(username: string) {
+    this.isButtonDisabled = true;
     console.log("added", username);
     this.membSer.addAsFriend(username).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
         // change icon
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "No internet Connection",
           duration: 3000
@@ -166,12 +179,15 @@ export class MemberPage {
   }
 
   cancelFriendReq(username: string) {
+    this.isButtonDisabled = true;
     this.membSer.cancelFriendReq(username).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
         // change icon
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "No internet Connection",
           duration: 3000
@@ -183,13 +199,16 @@ export class MemberPage {
   }
 
   handlefriendReq(username: string, approval: boolean) {
+    this.isButtonDisabled = true;
     console.log(approval, username);
     this.membSer.handleFriendReq(username, approval).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
         // change icon
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "No internet Connection",
           duration: 3000
@@ -201,12 +220,15 @@ export class MemberPage {
   }
 
   unfriend(username: string) {
+    this.isButtonDisabled = true;
     this.membSer.unfriend(username).subscribe(
       doc => {
+        this.isButtonDisabled = false;
         console.log("success");
         // change icon
       },
       err => {
+        this.isButtonDisabled = false;
         var toast = this.toastCtrl.create({
           message: "No internet Connection",
           duration: 3000

@@ -13,7 +13,7 @@ import { LocalNotifications } from "@ionic-native/local-notifications";
 @Injectable()
 export class AuthService {
   public globalUrl: string = 'https://vinti-app.herokuapp.com/';
-  // public globalUrl: string = 'http://192.168.1.37:8080/';
+  // public globalUrl: string = 'http://192.168.1.35:8080/';
   url: string = this.globalUrl + 'auth';
   myInfo: {
     token: string,
@@ -46,8 +46,8 @@ export class AuthService {
         isLeader: data.desig === 'Leader' ? true: false
       };
       if(this.onDevice)
-      this.scheduleNotification();
       this.saveData(this.myInfo);
+      this.scheduleNotification();
       return data.memb;
     });
   }
@@ -87,7 +87,7 @@ export class AuthService {
 
   scheduleNotification() {
     var date = new Date()
-    date.setDate(date.getDate()+1);
+    date.setDate(date.getDate());
     date.setHours(20);
     date.setMinutes(0);
     date.setSeconds(0);
@@ -104,7 +104,9 @@ export class AuthService {
         this.storage.set('settings', {notify: true});
         this.settings.notify = true;
       })
-    }).catch();
+    }).catch(err => {
+      this.storage.set('settings', {notify: false});
+    });
   }
 
   unscheduleNotification() {
@@ -125,7 +127,7 @@ export class AuthService {
   }
 
   isNotifyEnabled() {
-    return this.settings.notify;
+    return this.settings?this.settings.notify:false;
   }
 
   isAuthenticated(): Promise<boolean> {

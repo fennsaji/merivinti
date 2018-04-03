@@ -80,7 +80,7 @@ export class ChurchService {
             this.storage.set('myChurch', Pro);
             console.log('saved');
         }
-        Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, Pro.basicInfo);
+        Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, Pro.basicInfo).reverse();
         return Pro;
       });
   }
