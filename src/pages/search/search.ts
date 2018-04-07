@@ -27,6 +27,9 @@ export class SearchPage implements OnInit {
 
   ngOnInit() {
     this.profile = this.navParams.get("profile");
+    this.membSer.getbasicinfo().subscribe();
+    if(this.authSer.isLeader())
+    this.churchSer.getbasicinfo().subscribe();
     if(!this.authSer.isOnline()) {
       var toast = this.toastCtrl.create({
         message: "No Internet Connection!!",

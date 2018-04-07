@@ -51,7 +51,7 @@
                 *ngIf="isMyProfile" (tap)="onEditProfile()">Edit Profile</button>
               <div *ngIf="!isFriend(username) && !isMyProfile" item-end>
                 <button
-                  ion-button item-end small block color="secondary" [disabled]="isButtonDisabled"
+                  ion-button item-end small block [disabled]="isButtonDisabled"
                   *ngIf="!isPendingFriend(username) && !hasRequested(username)"
                   (tap)="addAsFriend(username)">
                   Befriend

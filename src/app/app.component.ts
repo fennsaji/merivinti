@@ -35,7 +35,7 @@ export class MyApp implements OnInit{
         this.navCtrl.setRoot('HomePage');
         splashScreen.hide();
       });
-      statusBar.backgroundColorByHexString('#263238');
+      statusBar.backgroundColorByHexString('#0e2a38');
       statusBar.styleDefault();
       statusBar.styleLightContent();
     });

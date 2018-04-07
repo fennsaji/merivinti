@@ -5,10 +5,11 @@ import { Storage } from "@ionic/storage";
 import { AuthService } from "./auth";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/do";
+import "rxjs/add/operator/mergeMap";
 import "rxjs/Rx";
 import "rxjs/add/observable/of";
 import { Events } from "ionic-angular";
-import { PrayerService } from "./prayer";
+// import { PrayerService } from "./prayer";
 
 @Injectable()
 export class MemberService {
@@ -37,7 +38,6 @@ export class MemberService {
   constructor(private authSer: AuthService,
     private http: HttpClient,
     public events: Events,
-    private prayerSer: PrayerService,
     private storage: Storage) {}
 
   initialize() {
@@ -50,7 +50,7 @@ export class MemberService {
     }
     this.url = this.authSer.globalUrl + 'member/';
     this.username = this.authSer.getUsername();
-    this.getbasicinfo();
+    this.getbasicinfo().subscribe();
     this.getNotifications();
     console.log('initiated member');
   }
@@ -65,6 +65,7 @@ export class MemberService {
         console.log('saved1234');
         this.storage.set('myProfile', Pro);
         this.authSer.saveNewInfo(this.churchId, this.isLeader);
+        this.getbasicinfo().subscribe();
       }
       // Pro.prayerReq = this.prayerSer.mapInfoPr(Pro.prayerReq, [{
       //   name: this.name,
@@ -93,8 +94,8 @@ export class MemberService {
   }
 
   getbasicinfo() {
-    this.http.get<any>(this.url + 'getbasicinfo', this.httpOptions)
-      .subscribe(res => {
+    return this.http.get<any>(this.url + 'getbasicinfo', this.httpOptions)
+      .map(res => {
         console.log('list', res);
         this.name = res.list.name;
         this.proPic = res.list.proPic;
@@ -127,6 +128,7 @@ export class MemberService {
         console.log('mapped', this.notifications);
         this.notify.emit(this.notifications);
         this.storage.set('userEvents', {notifications: this.notifications});
+        this.getbasicinfo().subscribe();
       }, err => {
         console.log('Errorr1');
         this.notificationFromStorage();
@@ -203,7 +205,7 @@ export class MemberService {
   searchUsers(search: string) {
     return this.http.post<any>(this.url + 'search', {search}, this.httpOptions)
      .map(data => {
-       this.getbasicinfo();
+       this.getbasicinfo().subscribe();
        return data.users
       });
   }
@@ -241,34 +243,75 @@ export class MemberService {
 
   addAsFriend(username: string) {
     return this.http.post<any>(this.url + 'sendfriendReq', {username}, this.httpOptions)
-      .do(doc => {
-        this.getbasicinfo();
-        return doc;
+      .flatMap(doc => {
+        return this.getbasicinfo()
+          .map(doc => {
+            console.log('called');
+            return doc;
+          }, err => {
+            return doc;
+          });
+        // console.log('add fr', this.pendingReq);
+        // this.pendingReq.push({username});
+        // return doc;
       });
   }
 
   handleFriendReq(username: string, approval: boolean) {
+    // var ind = this.requests.indexOf(username);
     console.log(username, approval);
     return this.http.post<any>(this.url + 'handleFriendReq', {username, approval}, this.httpOptions)
-      .do(doc => {
-        this.getbasicinfo();
-        return doc;
+      .flatMap(doc => {
+        return this.getbasicinfo()
+          .map(doc => {
+            console.log('called');
+            return doc;
+          }, err => {
+            return doc;
+          });
+        // if(approval) {
+        //   this.requests.slice(ind, 1);
+        //   this.friends.push(username);
+        //   console.log('accpt', this.requests, this.friends, ind);
+        // } else {
+        //   this.requests.slice(ind, 1);
+        //   console.log('rej', this.requests, ind);
+        // }
+        // return doc;
       });
   }
 
   cancelFriendReq(username: string) {
+    // var ind = this.pendingReq.findIndex(obj => obj.username  === username);
     return this.http.post<any>(this.url + 'cancelFriendReq', {username}, this.httpOptions)
-      .do(doc => {
-        this.getbasicinfo();
-        return doc;
+      .flatMap(doc => {
+        return this.getbasicinfo()
+          .map(doc => {
+            console.log('called');
+            return doc;
+          }, err => {
+            return doc;
+        });
+        // this.pendingReq.slice(ind, 1);
+        // console.log('cancel', this.pendingReq, ind);
+        // return doc;
       });
   }
 
   unfriend(username: string) {
+    // var ind = this.friends.indexOf(username);
     return this.http.post<any>(this.url + 'unfriend', {username}, this.httpOptions)
-      .do(doc => {
-        this.getbasicinfo();
-        return doc;
+      .flatMap(doc => {
+        return this.getbasicinfo()
+          .map(doc => {
+            console.log('called');
+            return doc;
+          }, err => {
+            return doc;
+          });
+        // this.friends.slice(ind, 1);
+        // console.log('unfr', this.friends, ind);
+        // return doc;
       });
   }
 

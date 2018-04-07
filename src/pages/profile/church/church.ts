@@ -108,8 +108,8 @@ export class ChurchPage {
               });
               toast.present();
               this.loadFromStorage();
-            this.isLoading = false;
-            if (refresher) refresher.complete();
+              this.isLoading = false;
+              if (refresher) refresher.complete();
           }
         );
 

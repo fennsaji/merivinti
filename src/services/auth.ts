@@ -13,7 +13,7 @@ import { LocalNotifications } from "@ionic-native/local-notifications";
 @Injectable()
 export class AuthService {
   public globalUrl: string = 'https://vinti-app.herokuapp.com/';
-  // public globalUrl: string = 'http://192.168.1.35:8080/';
+  // public globalUrl: string = 'http://192.168.1.38:8080/';
   url: string = this.globalUrl + 'auth';
   myInfo: {
     token: string,
@@ -22,8 +22,8 @@ export class AuthService {
     isLeader: boolean
   };
   onDevice: boolean;
-  settings: {
-    notify: boolean
+  settings = {
+    notify : false
   }
 
   constructor(private http: HttpClient,
@@ -87,7 +87,7 @@ export class AuthService {
 
   scheduleNotification() {
     var date = new Date()
-    date.setDate(date.getDate());
+    date.setDate(date.getDate()+1);
     date.setHours(20);
     date.setMinutes(0);
     date.setSeconds(0);
