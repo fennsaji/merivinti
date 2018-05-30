@@ -14,14 +14,14 @@
   <ion-list>
     <!-- <ion-title *ngIf="lists == undefined || lists2 == undefined">Members</ion-title> -->
     <ion-item *ngFor="let item of lists; let i = index">
-      <ion-avatar item-start (tap)="goToProfile(item.username)">
+      <ion-avatar item-start (tap)="goToProfile(item.username, item.churchId)">
         <!-- <img [src]="url + item.username + '.jpg'"> -->
         <img [src]="item.proPic | safeHtml">
       </ion-avatar>
-      <h2 (tap)="goToProfile(item.username)">
+      <h2 (tap)="goToProfile(item.username, item.churchId)">
         {{item.name || item.churchName}}
       </h2>
-      <ion-note (tap)="goToProfile(item.username)">
+      <ion-note (tap)="goToProfile(item.username, item.churchId)">
         {{item.username || item.churchId}}
       </ion-note>
       <button ion-button item-end color="secondary" *ngIf="isMyChurchAndLeader && notMe(item.username) && type!=='Leaders'"

@@ -59,8 +59,10 @@ export class ChurchPage {
       this.churchId = this.navParams.get("churchId");
       if(this.churchId === this.authSer.getChurchId()) {
         this.isMyChurch = true;
+        console.log('its your church');
       } else {
         this.isMyChurch = false;
+        console.log('its not your church');
       }
       this.noChurch = false;
       console.log(this.churchId);

@@ -46,7 +46,7 @@ export class TabsPage implements OnInit{
       this.churchSer.initialize();
       this.membSer.initialize();
     });
-    
+
     this.churchSer.initialize();
     this.membSer.initialize();
   }

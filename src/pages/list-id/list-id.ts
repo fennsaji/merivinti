@@ -311,11 +311,11 @@ export class ListIdPage {
     );
   }
 
-  goToProfile(id: string) {
+  goToProfile(username: string, churchId: string) {
     if(this.type === 'Following') {
-      this.navCtrl.push("ChurchPage", { churchId: id });
+      this.navCtrl.push("ChurchPage", { churchId });
     } else {
-      this.navCtrl.push("MemberPage", { username: id });
+      this.navCtrl.push("MemberPage", { username });
     }
   }
 

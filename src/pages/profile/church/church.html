@@ -119,7 +119,7 @@
       </ion-item>
     </ion-list>
 
-  <ion-list class="centeralize" no-lines *ngIf="noChurch && !hasRequested() && !isLoading">
+  <ion-list class="centeralize" no-lines *ngIf="isMyChurch && noChurch && !hasRequested() && !isLoading">
     <ion-item>
       <h2><b>You are not a member of any church</b></h2>
       <h3>Click below to search for your church</h3>
@@ -129,7 +129,7 @@
     </ion-item>
   </ion-list>
 
-  <ion-list no-lines class="centeralize" *ngIf="noChurch && hasRequested() && !isLoading">
+  <ion-list no-lines class="centeralize" *ngIf="isMyChurch && noChurch && hasRequested() && !isLoading">
       <ion-item>
         <h2><b>Your request to {{ hasRequested() }} is pending</b></h2>
         <h3>Click below to search for another church</h3>

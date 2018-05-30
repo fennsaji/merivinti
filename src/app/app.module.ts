@@ -12,13 +12,14 @@ import { Camera } from '@ionic-native/camera';
 import { AppUpdate } from '@ionic-native/app-update';
 import { LocalNotifications } from '@ionic-native/local-notifications';
 import { AppVersion } from '@ionic-native/app-version';
+import { FCM } from '@ionic-native/fcm';
 
 import { AuthService } from '../services/auth';
 import { ChurchService } from '../services/church';
 import { MemberService } from '../services/member';
 import { PrayerService } from '../services/prayer';
 import { SocialSharing } from '@ionic-native/social-sharing';
-// import { ActivitiesService } from '../services/activities';
+import { ActivitiesService } from '../services/activities';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { SocialSharing } from '@ionic-native/social-sharing';
     ChurchService,
     MemberService,
     PrayerService,
-    // ActivitiesService,
+    FCM,
+    ActivitiesService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

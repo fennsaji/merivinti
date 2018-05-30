@@ -1,63 +1,122 @@
-// import { Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 // import { Platform, ActionSheetController } from "ionic-angular";
 // import { PrayerService } from "./prayer";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { AuthService } from "./auth";
+import { FCM } from '@ionic-native/fcm';
 
-// @Injectable()
-// export class ActivitiesService {
-//   constructor(public platform: Platform,
-//     public actionSheet: ActionSheetController,
-//     private prayerSer: PrayerService) {}
+@Injectable()
+export class ActivitiesService {
+  token;
+  url;
 
-//   loadPrayerOptions() {
-//     const options = this.actionSheet.create(
-//       {
-//         title: 'Prayer Request',
-//         cssClass: 'action-sheets-basic-page',
-//         buttons: [
-//           {
-//             text: 'Delete',
-//             role: 'destructive',
-//             icon: !this.platform.is('ios') ? 'trash' : null,
-//             handler: () => {
-//               console.log('Delete clicked');
-//               this.prayerSer.deletePr(prayerId)
-//                 .subscribe(doc => {
-//                   this.prayerReq.splice(index, 1);
-//                 })
-//             }
-//           },
-//           {
-//             text: 'Share',
-//             icon: !this.platform.is('ios') ? 'share' : null,
-//             handler: () => {
-//               // this.sharePrayerReq(index);
-//             }
-//           },
-//           {
-//             text: 'Edit',
-//             icon: !this.platform.is('ios') ? 'hammer' : null,
-//             handler: () => {
-//               console.log('Play clicked');
-//             }
-//           },
-//           {
-//             text: 'Report',
-//             icon: !this.platform.is('ios') ? 'alert' : null,
-//             handler: () => {
-//               console.log('Play clicked');
-//             }
-//           },
-//           {
-//             text: 'Cancel',
-//             role: 'cancel', // will always sort to be on the bottom
-//             icon: !this.platform.is('ios') ? 'close' : null,
-//             handler: () => {
-//               console.log('Cancel clicked');
-//             }
-//           }
-//         ]
-//       }
-//     );
-//     options.present();
-//   }
-// }
+  constructor(private http: HttpClient,
+    private authSer: AuthService,
+    private fcm: FCM,
+    // public platform: Platform,
+    // public actionSheet: ActionSheetController,
+    // private prayerSer: PrayerService
+  ) {}
+
+  initialize() {
+    this.token = this.authSer.getToken();
+    this.url = this.authSer.globalUrl;
+    var churchId = this.authSer.getChurchId();
+
+    this.fcm.subscribeToTopic(churchId);
+
+    this.fcm.subscribeToTopic('All');
+
+    this.fcm.getToken().then(token => {
+      let httpOptions = {
+        headers : new HttpHeaders({
+          'x-auth': this.token
+        })
+      }
+      this.http.post(this.url + '/notify/regtoken', {regToken: token}, httpOptions);
+    });
+
+
+    this.fcm.onNotification().subscribe(data => {
+      alert('message received')
+      if(data.wasTapped) {
+        console.info("Received in background");
+      } else {
+        console.info("Received in foreground");
+      };
+    });
+
+
+    this.fcm.onTokenRefresh().subscribe(token => {
+      let httpOptions = {
+        headers : new HttpHeaders({
+          'x-auth': this.token
+        })
+      }
+      this.http.post(this.url + '/notify/regtoken', {regToken: token}, httpOptions);
+    });
+
+  }
+
+    sendNotificationChurch() {
+      let httpOptions = {
+        headers : new HttpHeaders({
+          'x-auth': this.token
+        })
+      }
+      return this.http.post<any>(this.url + "notify/sendNotifyChurch", httpOptions)
+    }
+
+  // loadPrayerOptions() {
+  //   const options = this.actionSheet.create(
+  //     {
+  //       title: 'Prayer Request',
+  //       cssClass: 'action-sheets-basic-page',
+  //       buttons: [
+  //         {
+  //           text: 'Delete',
+  //           role: 'destructive',
+  //           icon: !this.platform.is('ios') ? 'trash' : null,
+  //           handler: () => {
+  //             console.log('Delete clicked');
+  //             this.prayerSer.deletePr(prayerId)
+  //               .subscribe(doc => {
+  //                 this.prayerReq.splice(index, 1);
+  //               })
+  //           }
+  //         },
+  //         {
+  //           text: 'Share',
+  //           icon: !this.platform.is('ios') ? 'share' : null,
+  //           handler: () => {
+  //             // this.sharePrayerReq(index);
+  //           }
+  //         },
+  //         {
+  //           text: 'Edit',
+  //           icon: !this.platform.is('ios') ? 'hammer' : null,
+  //           handler: () => {
+  //             console.log('Play clicked');
+  //           }
+  //         },
+  //         {
+  //           text: 'Report',
+  //           icon: !this.platform.is('ios') ? 'alert' : null,
+  //           handler: () => {
+  //             console.log('Play clicked');
+  //           }
+  //         },
+  //         {
+  //           text: 'Cancel',
+  //           role: 'cancel', // will always sort to be on the bottom
+  //           icon: !this.platform.is('ios') ? 'close' : null,
+  //           handler: () => {
+  //             console.log('Cancel clicked');
+  //           }
+  //         }
+  //       ]
+  //     }
+  //   );
+  //   options.present();
+  // }
+}

@@ -4,6 +4,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { AuthService } from '../services/auth';
+import { ActivitiesService } from '../services/activities';
 
 
 @Component({
@@ -16,7 +17,9 @@ export class MyApp implements OnInit{
   constructor(platform: Platform,
               statusBar: StatusBar,
               splashScreen: SplashScreen,
-              private authser: AuthService) {
+              private actSer: ActivitiesService,
+              private authser: AuthService
+            ) {
     platform.ready().then(() => {
 
       // Okay, so the platform is ready and our plugins are available.
@@ -25,6 +28,7 @@ export class MyApp implements OnInit{
         console.log(auth);
         if(auth) {
           this.navCtrl.setRoot('TabsPage');
+          this.actSer.initialize();
           splashScreen.hide();
         } else {
           this.navCtrl.setRoot('HomePage');

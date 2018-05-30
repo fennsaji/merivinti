@@ -64,7 +64,7 @@ export class ChurchService {
           this.newNotifications = res.list.newNotifications;
           console.log('1233', this.newNotifications);
           this.events.publish('churchNotify:updated', this.newNotifications);
-          this.followReq.emit(this.requests);
+          // this.followReq.emit(this.requests);
           return Promise.resolve();
         }, err => {
           console.log('Errorr');

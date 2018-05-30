@@ -105,9 +105,10 @@ export class MemberService {
         this.isLeader = res.list.isLeader;
         this.churchId = res.list.churchId;
         this.requests = res.list.requests;
+        // this.requests = this.mapRequests(res.list.requests, res.basicInfo);
         this.following = res.list.following;
         this.newNotifications = res.list.newNotifications;
-        this.friendReq.emit(this.requests);
+        // this.friendReq.emit(this.requests);
         this.authSer.saveNewInfo(this.churchId, this.isLeader);
         this.events.publish('profileNotify:updated', this.newNotifications);
         console.log('New Not', this.newNotifications)
@@ -247,6 +248,7 @@ export class MemberService {
         return this.getbasicinfo()
           .map(doc => {
             console.log('called');
+            this.getbasicinfo().subscribe();
             return doc;
           }, err => {
             return doc;
@@ -265,6 +267,7 @@ export class MemberService {
         return this.getbasicinfo()
           .map(doc => {
             console.log('called');
+            this.getbasicinfo().subscribe();
             return doc;
           }, err => {
             return doc;
@@ -288,6 +291,7 @@ export class MemberService {
         return this.getbasicinfo()
           .map(doc => {
             console.log('called');
+            this.getbasicinfo().subscribe();
             return doc;
           }, err => {
             return doc;
@@ -305,6 +309,7 @@ export class MemberService {
         return this.getbasicinfo()
           .map(doc => {
             console.log('called');
+            this.getbasicinfo().subscribe();
             return doc;
           }, err => {
             return doc;

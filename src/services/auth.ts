@@ -173,11 +173,11 @@ export class AuthService {
         'x-auth': this.myInfo.token
       })
     }
-    if(this.onDevice)
     if(this.myInfo.isLeader) {
       return this.http.delete(this.url + '/logoutLead', httpOptions)
       .map(doc => {
         this.removeData();
+        if(this.onDevice)
         this.unscheduleNotification();
         return doc;
       });
@@ -185,6 +185,7 @@ export class AuthService {
       return this.http.delete(this.url + '/logoutMemb', httpOptions)
       .map(doc => {
         this.removeData();
+        if(this.onDevice)
         this.unscheduleNotification();
         return doc;
       });
