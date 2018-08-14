@@ -1,17 +1,7 @@
 <ion-header>
 
   <ion-navbar color="navbar">
-    <ion-buttons *ngIf="isMyProfile" left (tap)="search()">
-      <button ion-button icon-only>
-        <ion-icon name="person-add"></ion-icon>
-      </button>
-    </ion-buttons>
     <ion-title text-center>{{ username }}</ion-title>
-    <ion-buttons right *ngIf="isMyProfile">
-      <button ion-button icon-only (tap)="goToOptions()">
-        <ion-icon name="options"></ion-icon>
-      </button>
-    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
@@ -116,7 +106,7 @@
           <button ion-button block (tap)="createNewPrayer()">Add</button>
         </ion-item>
       </ion-list>
-    <ion-card *ngFor="let item of prayerReq; let i = index">
+    <ion-card padding-bottom *ngFor="let item of prayerReq; let i = index">
       <ion-item>
         <ion-avatar item-start>
           <img [src]="profile.proPic | safeHtml">
@@ -131,14 +121,14 @@
       <ion-card-content id="card-content">
         <h2>{{item.body}}</h2>
       </ion-card-content>
-      <ion-row no-padding>
+      <!-- <ion-row no-padding>
           <ion-col text-end>
             <button ion-button clear small color="primary" icon-start (tap)="sharePrayerReq(i)">
               <ion-icon class="share" name="share-alt"></ion-icon>
               Share
             </button>
           </ion-col>
-        </ion-row>
+        </ion-row> -->
     </ion-card>
   </ion-list>
 </ion-content>

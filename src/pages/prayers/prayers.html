@@ -21,22 +21,25 @@
   </div>
 
   <div>
-      <ion-list no-lines class="centeralize" *ngIf="prayerReq.length == 0 && !isLoading">
-          <ion-item>
-            <h2><b>No Prayer Requests was Found</b></h2>
-            <h3>Follow Churches or add Friends</h3>
-          </ion-item>
-          <ion-item>
-            <button ion-button block (tap)="search()">Search</button>
-          </ion-item>
-        </ion-list>
-    <ion-card *ngFor="let item of prayerReq; let i = index" color="card">
+    <ion-list no-lines class="centeralize" *ngIf="prayerReq.length == 0 && !isLoading">
+      <ion-item>
+        <h2>
+          <b>No Prayer Requests was Found</b>
+        </h2>
+        <h3>Follow Churches or add Friends</h3>
+      </ion-item>
+      <ion-item>
+        <button ion-button block (tap)="search()">Search</button>
+      </ion-item>
+    </ion-list>
+
+    <ion-card padding-bottom *ngFor="let item of prayerReq; let i = index" color="card">
       <ion-item color="card">
         <ion-avatar item-start (tap)="goToProfile(item.username)">
-          <!-- <img [src]="url + item.username + '.jpg'"> -->
           <img [src]="item.proPic | safeHtml">
         </ion-avatar>
-        <h3 (tap)="goToProfile(item.username)">{{item.name}}</h3>
+        <h3 class="inline" (tap)="goToProfile(item.username)">{{item.name}}</h3> 
+        <h3 class="inline" (tap)="goToChurchPro(item.churchId)" *ngIf="item.churchId"> | {{item.churchId}}</h3>
         <p class="date">{{ item.date | timeAgo}}</p>
         <button ion-button icon-only item-end clear *ngIf="item.username === username" (tap)="loadPrayerOptions(item._id, i)">
           <ion-icon name="more"></ion-icon>
@@ -45,14 +48,14 @@
       <ion-card-content id="card-content">
         <h2>{{item.body}}</h2>
       </ion-card-content>
-      <ion-row no-padding>
+      <!-- <ion-row no-padding>
         <ion-col text-end>
           <button ion-button clear small color="primary" icon-start (tap)="sharePrayerReq(i)">
             <ion-icon class="share" name="share-alt"></ion-icon>
             Share
           </button>
         </ion-col>
-      </ion-row>
+      </ion-row> -->
     </ion-card>
   </div>
 

@@ -16,8 +16,8 @@ export class TabsPage implements OnInit {
 
   tab1 = "PrayersPage";
   tab2 = "ActivitiesPage";
-  tab3 = "MemberPage";
-  tab4 = "ChurchPage";
+  tab3 = "ChurchPage";
+  tab4 = "SettingsPage";
 
   constructor(
     private churchSer: ChurchService,
@@ -32,15 +32,12 @@ export class TabsPage implements OnInit {
   }
 
   initializePages() {
-    console.log("tabs page");
     this.events.subscribe("profileNotify:updated", data => {
-      console.log("notifudap", data);
       this.newProfileNotify = data;
       this.newNotify = this.newChurchNotify + this.newProfileNotify;
     });
 
     this.events.subscribe("churchNotify:updated", data => {
-      console.log("notifudac", data);
       this.newChurchNotify = data;
       this.newNotify = this.newChurchNotify + this.newProfileNotify;
     });

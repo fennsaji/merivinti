@@ -21,26 +21,26 @@ export class SettingsPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad SettingsPage');
     this.isLeader = this.authSer.isLeader();
 
     if(this.authSer.ifonDevice())
     this.notify = this.authSer.isNotifyEnabled();
   }
 
+  onOpenProfile() {
+    this.navCtrl.push('MemberPage');
+  }
+
   onLogout() {
     this.authSer.logout()
       .subscribe(() => {
         this.app.getRootNav().setRoot('HomePage');
-        // this.navCtrl.g
-        // setRoot('HomePage');
       }, err => {
         var toast = this.toastCtrl.create({
           message: "Could not Connect to Server",
           duration: 3000
         });
         toast.present();
-        console.log('Error');
       });
   }
 

@@ -24,7 +24,8 @@ export class ActivitiesService {
     this.token = this.authSer.getToken();
     this.url = this.authSer.globalUrl;
 
-    this.fcmNotificationInit();
+    if(this.authSer.ifonDevice())
+      this.fcmNotificationInit();
 
     this.onUpdate();
   }
@@ -40,7 +41,6 @@ export class ActivitiesService {
   }
 
   fcmNotificationInit() {
-
     this.subFcmChurch();
     this.fcm.subscribeToTopic("All");
 
@@ -67,9 +67,7 @@ export class ActivitiesService {
     });
 
     this.fcm.onNotification().subscribe(data => {
-      alert(data);
       if (data.wasTapped) {
-        alert(data);
         console.info("Received in background");
       } else {
         console.info("Received in foreground");

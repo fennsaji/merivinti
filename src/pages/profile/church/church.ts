@@ -375,11 +375,7 @@ export class ChurchPage {
             role: 'destructive',
             icon: !this.platform.is('ios') ? 'trash' : null,
             handler: () => {
-              console.log('Delete clicked');
-              this.prayerSer.deletePr(prayerId)
-                .subscribe(doc => {
-                  this.prayerReq.splice(index, 1);
-                })
+              this.presentAlert(prayerId, index);
             }
           },
           {
@@ -393,14 +389,12 @@ export class ChurchPage {
             text: 'Edit',
             icon: !this.platform.is('ios') ? 'hammer' : null,
             handler: () => {
-              console.log('Play clicked');
             }
           },
           {
             text: 'Report',
             icon: !this.platform.is('ios') ? 'alert' : null,
             handler: () => {
-              console.log('Play clicked');
             }
           },
           {
@@ -408,13 +402,39 @@ export class ChurchPage {
             role: 'cancel', // will always sort to be on the bottom
             icon: !this.platform.is('ios') ? 'close' : null,
             handler: () => {
-              console.log('Cancel clicked');
             }
           }
         ]
       }
     );
     options.present();
+  }
+
+  deletePRConfirm(prayerId, index) {
+    this.prayerSer.deletePr(prayerId)
+    .subscribe(doc => {
+      this.prayerReq.splice(index, 1);
+    })
+  }
+
+  presentAlert(prayerId, index) {
+    const confirm = this.alertCtrl.create({
+      title: 'Are you sure?',
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Delete',
+          handler: () => {
+            this.deletePRConfirm(prayerId, index);
+          }
+        }
+      ]
+    });
+    confirm.present();
   }
 
   sharePrayerReq(index: number) {

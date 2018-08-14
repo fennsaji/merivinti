@@ -140,23 +140,7 @@ export class PrayersPage {
             role: 'destructive',
             icon: !this.platform.is('ios') ? 'trash' : null,
             handler: () => {
-              const confirm = this.alertCtrl.create({
-                title: 'Are you sure?',
-                buttons: [
-                  {
-                    text: 'Cancel',
-                    handler: () => {
-                    }
-                  },
-                  {
-                    text: 'Delete',
-                    handler: () => {
-                      this.deletePRConfirm(prayerId, index);
-                    }
-                  }
-                ]
-              });
-              confirm.present();
+              this.presentAlert(prayerId, index);
             }
           },
           {
@@ -198,6 +182,26 @@ export class PrayersPage {
     })
   }
 
+  presentAlert(prayerId, index) {
+    const confirm = this.alertCtrl.create({
+      title: 'Are you sure?',
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Delete',
+          handler: () => {
+            this.deletePRConfirm(prayerId, index);
+          }
+        }
+      ]
+    });
+    confirm.present();
+  }
+
   sharePrayerReq(index: number) {
     console.log(this.prayerReq[index]);
     var subject = "Prayer Request by " + this.prayerReq[index].username;
@@ -210,9 +214,17 @@ export class PrayersPage {
   goToProfile(username: string) {
     console.log("pro");
     if(username === this.authSer.getUsername()) {
-      this.navCtrl.parent.select(2);
+      this.navCtrl.push("MemberPage");
     } else {
       this.navCtrl.push("MemberPage", { username });
+    }
+  }
+
+  goToChurchPro(churchId) {
+    if(churchId === this.authSer.getChurchId()) {
+      this.navCtrl.parent.select(2);
+    } else {
+      this.navCtrl.push("ChurchPage", { churchId });
     }
   }
 }

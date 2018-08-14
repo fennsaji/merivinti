@@ -1,7 +1,7 @@
 <ion-header>
 
   <ion-navbar color="navbar">
-    <ion-title>Settings</ion-title>
+    <ion-title text-center>Settings</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -9,8 +9,12 @@
 
 <ion-content padding class="background">
   <ion-list>
-    <button ion-item (tap)="onEditProfile()">
+    <button ion-item (tap)="onOpenProfile()">
       <ion-icon name="person" item-start></ion-icon>
+      <ion-label>My Profile</ion-label>
+    </button>
+    <button ion-item (tap)="onEditProfile()">
+      <ion-icon name="construct" item-start></ion-icon>
       <ion-label>Edit Profile</ion-label>
     </button>
     <button ion-item *ngIf="isLeader" (tap)="onEditChurch()">

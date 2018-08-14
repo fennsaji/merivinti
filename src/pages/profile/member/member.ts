@@ -67,7 +67,7 @@ export class MemberPage {
     .subscribe(doc => {
       this.isButtonDisabled = false;
       this.profile = doc.member?doc.member:this.profile;
-      this.prayerReq = doc.prayerReq? doc.prayerReq: [];
+      this.prayerReq = doc.prayerReq? doc.prayerReq.reverse(): [];
       console.log('doc', this.profile);
       this.isLoading = false;
       if(refresher)
@@ -119,7 +119,7 @@ export class MemberPage {
     .then(Pro => {
       console.log('proifil', Pro);
       this.profile = Pro.member?Pro.member:this.profile;
-      this.prayerReq = Pro.prayerReq? Pro.prayerReq: [];
+      this.prayerReq = Pro.prayerReq? Pro.prayerReq.reverse(): [];
     })
     .catch(err => {
       var toast = this.toastCtrl.create({
