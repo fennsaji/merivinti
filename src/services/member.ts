@@ -285,6 +285,7 @@ export class MemberService {
   }
 
   cancelFriendReq(username: string) {
+    
     // var ind = this.pendingReq.findIndex(obj => obj.username  === username);
     return this.http.post<any>(this.url + 'cancelFriendReq', {username}, this.httpOptions)
       .flatMap(doc => {

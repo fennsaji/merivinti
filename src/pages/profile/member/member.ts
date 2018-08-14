@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { NavController, NavParams, IonicPage, ToastController, ActionSheetController, Platform, ModalController } from "ionic-angular";
+import { NavController, NavParams, AlertController, IonicPage, ToastController, ActionSheetController, Platform, ModalController } from "ionic-angular";
 import { AuthService } from "../../../services/auth";
 import { MemberService } from "../../../services/member";
 import { IPrayerReq } from "../../../models/prayerReq.model";
@@ -37,6 +37,7 @@ export class MemberPage {
     private membSer: MemberService,
     public toastCtrl: ToastController,
     public actionSheet: ActionSheetController,
+    public alertCtrl: AlertController
   ) {}
 
   ionViewDidLoad() {
@@ -111,6 +112,7 @@ export class MemberPage {
     }
   }
 
+
   loadFromStorage() {
     this.membSer
     .getPrStorage()
@@ -128,6 +130,7 @@ export class MemberPage {
     });
   }
 
+
   createNewPrayer(): void {
     // this.navCtrl.push('NewPrayerPage');
     const modal = this.modalCtrl.create('NewPrayerPage');
@@ -141,21 +144,26 @@ export class MemberPage {
     });
   }
 
+
   gotoInfoPrayees() {
     this.navCtrl.push('ListIdPage', {type:'Friends', id: this.username})
   }
+
 
   gotoInfoFollowing() {
     this.navCtrl.push('ListIdPage', {type:'Following', id: this.username})
   }
 
+
   onLogout() {
     this.authSer.logout().subscribe(d => console.log(d), e => console.log(e));
   }
 
+
   search() {
     this.navCtrl.push("SearchPage", { profile: "people" , myChurch: false});
   }
+
 
   addAsFriend(username: string) {
     this.isButtonDisabled = true;
@@ -178,6 +186,7 @@ export class MemberPage {
     );
   }
 
+
   cancelFriendReq(username: string) {
     this.isButtonDisabled = true;
     this.membSer.cancelFriendReq(username).subscribe(
@@ -197,6 +206,7 @@ export class MemberPage {
       }
     );
   }
+
 
   handlefriendReq(username: string, approval: boolean) {
     this.isButtonDisabled = true;
@@ -219,8 +229,29 @@ export class MemberPage {
     );
   }
 
+
   unfriend(username: string) {
     this.isButtonDisabled = true;
+    const confirm = this.alertCtrl.create({
+      title: 'Are you sure?',
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Unfriend',
+          handler: () => {
+            this.unfriendConfirm(username);
+          }
+        }
+      ]
+    });
+    confirm.present();
+  }
+
+  unfriendConfirm(username) {
     this.membSer.unfriend(username).subscribe(
       doc => {
         this.isButtonDisabled = false;

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, IonicPage, ModalController, ActionSheetController, Platform, ToastController } from 'ionic-angular';
+import { NavController,AlertController, NavParams, IonicPage, ModalController, ActionSheetController, Platform, ToastController } from 'ionic-angular';
 import { IPrayerReq } from '../../models/prayerReq.model';
 import { PrayerService } from '../../services/prayer';
 import { AuthService } from '../../services/auth';
@@ -24,6 +24,7 @@ export class PrayersPage {
       public toastCtrl: ToastController,
       private authSer: AuthService,
       private membSer: MemberService,
+      public alertCtrl: AlertController,
       public actionSheet: ActionSheetController) {}
 
   ionViewDidLoad() {
@@ -139,11 +140,23 @@ export class PrayersPage {
             role: 'destructive',
             icon: !this.platform.is('ios') ? 'trash' : null,
             handler: () => {
-              console.log('Delete clicked');
-              this.prayerSer.deletePr(prayerId)
-                .subscribe(doc => {
-                  this.prayerReq.splice(index, 1);
-                })
+              const confirm = this.alertCtrl.create({
+                title: 'Are you sure?',
+                buttons: [
+                  {
+                    text: 'Cancel',
+                    handler: () => {
+                    }
+                  },
+                  {
+                    text: 'Delete',
+                    handler: () => {
+                      this.deletePRConfirm(prayerId, index);
+                    }
+                  }
+                ]
+              });
+              confirm.present();
             }
           },
           {
@@ -157,14 +170,12 @@ export class PrayersPage {
             text: 'Edit',
             icon: !this.platform.is('ios') ? 'hammer' : null,
             handler: () => {
-              console.log('Play clicked');
             }
           },
           {
             text: 'Report',
             icon: !this.platform.is('ios') ? 'alert' : null,
             handler: () => {
-              console.log('Play clicked');
             }
           },
           {
@@ -172,13 +183,19 @@ export class PrayersPage {
             role: 'cancel', // will always sort to be on the bottom
             icon: !this.platform.is('ios') ? 'close' : null,
             handler: () => {
-              console.log('Cancel clicked');
             }
           }
         ]
       }
     );
     options.present();
+  }
+
+  deletePRConfirm(prayerId, index) {
+    this.prayerSer.deletePr(prayerId)
+    .subscribe(doc => {
+      this.prayerReq.splice(index, 1);
+    })
   }
 
   sharePrayerReq(index: number) {

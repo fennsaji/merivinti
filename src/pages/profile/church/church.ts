@@ -5,7 +5,8 @@ import {
   IonicPage,
   ToastController,
   ActionSheetController,
-  Platform
+  Platform,
+  AlertController 
 } from "ionic-angular";
 import { ChurchService } from "../../../services/church";
 import { AuthService } from "../../../services/auth";
@@ -47,7 +48,8 @@ export class ChurchPage {
     public platform: Platform,
     private prayerSer: PrayerService,
     private membSer: MemberService,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    public alertCtrl: AlertController
   ) {}
 
   ionViewDidLoad() {
@@ -221,10 +223,30 @@ export class ChurchPage {
 
   unfollow() {
     this.isButtonDisabled = true;
+    
+    const confirm = this.alertCtrl.create({
+      title: 'Are you sure?',
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: () => {}
+        },
+        {
+          text: 'Unfollow',
+          handler: () => {
+            this.unfollowConfirm();
+          }
+        }
+      ]
+    });
+
+    confirm.present();
+  }
+
+  unfollowConfirm() {
     this.churchSer.unfollowChurch(this.churchId).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
         // change icon
       },
       err => {
@@ -234,7 +256,6 @@ export class ChurchPage {
           duration: 3000
         });
         toast.present();
-        console.log("Error");
       }
     );
   }
@@ -292,10 +313,29 @@ export class ChurchPage {
 
   unmember() {
     this.isButtonDisabled = true;
+
+    const confirm = this.alertCtrl.create({
+      title: 'Do you want to leave this church?',
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: () => {}
+        },
+        {
+          text: 'Leave',
+          handler: () => {
+            this.unmemberConfirm();
+          }
+        }
+      ]
+    });
+    confirm.present();
+  }
+
+  unmemberConfirm() {
     this.churchSer.unmember().subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
       },
       err => {
         this.isButtonDisabled = false;
@@ -304,7 +344,6 @@ export class ChurchPage {
           duration: 3000
         });
         toast.present();
-        console.log("Erooorr");
       }
     );
   }

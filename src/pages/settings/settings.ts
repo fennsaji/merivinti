@@ -8,7 +8,7 @@ import { AppUpdate } from '@ionic-native/app-update';
   selector: 'page-settings',
   templateUrl: 'settings.html',
 })
-export class SettingsPage {
+export class SettingsPage { 
   isLeader: boolean;
   notify: boolean;
 

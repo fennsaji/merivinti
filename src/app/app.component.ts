@@ -4,7 +4,6 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { AuthService } from '../services/auth';
-import { ActivitiesService } from '../services/activities';
 
 
 @Component({
@@ -17,7 +16,6 @@ export class MyApp implements OnInit{
   constructor(platform: Platform,
               statusBar: StatusBar,
               splashScreen: SplashScreen,
-              private actSer: ActivitiesService,
               private authser: AuthService
             ) {
     platform.ready().then(() => {
@@ -25,20 +23,19 @@ export class MyApp implements OnInit{
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       this.authser.isAuthenticated().then(auth => {
-        console.log(auth);
         if(auth) {
           this.navCtrl.setRoot('TabsPage');
-          this.actSer.initialize();
+          // this.actSer.initialize();
           splashScreen.hide();
         } else {
           this.navCtrl.setRoot('HomePage');
           splashScreen.hide();
         }
       }).catch(e => {
-        console.log('error');
         this.navCtrl.setRoot('HomePage');
         splashScreen.hide();
       });
+      
       statusBar.backgroundColorByHexString('#0e2a38');
       statusBar.styleDefault();
       statusBar.styleLightContent();

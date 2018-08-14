@@ -6,62 +6,65 @@ import { IRegChurch } from "../models/regChurch.model";
 import "rxjs/add/operator/map";
 // import { IChurch } from "../models/church.model";
 import { Storage } from "@ionic/storage";
-import { Network } from '@ionic-native/network';
+import { Network } from "@ionic-native/network";
 import { Platform, ToastController } from "ionic-angular";
 import { LocalNotifications } from "@ionic-native/local-notifications";
 
 @Injectable()
 export class AuthService {
-  public globalUrl: string = 'https://vinti-app.herokuapp.com/';
-  // public globalUrl: string = 'http://192.168.1.38:8080/';
-  url: string = this.globalUrl + 'auth';
+  // public globalUrl: string = 'https://vinti-app.herokuapp.com/';
+  public globalUrl: string = "http://192.168.1.34:8080/";
+  url: string = this.globalUrl + "auth";
   myInfo: {
-    token: string,
-    username: string,
-    churchId: string,
-    isLeader: boolean
+    token: string;
+    username: string;
+    churchId: string;
+    isLeader: boolean;
   };
   onDevice: boolean;
   settings = {
-    notify : false
-  }
+    notify: false
+  };
 
-  constructor(private http: HttpClient,
+  constructor(
+    private http: HttpClient,
     private network: Network,
     private storage: Storage,
     private localNotifications: LocalNotifications,
     public platform: Platform,
-    public toastCtrl: ToastController) {
-      this.onDevice = this.platform.is('cordova');
+    public toastCtrl: ToastController
+  ) {
+    this.onDevice = this.platform.is("cordova");
+    console.log(this.onDevice, "on Device");
   }
 
   login(loginUser: ILoginUser): Observable<any> {
-    return this.http.post<any>(this.url + '/login', loginUser).map(data => {
-      console.log('response', data);
-      console.log('myInfo', this.myInfo);
+    return this.http.post<any>(this.url + "/login", loginUser).map(data => {
+      console.log("response", data);
+      console.log("myInfo", this.myInfo);
       this.myInfo = {
         token: data.token,
         username: data.username,
         churchId: data.churchId,
-        isLeader: data.desig === 'Leader' ? true: false
+        isLeader: data.desig === "Leader" ? true : false
       };
-      if(this.onDevice)
-      this.saveData(this.myInfo);
-      this.scheduleNotification();
+      if (this.onDevice) {
+        this.saveData(this.myInfo);
+        this.scheduleNotification();
+      }
       return data.memb;
     });
   }
 
   regChurch(regChurch: IRegChurch): Observable<any> {
-    return this.http.post<any>(this.url + '/regChurch', regChurch).map(data => {
-      console.log('response', data);
-      if(this.onDevice)
-      this.scheduleNotification();
+    return this.http.post<any>(this.url + "/regChurch", regChurch).map(data => {
+      console.log("response", data);
+      if (this.onDevice) this.scheduleNotification();
       this.myInfo = {
         token: data.token,
         username: data.username,
         churchId: data.churchId,
-        isLeader: data.desig === 'Leader' ? true: false
+        isLeader: data.desig === "Leader" ? true : false
       };
       this.saveData(this.myInfo);
       return data;
@@ -69,15 +72,14 @@ export class AuthService {
   }
 
   regMember(regMemb: IRegChurch): Observable<any> {
-    return this.http.post<any>(this.url + '/regMemb', regMemb).map(data => {
-      console.log('response', data);
-      if(this.onDevice)
-      this.scheduleNotification();
+    return this.http.post<any>(this.url + "/regMemb", regMemb).map(data => {
+      console.log("response", data);
+      if (this.onDevice) this.scheduleNotification();
       this.myInfo = {
         token: data.token,
         username: data.username,
         churchId: data.churchId,
-        isLeader: data.desig === 'Leader' ? true: false
+        isLeader: data.desig === "Leader" ? true : false
       };
       console.log(this.myInfo);
       this.saveData(this.myInfo);
@@ -86,73 +88,79 @@ export class AuthService {
   }
 
   scheduleNotification() {
-    var date = new Date()
-    date.setDate(date.getDate()+1);
+    var date = new Date();
+    date.setDate(date.getDate() + 1);
     date.setHours(20);
     date.setMinutes(0);
     date.setSeconds(0);
     let notification = {
       id: 1,
-      title: 'Praise the Lord!',
-      text: 'Don\'t forget to pray today',
+      title: "Praise the Lord!",
+      text: "Don't forget to pray today",
       at: date,
-      every: 'day'
+      every: "day"
     };
-    this.localNotifications.requestPermission().then(d => {
-      this.localNotifications.hasPermission().then(d => {
-        this.localNotifications.schedule(notification);
-        this.storage.set('settings', {notify: true});
-        this.settings.notify = true;
+    this.localNotifications
+      .requestPermission()
+      .then(d => {
+        this.localNotifications.hasPermission().then(d => {
+          this.localNotifications.schedule(notification);
+          this.storage.set("settings", { notify: true });
+          this.settings.notify = true;
+        });
       })
-    }).catch(err => {
-      this.storage.set('settings', {notify: false});
-    });
+      .catch(err => {
+        this.storage.set("settings", { notify: false });
+      });
   }
 
   unscheduleNotification() {
     this.localNotifications.hasPermission().then(d => {
-      this.localNotifications.cancelAll()
-      .then(d => {
-        this.storage.set('settings', {notify: false});
-      })
-      .catch();
-    })
+      this.localNotifications
+        .cancelAll()
+        .then(d => {
+          this.storage.set("settings", { notify: false });
+        })
+        .catch();
+    });
   }
 
   getSettings() {
-    this.storage.get('settings')
-      .then(settings => {
-        this.settings = settings;
-      })
+    this.storage.get("settings").then(settings => {
+      this.settings = settings;
+    });
   }
 
   isNotifyEnabled() {
-    return this.settings?this.settings.notify:false;
+    return this.settings ? this.settings.notify : false;
   }
 
   isAuthenticated(): Promise<boolean> {
     return this.storage.ready().then(() => {
-      return this.storage.get('myInfo').then(data => {
-        console.log('isAUth', data);
-        this.myInfo = data;
-        console.log('isAUth', this.myInfo);
-        this.getSettings();
-        return data? true: false;
-      }).catch(err => {
-        console.log('errror', err);
-        return false;
-      });
+      return this.storage
+        .get("myInfo")
+        .then(data => {
+          console.log("isAUth", data);
+          this.myInfo = data;
+          console.log("isAUth", this.myInfo);
+          this.getSettings();
+          return data ? true : false;
+        })
+        .catch(err => {
+          console.log("errror", err);
+          return false;
+        });
     });
   }
 
   saveData(myInfo) {
-    console.log('myInfo ', myInfo);
-    this.storage.set('myInfo', myInfo);
-    this.storage.set('prayerReq', '');
-    this.storage.set('churchEvents', '');
-    this.storage.set('userEvents', '');
-    this.storage.set('myProfile', '');
-    this.storage.set('myChurch', '');
+    console.log("myInfo ", myInfo);
+    this.storage.set("myInfo", myInfo);
+    this.storage.set("prayerReq", "");
+    this.storage.set("churchEvents", "");
+    this.storage.set("userEvents", "");
+    this.storage.set("myProfile", "");
+    this.storage.set("myChurch", "");
   }
 
   saveNewInfo(churchId, isLeader) {
@@ -163,48 +171,48 @@ export class AuthService {
       username: this.myInfo.username,
       churchId,
       isLeader
-    }
-    this.storage.set('myInfo', myInfo);
+    };
+    this.storage.set("myInfo", myInfo);
   }
 
   logout(): Observable<any> {
     let httpOptions = {
-      headers : new HttpHeaders({
-        'x-auth': this.myInfo.token
+      headers: new HttpHeaders({
+        "x-auth": this.myInfo.token
       })
-    }
-    if(this.myInfo.isLeader) {
-      return this.http.delete(this.url + '/logoutLead', httpOptions)
-      .map(doc => {
-        this.removeData();
-        if(this.onDevice)
-        this.unscheduleNotification();
-        return doc;
-      });
+    };
+    if (this.myInfo.isLeader) {
+      return this.http
+        .delete(this.url + "/logoutLead", httpOptions)
+        .map(doc => {
+          this.removeData();
+          if (this.onDevice) this.unscheduleNotification();
+          return doc;
+        });
     } else {
-      return this.http.delete(this.url + '/logoutMemb', httpOptions)
-      .map(doc => {
-        this.removeData();
-        if(this.onDevice)
-        this.unscheduleNotification();
-        return doc;
-      });
+      return this.http
+        .delete(this.url + "/logoutMemb", httpOptions)
+        .map(doc => {
+          this.removeData();
+          if (this.onDevice) this.unscheduleNotification();
+          return doc;
+        });
     }
   }
 
   removeData(): void {
     this.myInfo = {
-      token: '',
-      username: '',
-      churchId: '',
+      token: "",
+      username: "",
+      churchId: "",
       isLeader: false
     };
-    this.storage.remove('myInfo');
-    this.storage.remove('prayerReq');
-    this.storage.remove('userEvents');
-    this.storage.remove('myProfile');
-    this.storage.remove('myChurch');
-    this.storage.remove('settings');
+    this.storage.remove("myInfo");
+    this.storage.remove("prayerReq");
+    this.storage.remove("userEvents");
+    this.storage.remove("myProfile");
+    this.storage.remove("myChurch");
+    this.storage.remove("settings");
   }
 
   getToken(): string {
@@ -224,8 +232,8 @@ export class AuthService {
   }
 
   isOnline(): boolean {
-    if(this.onDevice && this.network.type) {
-      return this.network.type !== 'none';
+    if (this.onDevice && this.network.type) {
+      return this.network.type !== "none";
     } else {
       return navigator.onLine;
     }
@@ -234,6 +242,5 @@ export class AuthService {
   ifonDevice() {
     return this.onDevice;
   }
-
 }
 // headers.append('Content-Type', 'application/json');
