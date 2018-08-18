@@ -66,4 +66,8 @@ export class SettingsPage {
       this.authSer.scheduleNotification();
     }
   }
+
+  onDevice() {
+    return this.authSer.ifonDevice()
+  }
 }

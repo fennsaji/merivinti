@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="10004" id="com.fennsaji.vinti" version="1.0.04" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="10005" id="com.fennsaji.vinti" version="1.0.05" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Vinti</name>
     <description>A Social App for Prayer Requests.</description>
     <author email="fennsaji@outlook.com" href="http://www.facebook.com/fennsaji">Fenn Ignatius Saji</author>

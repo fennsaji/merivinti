@@ -20,6 +20,10 @@ import { MemberService } from '../services/member';
 import { PrayerService } from '../services/prayer';
 import { SocialSharing } from '@ionic-native/social-sharing';
 import { ActivitiesService } from '../services/activities';
+import { MessagingService } from '../services/messaging';
+import { AngularFireModule } from 'angularfire2';
+import 'firebase/messaging'; // only import firebase messaging or as needed;
+import { firebaseConfig } from '../environment';
 
 @NgModule({
   declarations: [
@@ -28,6 +32,7 @@ import { ActivitiesService } from '../services/activities';
   imports: [
     BrowserModule,
     HttpClientModule,
+    AngularFireModule.initializeApp(firebaseConfig),
     ReactiveFormsModule,
     IonicStorageModule.forRoot(),
     IonicModule.forRoot(MyApp, {
@@ -51,6 +56,7 @@ import { ActivitiesService } from '../services/activities';
     ChurchService,
     MemberService,
     PrayerService,
+    MessagingService,
     FCM,
     ActivitiesService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}

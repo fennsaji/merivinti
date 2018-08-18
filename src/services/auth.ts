@@ -12,8 +12,8 @@ import { LocalNotifications } from "@ionic-native/local-notifications";
 
 @Injectable()
 export class AuthService {
-  // public globalUrl: string = 'https://vinti-app.herokuapp.com/';
-  public globalUrl: string = "http://192.168.1.34:8080/";
+  public globalUrl: string = 'https://vinti-app.herokuapp.com/';
+  // public globalUrl: string = "http://192.168.1.34:8080/";
   url: string = this.globalUrl + "auth";
   myInfo: {
     token: string;

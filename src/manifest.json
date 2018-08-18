@@ -1,13 +1,30 @@
 {
-  "name": "Ionic",
-  "short_name": "Ionic",
+  "name": "Vinti",
+  "short_name": "Vinti",
   "start_url": "index.html",
   "display": "standalone",
   "icons": [{
-    "src": "assets/imgs/logo.png",
+    "src": "assets/imgs/icon96.png",
+    "sizes": "96x96",
+    "type": "image/png"
+  },
+  {
+    "src": "assets/imgs/icon144.png",
+    "sizes": "144x144",
+    "type": "image/png"
+  },
+  {
+    "src": "assets/imgs/icon192.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  },
+  {
+    "src": "assets/imgs/icon.png",
     "sizes": "512x512",
     "type": "image/png"
   }],
-  "background_color": "#4e8ef7",
-  "theme_color": "#4e8ef7"
-}
+  "background_color": "#ECEFF1",
+  "theme_color": "#02354e",
+  "gcm_sender_id": "103953800507",
+  "gcm_user_visible_only": true
+} 

@@ -1,3 +1,4 @@
+import { AuthService } from './../../../services/auth';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, ActionSheetController, Platform, ToastController } from 'ionic-angular';
 import { ChurchService } from '../../../services/church';
@@ -19,6 +20,7 @@ export class EditChurchPage {
     private churchSer: ChurchService,
     private actionSheet: ActionSheetController,
     private platform: Platform,
+    private authSer: AuthService,
     private camera: Camera,
     private toastCtrl: ToastController) {
   }
@@ -72,20 +74,28 @@ export class EditChurchPage {
   }
 
   takePic() {
-    this.camera.getPicture(this.options).then((imageData) => {
-      // imageData is either a base64 encoded string or a file URI
-      // If it's base64:
-      let base64Image = 'data:image/jpeg;base64,' + imageData;
-      console.log(imageData);
-      this.proPic = base64Image;
-     }, (err) => {
+    if(this.authSer.ifonDevice()) {
+      this.camera.getPicture(this.options).then((imageData) => {
+        // imageData is either a base64 encoded string or a file URI
+        // If it's base64:
+        let base64Image = 'data:image/jpeg;base64,' + imageData;
+        console.log(imageData);
+        this.proPic = base64Image;
+       }, (err) => {
+        var toast = this.toastCtrl.create({
+          message: "Could not take Pic",
+          duration: 3000
+        });
+        toast.present();
+        // Handle error
+       });
+    } else {
       var toast = this.toastCtrl.create({
-        message: "Could not take Pic",
+        message: "Not yet supported in PWA",
         duration: 3000
       });
       toast.present();
-      // Handle error
-     });
+    }
   }
 
 

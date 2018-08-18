@@ -1,4 +1,5 @@
-import { ActivitiesService } from "./../../services/activities";
+import { MessagingService } from './../../services/messaging';
+import { ActivitiesService } from './../../services/activities';
 import { Component, OnInit } from "@angular/core";
 import { IonicPage, Events } from "ionic-angular";
 import { ChurchService } from "../../services/church";
@@ -24,7 +25,8 @@ export class TabsPage implements OnInit {
     private membSer: MemberService,
     private network: Network,
     private actSer: ActivitiesService,
-    public events: Events
+    public events: Events,
+    private messSer: MessagingService
   ) {}
 
   ngOnInit() {
@@ -50,5 +52,6 @@ export class TabsPage implements OnInit {
     this.churchSer.initialize();
     this.membSer.initialize();
     this.actSer.initialize();
+    this.messSer.initMessaging();
   }
 }

@@ -21,11 +21,11 @@
       <ion-icon name="build" item-start></ion-icon>
       <ion-label>Edit Church</ion-label>
     </button>
-    <button ion-item (tap)="onUpdate()">
+    <button *ngIf="onDevice()" ion-item (tap)="onUpdate()">
       <ion-icon name="download" item-start></ion-icon>
       <ion-label>Check for Update</ion-label>
     </button>
-    <ion-item>
+    <ion-item *ngIf="onDevice()">
       <ion-icon name="alert" item-start></ion-icon>
       <ion-label>Local Notifications</ion-label>
       <ion-toggle [(ngModel)]="notify" (ionChange)="onToggleNotify()"></ion-toggle>
