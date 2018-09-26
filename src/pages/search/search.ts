@@ -44,7 +44,6 @@ export class SearchPage implements OnInit {
     this.isLoading = true;
     this.isButtonDisabled = true;
     let val = ev.target.value;
-    console.log(val, profile);
     if (profile === "people" && val && val.trim() != "") {
       this.membSer.searchUsers(val).subscribe(
         data => {
@@ -56,7 +55,6 @@ export class SearchPage implements OnInit {
               duration: 3000
             });
             toast.present();
-            console.log("No hits");
           }
           this.People = data;
         },
@@ -68,7 +66,6 @@ export class SearchPage implements OnInit {
             duration: 3000
           });
           toast.present();
-          console.log("Something went wrong");
         }
       );
     } else if (profile === "church" && val && val.trim() != "") {
@@ -82,7 +79,6 @@ export class SearchPage implements OnInit {
               duration: 3000
             });
             toast.present();
-            console.log("No hits");
           }
           this.Churches = data;
         },
@@ -94,7 +90,6 @@ export class SearchPage implements OnInit {
           toast.present();
           this.isButtonDisabled = false;
           this.isLoading = false;
-          console.log("Something went wrong");
         }
       );
     } else {
@@ -108,7 +103,6 @@ export class SearchPage implements OnInit {
   }
 
   goToProfile(username: string) {
-    console.log("pro");
     this.navCtrl.push("MemberPage", { username });
   }
 
@@ -119,11 +113,9 @@ export class SearchPage implements OnInit {
   // member
   addAsFriend(username: string) {
     this.isButtonDisabled = true;
-    console.log("added", username);
     this.membSer.addAsFriend(username).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
         // change icon
       },
       err => {
@@ -133,7 +125,6 @@ export class SearchPage implements OnInit {
           duration: 3000
         });
         toast.present();
-        console.log("Error");
       }
     );
   }
@@ -143,7 +134,6 @@ export class SearchPage implements OnInit {
     this.membSer.cancelFriendReq(username).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
         // change icon
       },
       err => {
@@ -153,18 +143,15 @@ export class SearchPage implements OnInit {
           duration: 3000
         });
         toast.present();
-        console.log("Error");
       }
     );
   }
 
   handlefriendReq(username: string, approval: boolean) {
     this.isButtonDisabled = true;
-    console.log(approval, username);
     this.membSer.handleFriendReq(username, approval).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
         // change icon
       },
       err => {
@@ -174,7 +161,6 @@ export class SearchPage implements OnInit {
           duration: 3000
         });
         toast.present();
-        console.log("Error");
       }
     );
   }
@@ -197,7 +183,6 @@ export class SearchPage implements OnInit {
     this.churchSer.followChurch(churchId).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
         // change icon
       },
       err => {
@@ -207,7 +192,6 @@ export class SearchPage implements OnInit {
           duration: 3000
         });
         toast.present();
-        console.log("Error");
       }
     );
   }
@@ -217,7 +201,6 @@ export class SearchPage implements OnInit {
     this.churchSer.cancelfollowReq(churchId).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
         // change icon
       },
       err => {
@@ -227,7 +210,6 @@ export class SearchPage implements OnInit {
           duration: 3000
         });
         toast.present();
-        console.log("Error");
       }
     );
   }
@@ -239,29 +221,6 @@ export class SearchPage implements OnInit {
   following(churchId: string) {
     return this.membSer.iffollowing(churchId);
   }
-
-  //Member
-  // sendMembReq(churchId: string) {
-  //   this.churchSer.sendMembReq(churchId).subscribe(
-  //     doc => {
-  //       console.log("success");
-  //     },
-  //     err => {
-  //       console.log("Erooorr");
-  //     }
-  //   );
-  // }
-
-  // cancelMembReq(churchId: string) {
-  //   this.churchSer.cancelMembReq(churchId).subscribe(
-  //     doc => {
-  //       console.log("success");
-  //     },
-  //     err => {
-  //       console.log("Erooorr");
-  //     }
-  //   );
-  // }
 
   pendingMembReq(churchId: string) {
     return this.membSer.pendingMembReq() === churchId;

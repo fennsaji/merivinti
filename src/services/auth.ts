@@ -35,13 +35,10 @@ export class AuthService {
     public toastCtrl: ToastController
   ) {
     this.onDevice = this.platform.is("cordova");
-    console.log(this.onDevice, "on Device");
   }
 
   login(loginUser: ILoginUser): Observable<any> {
     return this.http.post<any>(this.url + "/login", loginUser).map(data => {
-      console.log("response", data);
-      console.log("myInfo", this.myInfo);
       this.myInfo = {
         token: data.token,
         username: data.username,
@@ -58,7 +55,6 @@ export class AuthService {
 
   regChurch(regChurch: IRegChurch): Observable<any> {
     return this.http.post<any>(this.url + "/regChurch", regChurch).map(data => {
-      console.log("response", data);
       if (this.onDevice) this.scheduleNotification();
       this.myInfo = {
         token: data.token,
@@ -73,7 +69,6 @@ export class AuthService {
 
   regMember(regMemb: IRegChurch): Observable<any> {
     return this.http.post<any>(this.url + "/regMemb", regMemb).map(data => {
-      console.log("response", data);
       if (this.onDevice) this.scheduleNotification();
       this.myInfo = {
         token: data.token,
@@ -81,7 +76,6 @@ export class AuthService {
         churchId: data.churchId,
         isLeader: data.desig === "Leader" ? true : false
       };
-      console.log(this.myInfo);
       this.saveData(this.myInfo);
       return data.memb;
     });
@@ -140,21 +134,17 @@ export class AuthService {
       return this.storage
         .get("myInfo")
         .then(data => {
-          console.log("isAUth", data);
           this.myInfo = data;
-          console.log("isAUth", this.myInfo);
           this.getSettings();
           return data ? true : false;
         })
         .catch(err => {
-          console.log("errror", err);
           return false;
         });
     });
   }
 
   saveData(myInfo) {
-    console.log("myInfo ", myInfo);
     this.storage.set("myInfo", myInfo);
     this.storage.set("prayerReq", "");
     this.storage.set("churchEvents", "");

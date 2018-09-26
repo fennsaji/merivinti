@@ -52,17 +52,14 @@ export class MemberService {
     this.username = this.authSer.getUsername();
     this.getbasicinfo().subscribe();
     this.getNotifications();
-    console.log('initiated member');
   }
 
   getMembProfile(username: string, isMyProfile: boolean) {
     return this.http.post<any>(this.url + 'getDetails', {username}, this.httpOptions)
     .map(Pro => {
-      console.log(Pro, this.name);
       if(isMyProfile) {
         this.isLeader = Pro.member.isLeader;
         this.churchId = Pro.member.churchId;
-        console.log('saved1234');
         this.storage.set('myProfile', Pro);
         this.authSer.saveNewInfo(this.churchId, this.isLeader);
         this.getbasicinfo().subscribe();
@@ -82,9 +79,6 @@ export class MemberService {
       return this.storage.get('myProfile')
     })
     .then((Pro) => {
-      console.log('1', Pro);
-      // this.prayerReq = [...pr];
-      // return pr;
       if(Pro) {
         return Pro;
       } else {
@@ -96,7 +90,6 @@ export class MemberService {
   getbasicinfo() {
     return this.http.get<any>(this.url + 'getbasicinfo', this.httpOptions)
       .map(res => {
-        console.log('list', res);
         this.name = res.list.name;
         this.proPic = res.list.proPic;
         this.friends = res.list.friends;
@@ -111,9 +104,6 @@ export class MemberService {
         // this.friendReq.emit(this.requests);
         this.authSer.saveNewInfo(this.churchId, this.isLeader);
         this.events.publish('profileNotify:updated', this.newNotifications);
-        console.log('New Not', this.newNotifications)
-      }, err => {
-        console.log('Errorr1');
       });
   }
 
@@ -121,17 +111,14 @@ export class MemberService {
     if(this.authSer.isOnline()) {
       this.http.get<any>(this.url + 'getNotifications', this.httpOptions)
       .subscribe(res => {
-        console.log('response list', res.list, res.basicInfo);
         this.requests = res.list.requests;
         var request = this.mapRequests(res.list.requests, res.basicInfo);
         this.notifications = this.mapNotifications(res.list.notifications, res.basicInfo, res.churchInfo).reverse();
         this.friendReq.emit(request);
-        console.log('mapped', this.notifications);
         this.notify.emit(this.notifications);
         this.storage.set('userEvents', {notifications: this.notifications});
         this.getbasicinfo().subscribe();
       }, err => {
-        console.log('Errorr1');
         this.notificationFromStorage();
       });
     } else {
@@ -149,22 +136,18 @@ export class MemberService {
         return {...o, ...basicInfo[index]};
       }
     })
-    console.log('notificTIONS Mapped', notifications);
     return notifications;
   }
 
   mapRequests(requests, basicInfo) {
     requests = requests.map(o => {
-      console.log('object',o)
       var ind = basicInfo.findIndex(obj => obj.username === o);
-      console.log('index', ind);
       var obj = {
         username: o,
         proPic: basicInfo[ind].proPic
       }
       return obj;
     })
-    console.log(requests);
     return requests;
   }
 
@@ -174,7 +157,6 @@ export class MemberService {
       return this.storage.get('userEvents')
     })
     .then((Notify) => {
-      console.log('1', Notify);
       this.notifications = Notify.notifications;
       this.notify.emit(this.notifications);
     });
@@ -185,9 +167,7 @@ export class MemberService {
     .subscribe(res => {
       this.newNotifications = 0;
       this.events.publish('profileNotify:updated', this.newNotifications);
-      console.log('successss');
     }, err => {
-      console.log('Errorr1');
     });
   }
 
@@ -228,32 +208,16 @@ export class MemberService {
     return this.proPic;
   }
 
-  // getChurchId(): string {
-  //   console.log(this.churchId, '1234');
-  //   return this.churchId;
-  // }
-
-  // checkChurcId() {
-  //   return this.churchId? Rx.Observable.of(this.churchId) : this.http.get(this.url+ 'getChurchId', this.httpOptions)
-  // }
-
-  // ifLeader() {
-  //   console.log('isleader', this.isLeader)
-  //   return this.isLeader;
-  // }
-
   addAsFriend(username: string) {
     return this.http.post<any>(this.url + 'sendfriendReq', {username}, this.httpOptions)
       .flatMap(doc => {
         return this.getbasicinfo()
           .map(doc => {
-            console.log('called');
             this.getbasicinfo().subscribe();
             return doc;
           }, err => {
             return doc;
           });
-        // console.log('add fr', this.pendingReq);
         // this.pendingReq.push({username});
         // return doc;
       });
@@ -261,26 +225,16 @@ export class MemberService {
 
   handleFriendReq(username: string, approval: boolean) {
     // var ind = this.requests.indexOf(username);
-    console.log(username, approval);
     return this.http.post<any>(this.url + 'handleFriendReq', {username, approval}, this.httpOptions)
       .flatMap(doc => {
         return this.getbasicinfo()
           .map(doc => {
-            console.log('called');
             this.getbasicinfo().subscribe();
             return doc;
           }, err => {
             return doc;
           });
-        // if(approval) {
-        //   this.requests.slice(ind, 1);
-        //   this.friends.push(username);
-        //   console.log('accpt', this.requests, this.friends, ind);
-        // } else {
-        //   this.requests.slice(ind, 1);
-        //   console.log('rej', this.requests, ind);
-        // }
-        // return doc;
+
       });
   }
 
@@ -291,14 +245,12 @@ export class MemberService {
       .flatMap(doc => {
         return this.getbasicinfo()
           .map(doc => {
-            console.log('called');
             this.getbasicinfo().subscribe();
             return doc;
           }, err => {
             return doc;
         });
         // this.pendingReq.slice(ind, 1);
-        // console.log('cancel', this.pendingReq, ind);
         // return doc;
       });
   }
@@ -309,14 +261,12 @@ export class MemberService {
       .flatMap(doc => {
         return this.getbasicinfo()
           .map(doc => {
-            console.log('called');
             this.getbasicinfo().subscribe();
             return doc;
           }, err => {
             return doc;
           });
         // this.friends.slice(ind, 1);
-        // console.log('unfr', this.friends, ind);
         // return doc;
       });
   }
@@ -338,7 +288,6 @@ export class MemberService {
   }
 
   iffollowing(churchId: string) {
-    console.log(this.following);
     return this.following.indexOf(churchId) > -1 ? true: false;
   }
 

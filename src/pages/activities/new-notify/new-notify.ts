@@ -26,7 +26,6 @@ export class NewNotifyPage {
       date: new Date(),
       proPic: this.churchSer.getProPic()
     };
-    console.log(newNotify);
     if(this.authSer.isOnline()) {
       this.churchSer.pushNotifications(newNotify)
       .subscribe(res => {

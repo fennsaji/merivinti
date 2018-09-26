@@ -24,7 +24,6 @@ export class LoginPage {
 
   async getVersion() {
     const versionNumber = await this.app.getVersionCode();
-    console.log(versionNumber);
     var toast = this.toastCtrl.create({
       message: versionNumber,
       duration: 3000
@@ -36,7 +35,6 @@ export class LoginPage {
     this.isLoading = true;
     if(this.authSer.isOnline()) {
       this.authSer.login(f.value).subscribe(data => {
-        console.log('data', data);
         this.isLoading = false;
         this.navCtrl.setRoot('TabsPage');
       }, err => {
@@ -76,7 +74,6 @@ export class LoginPage {
           });
           toast.present();
         }
-        console.log('error', err.error, this.username);
       });
     } else {
       this.isLoading = false;
@@ -86,6 +83,5 @@ export class LoginPage {
       });
       toast.present();
     }
-    console.log('console', f.value);
   }
 }

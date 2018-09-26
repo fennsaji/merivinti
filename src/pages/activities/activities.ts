@@ -32,7 +32,6 @@ export class ActivitiesPage {
 
   ionViewDidLoad() {
     this.isLoading = true;
-    console.log('Enter ActivitiesPage');
     this.url = this.authSer.globalUrl + 'profile/';
 
     this.membSer.friendReq.subscribe((data) => {
@@ -40,7 +39,6 @@ export class ActivitiesPage {
         this.noFrR = true;
       else
         this.noFrR = false;
-      console.log('32',this.noFrR);
       this.requests = data?data:[];
     });
 
@@ -49,20 +47,15 @@ export class ActivitiesPage {
         this.noFoR = true;
       else
         this.noFoR = false;
-      console.log('45', this.noFoR, data);
       this.followReq = data? data: [];
-      console.log(this.followReq);
     });
 
     this.membSer.notify.subscribe(doc => {
-      console.log('emitt', doc);
       if(doc.length == 0)
         this.noNotify = true;
       else
         this.noNotify = false;
-      console.log('123',this.noNotify);
       this.notifications = doc?doc:[];
-      console.log(this.notifications);
       this.isLoading = false;
     });
 
@@ -92,7 +85,6 @@ export class ActivitiesPage {
     this.isButtonDisabled = true;
     this.membSer.handleFriendReq(username, approval)
       .subscribe(doc => {
-        console.log('success');
         this.requests.splice(i, 1);
         this.isButtonDisabled = false;
         if(!this.requests)
@@ -104,7 +96,6 @@ export class ActivitiesPage {
           duration: 3000
         });
         toast.present();
-        console.log('Error');
       });
   }
 
@@ -113,7 +104,6 @@ export class ActivitiesPage {
     if(desig == 'Follower') {
       this.churchSer.handlefollowReq(username, approval)
       .subscribe(doc => {
-        console.log('success');
         this.followReq.splice(i, 1);
         this.isButtonDisabled = false;
         if(!this.followReq)
@@ -126,12 +116,10 @@ export class ActivitiesPage {
           duration: 3000
         });
         toast.present();
-        console.log('Error');
       });
     } else if(desig == 'Member') {
       this.churchSer.handleMembReq(username, approval)
       .subscribe(doc => {
-        console.log('success');
         this.followReq.splice(i, 1);
         this.isButtonDisabled = false;
         if(!this.followReq)
@@ -144,14 +132,12 @@ export class ActivitiesPage {
           duration: 3000
         });
         toast.present();
-        console.log('Error');
       });
     }
 
   }
 
   goToProfile(type: string, id: string) {
-    console.log(type);
     if(type === 'user')
       this.navCtrl.push('MemberPage', {username: id});
     else if(type === 'church') {

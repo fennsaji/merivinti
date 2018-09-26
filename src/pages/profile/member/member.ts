@@ -42,7 +42,6 @@ export class MemberPage {
 
   ionViewDidLoad() {
     this.isLoading = true;
-    console.log('enter');
     if(this.navParams.get('username')) {
       this.username = this.navParams.get('username');
       if(this.username === this.authSer.getUsername()) {
@@ -50,7 +49,6 @@ export class MemberPage {
       } else {
         this.isMyProfile = false;
       }
-      console.log(this.username, this.isMyProfile);
     } else {
       this.username = this.authSer.getUsername();
       this.isMyProfile = true;
@@ -68,14 +66,12 @@ export class MemberPage {
       this.isButtonDisabled = false;
       this.profile = doc.member?doc.member:this.profile;
       this.prayerReq = doc.prayerReq? doc.prayerReq.reverse(): [];
-      console.log('doc', this.profile);
       this.isLoading = false;
       if(refresher)
         refresher.complete();
 
     }, err => {
       this.isButtonDisabled = false;
-      console.log('Something went wrong');
       var toast = this.toastCtrl.create({
         message: "Unable to connect to server",
         duration: 3000
@@ -117,7 +113,6 @@ export class MemberPage {
     this.membSer
     .getPrStorage()
     .then(Pro => {
-      console.log('proifil', Pro);
       this.profile = Pro.member?Pro.member:this.profile;
       this.prayerReq = Pro.prayerReq? Pro.prayerReq.reverse(): [];
     })
@@ -136,7 +131,6 @@ export class MemberPage {
     const modal = this.modalCtrl.create('NewPrayerPage');
     modal.present();
     modal.onDidDismiss((newPr) => {
-      console.log(newPr);
       if(!newPr) {
         return;
       }
@@ -156,7 +150,7 @@ export class MemberPage {
 
 
   onLogout() {
-    this.authSer.logout().subscribe(d => console.log(d), e => console.log(e));
+    this.authSer.logout().subscribe(d => console.log(""), e => console.log(""));
   }
 
 
@@ -167,11 +161,9 @@ export class MemberPage {
 
   addAsFriend(username: string) {
     this.isButtonDisabled = true;
-    console.log("added", username);
     this.membSer.addAsFriend(username).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
         // change icon
       },
       err => {
@@ -181,7 +173,6 @@ export class MemberPage {
           duration: 3000
         });
         toast.present();
-        console.log("Error");
       }
     );
   }
@@ -192,7 +183,6 @@ export class MemberPage {
     this.membSer.cancelFriendReq(username).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
         // change icon
       },
       err => {
@@ -202,7 +192,6 @@ export class MemberPage {
           duration: 3000
         });
         toast.present();
-        console.log("Error");
       }
     );
   }
@@ -210,11 +199,9 @@ export class MemberPage {
 
   handlefriendReq(username: string, approval: boolean) {
     this.isButtonDisabled = true;
-    console.log(approval, username);
     this.membSer.handleFriendReq(username, approval).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
         // change icon
       },
       err => {
@@ -224,7 +211,6 @@ export class MemberPage {
           duration: 3000
         });
         toast.present();
-        console.log("Error");
       }
     );
   }
@@ -255,7 +241,6 @@ export class MemberPage {
     this.membSer.unfriend(username).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
         // change icon
       },
       err => {
@@ -265,7 +250,6 @@ export class MemberPage {
           duration: 3000
         });
         toast.present();
-        console.log("Error");
       }
     );
   }
@@ -301,7 +285,6 @@ export class MemberPage {
             role: 'destructive',
             icon: !this.platform.is('ios') ? 'trash' : null,
             handler: () => {
-              console.log('Delete clicked');
               this.prayerSer.deletePr(prayerId)
                 .subscribe(doc => {
                   this.prayerReq.splice(index, 1);
@@ -319,14 +302,12 @@ export class MemberPage {
             text: 'Edit',
             icon: !this.platform.is('ios') ? 'hammer' : null,
             handler: () => {
-              console.log('Play clicked');
             }
           },
           {
             text: 'Report',
             icon: !this.platform.is('ios') ? 'alert' : null,
             handler: () => {
-              console.log('Play clicked');
             }
           },
           {
@@ -334,7 +315,6 @@ export class MemberPage {
             role: 'cancel', // will always sort to be on the bottom
             icon: !this.platform.is('ios') ? 'close' : null,
             handler: () => {
-              console.log('Cancel clicked');
             }
           }
         ]
@@ -344,7 +324,6 @@ export class MemberPage {
   }
 
   sharePrayerReq(index: number) {
-    console.log(this.prayerReq[index]);
     var subject = "Prayer Request by " + this.prayerReq[index].username;
     var mssg = this.prayerReq[index].body;
     var url = 'https://vinti-app.herokuapp.com/vinti.apk';

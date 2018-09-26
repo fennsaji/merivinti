@@ -55,21 +55,16 @@ export class ChurchPage {
   ionViewDidLoad() {
     this.isLoading = true;
     this.url = this.authSer.globalUrl + 'profile/';
-    console.log("ngoninit church");
 
     if (this.navParams.get("churchId")) {
       this.churchId = this.navParams.get("churchId");
       if(this.churchId === this.authSer.getChurchId()) {
         this.isMyChurch = true;
-        console.log('its your church');
       } else {
         this.isMyChurch = false;
-        console.log('its not your church');
       }
       this.noChurch = false;
-      console.log(this.churchId);
     } else {
-      console.log(this.churchId);
       this.churchId = this.authSer.getChurchId();
       if (!this.churchId) this.noChurch = true;
       else this.noChurch = false;
@@ -83,21 +78,17 @@ export class ChurchPage {
     this.isButtonDisabled = true;
     var toast;
     if (this.isMyChurch) {
-      console.log('12');
       this.churchId = this.authSer.getChurchId();
       if (!this.churchId) this.noChurch = true;
     }
-    console.log(this.churchId);
     if(this.authSer.isOnline()) {
       if (this.churchId) {
-        console.log('church ex', this.churchId);
         this.churchSer
           .getChurchProfile(this.churchId, this.isMyChurch)
           .subscribe(
             Pro => {
               this.church = Pro.church?Pro.church:this.church;
               this.prayerReq = Pro.prayerReq? Pro.prayerReq: [];
-              console.log("doc", Pro);
               this.noChurch = false;
               if (refresher) refresher.complete();
               this.isLoading = false;
@@ -105,7 +96,6 @@ export class ChurchPage {
             },
             err => {
               this.isButtonDisabled = false;
-              console.log("Something went wrong");
               var toast = this.toastCtrl.create({
                 message: "Unable to connect to server",
                 duration: 3000
@@ -150,7 +140,6 @@ export class ChurchPage {
     this.churchSer
         .getPrStorage()
         .then(Pro => {
-          console.log('from storage', Pro)
           this.church = Pro.church?Pro.church:this.church;
           this.prayerReq = Pro.prayerReq? Pro.prayerReq: [];
           this.noChurch = false;
@@ -172,7 +161,6 @@ export class ChurchPage {
 
 
   goToProfile(username: string) {
-    console.log("pro");
     if(username == this.authSer.getUsername()) {
       this.navCtrl.parent.select(2);
     } else {
@@ -186,7 +174,6 @@ export class ChurchPage {
     this.churchSer.followChurch(this.churchId).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
         // change icon
       },
       err => {
@@ -196,7 +183,6 @@ export class ChurchPage {
           duration: 3000
         });
         toast.present();
-        console.log("Error");
       }
     );
   }
@@ -206,12 +192,10 @@ export class ChurchPage {
     this.churchSer.cancelfollowReq(this.churchId).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
         // change icon
       },
       err => {
         this.isButtonDisabled = false;
-        console.log("Error");
         var toast = this.toastCtrl.create({
           message: "No internet Connection",
           duration: 3000
@@ -278,7 +262,6 @@ export class ChurchPage {
     this.churchSer.sendMembReq(this.churchId).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
       },
       err => {
         this.isButtonDisabled = false;
@@ -287,7 +270,6 @@ export class ChurchPage {
           duration: 3000
         });
         toast.present();
-        console.log("Erooorr");
       }
     );
   }
@@ -297,7 +279,6 @@ export class ChurchPage {
     this.churchSer.cancelMembReq(this.churchId).subscribe(
       doc => {
         this.isButtonDisabled = false;
-        console.log("success");
       },
       err => {
         this.isButtonDisabled = false;
@@ -306,7 +287,6 @@ export class ChurchPage {
           duration: 3000
         });
         toast.present();
-        console.log("Erooorr");
       }
     );
   }
@@ -438,7 +418,6 @@ export class ChurchPage {
   }
 
   sharePrayerReq(index: number) {
-    console.log(this.prayerReq[index]);
     var subject = "Prayer Request by " + this.prayerReq[index].username;
     var mssg = this.prayerReq[index].body;
     var url = 'https://vinti-app.herokuapp.com/vinti.apk';

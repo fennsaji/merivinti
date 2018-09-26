@@ -39,7 +39,6 @@ export class ListIdPage {
 
   ionViewDidLoad() {
     this.url = this.authSer.globalUrl + 'profile/';
-    console.log("ionViewDidLoad ListIdPage");
   }
 
   ionViewDidEnter() {
@@ -56,7 +55,6 @@ export class ListIdPage {
       this.isMyChurchAndMainLeader = false;
     }
     this.resolveList();
-    console.log(this.type, this.id);
   }
 
   resolveList() {
@@ -66,7 +64,6 @@ export class ListIdPage {
           this.membSer.getInfoFriends(this.id).subscribe(
             doc => {
               this.lists = doc.friends;
-              console.log(doc);
               this.isLoading = false;
             },
             err => {
@@ -77,7 +74,6 @@ export class ListIdPage {
                 duration: 3000
               });
               toast.present();
-              console.log("error loading");
             }
           );
           break;
@@ -85,7 +81,6 @@ export class ListIdPage {
           this.membSer.getInfoFollowings(this.id).subscribe(
             doc => {
               this.lists = doc.following;
-              console.log(doc);
               this.isLoading = false;
             },
             err => {
@@ -96,7 +91,6 @@ export class ListIdPage {
                 duration: 3000
               });
               toast.present();
-              console.log("error loading");
             }
           );
           break;
@@ -105,7 +99,6 @@ export class ListIdPage {
             doc => {
               this.lists = doc.leaders;
               this.isLoading = false;
-              console.log(doc);
             },
             err => {
               // toast
@@ -115,21 +108,17 @@ export class ListIdPage {
                 duration: 3000
               });
               toast.present();
-              console.log("error loading");
             }
           );
           break;
         case "Members":
-          console.log("Members");
           this.churchSer.getInfoMembers(this.id).subscribe(
             doc => {
               this.lists = doc.members;
-              console.log(doc);
               this.churchSer.getInfoFollowers(this.id).subscribe(
                 doc => {
                   this.lists2 = doc.followers;
                   this.isLoading = false;
-                  console.log(doc);
                 },
                 err => {
                   // toast
@@ -139,7 +128,6 @@ export class ListIdPage {
                     duration: 3000
                   });
                   toast.present();
-                  console.log("error loading");
                 }
               );
             },
@@ -151,7 +139,6 @@ export class ListIdPage {
                 duration: 3000
               });
               toast.present();
-              console.log("error loading");
             }
           );
           break;
@@ -178,7 +165,6 @@ export class ListIdPage {
               text: "Remove",
               icon: !this.platform.is("ios") ? "remove-circle" : null,
               handler: () => {
-                console.log('rempving Member');
                 this.removeMember(username, index);
               }
             },
@@ -214,7 +200,6 @@ export class ListIdPage {
     } else if (type === "Follower") {
       this.churchSer.removefollower(username).subscribe(
         () => {
-          console.log('rempving followr');
           this.lists2.splice(index, 1);
           if (this.lists2.length == 0) {
             this.lists2 = undefined;
@@ -240,7 +225,6 @@ export class ListIdPage {
               text: "Remove",
               icon: !this.platform.is("ios") ? "remove-circle" : null,
               handler: () => {
-                console.log('rempving leader');
                 this.removeLeader(username, index);
               }
             },

@@ -26,7 +26,6 @@ export class EditProfilePage {
   }
 
   ionViewDidEnter() {
-    console.log('ionViewDidLoad EditProfilePage');
     this.name =  this.membSer.getName();
     this.proPic = this.membSer.getProPic();
   }
@@ -79,7 +78,7 @@ export class EditProfilePage {
         // imageData is either a base64 encoded string or a file URI
         // If it's base64:
         let base64Image = 'data:image/jpeg;base64,' + imageData;
-        console.log(imageData);
+
         this.proPic = base64Image;
        }, (err) => {
         var toast = this.toastCtrl.create({
@@ -106,10 +105,8 @@ export class EditProfilePage {
     };
     this.membSer.updateProfile(updatedPro)
       .subscribe(d => {
-        console.log('Success');
         this.navCtrl.pop();
       }, err => {
-        console.log('error');
         var toast = this.toastCtrl.create({
           message: "Unable to connect to server",
           duration: 3000

@@ -26,7 +26,6 @@ export class EditChurchPage {
   }
 
   ionViewDidEnter() {
-    console.log('ionViewDidLoad EditChurchPage');
     this.churchName = this.churchSer.getChurchName();
     this.proPic = this.churchSer.getProPic();
   }
@@ -79,7 +78,6 @@ export class EditChurchPage {
         // imageData is either a base64 encoded string or a file URI
         // If it's base64:
         let base64Image = 'data:image/jpeg;base64,' + imageData;
-        console.log(imageData);
         this.proPic = base64Image;
        }, (err) => {
         var toast = this.toastCtrl.create({
@@ -104,13 +102,10 @@ export class EditChurchPage {
       churchName: form.value.churchName,
       proPic: this.proPic
     };
-    console.log(updatedPro);
     this.churchSer.updateProfile(updatedPro)
       .subscribe(d => {
-        console.log('Success');
         this.navCtrl.pop();
       }, err => {
-        console.log('error');
         var toast = this.toastCtrl.create({
           message: "Unable to connect to server",
           duration: 3000

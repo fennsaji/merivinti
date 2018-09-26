@@ -31,13 +31,10 @@ export class PrayersPage {
     this.isLoading = true;
     this.url = this.authSer.globalUrl + 'profile/';
     this.username = this.authSer.getUsername();
-    console.log('ionViewDidLoad PrayersPage');
     this.prayerSer.initializeAndGetPr()
       .then((pr: IPrayerReq[]) => {
-        console.log('prr', pr)
         this.prayerReq = [...pr];
         this.loadPrayers(null);
-        console.log('2', this.prayerReq)
         this.isLoading = false;
       })
       .catch(e => {
@@ -47,7 +44,6 @@ export class PrayersPage {
           duration: 3000
         });
         toast.present();
-        console.log('error loading old pr');
       });
   }
 
@@ -55,13 +51,11 @@ export class PrayersPage {
     if(this.authSer.isOnline()) {
       this.prayerSer.loadPrayerReq()
       .subscribe((doc: IPrayerReq[]) => {
-        console.log('fromdB', doc);
         this.prayerReq = [...doc];
         if(refresher) {
           refresher.complete();
         }
       }, err => {
-        console.log('unable to refresh');
         var toast = this.toastCtrl.create({
           message: "Unable to Refresh",
           duration: 3000
@@ -90,13 +84,9 @@ export class PrayersPage {
       .subscribe(doc => {
         if(doc) {
           this.prayerReq.push(...doc);
-        } else {
-          console.log('No more feed to load')
-        }
-        console.log('fromdB2', doc);
+        } 
         infinitescroll.complete();
       }, err => {
-        console.log('unable to refresh2');
         infinitescroll.complete();
       });
     } else {
@@ -109,7 +99,6 @@ export class PrayersPage {
     const modal = this.modalCtrl.create('NewPrayerPage');
     modal.present();
     modal.onDidDismiss((newPr) => {
-      console.log(newPr);
       if(!newPr) {
         return;
       }
@@ -118,7 +107,6 @@ export class PrayersPage {
   }
 
   search(): void {
-    console.log('clicked');
     this.navCtrl.push('SearchPage', {profile: 'people'});
   }
 
@@ -203,7 +191,6 @@ export class PrayersPage {
   }
 
   sharePrayerReq(index: number) {
-    console.log(this.prayerReq[index]);
     var subject = "Prayer Request by " + this.prayerReq[index].username;
     var mssg = this.prayerReq[index].body;
     var url = 'https://vinti-app.herokuapp.com/vinti.apk';
@@ -212,7 +199,6 @@ export class PrayersPage {
   }
 
   goToProfile(username: string) {
-    console.log("pro");
     if(username === this.authSer.getUsername()) {
       this.navCtrl.push("MemberPage");
     } else {

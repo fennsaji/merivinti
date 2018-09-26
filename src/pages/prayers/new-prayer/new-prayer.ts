@@ -23,19 +23,13 @@ export class NewPrayerPage {
       private membSer: MemberService) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad NewPrayerPage');
-  }
-
   // Make it modal page
   onSubmit(f: NgForm) {
     this.isLoading = true;
-    console.log(f.value);
     var newPr = f.value;
     newPr.date = new Date();
     newPr.username = this.authSer.getUsername();
     newPr.churchId = this.authSer.getChurchId();
-    console.log(newPr);
     if(this.authSer.isOnline()) {
       this.prayerSer.addNewPr(newPr)
       .subscribe(res => {
@@ -50,7 +44,6 @@ export class NewPrayerPage {
           duration: 3000
         });
         toast.present();
-        console.log('Error', err);
       });
     } else {
       var toast = this.toastCtrl.create({
@@ -68,6 +61,5 @@ export class NewPrayerPage {
       // alert
     }
     this.viewCtrl.dismiss();
-    console.log(f.pristine);
   }
 }

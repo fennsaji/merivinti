@@ -43,7 +43,6 @@ export class ChurchService {
       })
     }
     this.url = this.authSer.globalUrl + 'church/';
-    console.log('church initializes');
     if(this.authSer.isLeader())
     this.getbasicinfo().subscribe();
     this.getNotifications();
@@ -51,10 +50,8 @@ export class ChurchService {
 
   getbasicinfo() {
     if(this.authSer.isLeader()) {
-      console.log('church initilizes leader');
       return this.http.get<any>(this.url + 'getbasicinfo', this.httpOptions)
         .map(res => {
-          console.log('list23', res);
           this.leaders = res.list.leaders;
           this.requests = res.list.requests;
           this.members = res.list.members;
@@ -62,12 +59,10 @@ export class ChurchService {
           this.proPic = res.list.proPic;
           this.followers = res.list.followers;
           this.newNotifications = res.list.newNotifications;
-          console.log('1233', this.newNotifications);
           this.events.publish('churchNotify:updated', this.newNotifications);
           // this.followReq.emit(this.requests);
           return Promise.resolve();
         }, err => {
-          console.log('Errorr');
         });
     }
   }
@@ -79,7 +74,6 @@ export class ChurchService {
           this.churchName = Pro.church.churchName;
           this.proPic = Pro.church.proPic;
           this.storage.set('myChurch', Pro);
-          console.log('saved');
           if(this.authSer.isLeader())
           this.getbasicinfo().subscribe();
         }
@@ -102,11 +96,9 @@ export class ChurchService {
       this.http.get<any>(this.url + 'getNotifications', this.httpOptions)
       .subscribe(res => {
         this.requests = this.mapRequests(res.list.requests, res.basicInfo);
-        console.log(this.requests);
         this.followReq.emit(this.requests);
         this.getbasicinfo();
       }, err => {
-        console.log('Errorr1');
       });
     }
   }
@@ -115,23 +107,14 @@ export class ChurchService {
     requests = requests.map(o => {
       var ind = basicInfo.findIndex(obj => obj.username == o.username);
       o = { ...basicInfo[ind],...o}
-      // console.log('pr1', o);
       return o;
     })
-    console.log(requests);
     return requests;
   }
 
   pushNotifications(newNotify) {
-    console.log(newNotify);
     if(this.authSer.isLeader()) {
-      return this.http.post<any>(this.url + 'pushNotifications', {newNotify}, this.httpOptions)
-        .map(res => {
-          console.log('successss');
-          return res;
-        }, err => {
-          console.log('Errorr1');
-        });
+      return this.http.post<any>(this.url + 'pushNotifications', {newNotify}, this.httpOptions);
     }
   }
 
@@ -139,11 +122,8 @@ export class ChurchService {
     if(this.authSer.isLeader()) {
       this.http.delete<any>(this.url + 'newNotifications', this.httpOptions)
         .subscribe(res => {
-          console.log('successss');
           this.newNotifications = 0;
           this.events.publish('churchNotify:updated', this.newNotifications);
-        }, err => {
-          console.log('Errorr1');
         });
     }
   }
@@ -182,7 +162,6 @@ export class ChurchService {
       return this.storage.get('myChurch')
     })
     .then((Pro) => {
-      console.log('1', Pro);
       if(Pro) {
         return Pro;
       } else {

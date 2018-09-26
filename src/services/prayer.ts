@@ -37,7 +37,6 @@ export class PrayerService {
         return this.storage.get('prayerReq')
       })
       .then((pr) => {
-        console.log('1', pr);
         // this.prayerReq = [...pr];
         // return pr;
         if(pr) {
@@ -51,7 +50,6 @@ export class PrayerService {
   loadPrayerReq(): Observable<IPrayerReq[]> {
     return this.http.get<any>(this.url + 'getAllPr', this.httpOptions)
       .map(doc => {
-        console.log('loading....', doc.prayers);
         doc.prayers = this.mapInfoPr(doc.prayers, doc.basicInfo);
         this.storage.set('prayerReq', doc.prayers);
         return doc.prayers;
@@ -64,12 +62,9 @@ export class PrayerService {
       var ind = basicInfo.findIndex(bu => {
           return pr.username === bu.username;
       });
-      console.log(ind);
       pr = { ...basicInfo[ind],...pr}
-      console.log('pr1', pr);
       return pr;
     });
-    console.log('mappped', prayers);
     return prayers;
   }
 
@@ -85,10 +80,8 @@ export class PrayerService {
             handler: () => {
               this.socialSharing.shareViaWhatsApp(mssg + ' : '+ subject, proPic, url)
               .then(() => {
-                console.log('shared');
               })
               .catch(err => {
-                console.log('not shared');
               });
             }
           },
@@ -96,13 +89,10 @@ export class PrayerService {
             text: 'Facebook',
             icon: !this.platform.is('ios') ? 'logo-facebook' : null,
             handler: () => {
-              console.log('Play clicked');
               this.socialSharing.shareViaFacebook(mssg + ' : '+ subject, proPic, url)
               .then(() => {
-                console.log('shared');
               })
               .catch(err => {
-                console.log('not shared');
               });
 
             }
@@ -113,12 +103,9 @@ export class PrayerService {
             handler: () => {
               this.socialSharing.share(mssg, subject, proPic, url)
               .then(() => {
-                console.log('shared');
               })
               .catch(err => {
-                console.log('not shared');
               });
-              console.log('Play clicked');
             }
           },
           {
@@ -126,7 +113,6 @@ export class PrayerService {
             role: 'cancel', // will always sort to be on the bottom
             icon: !this.platform.is('ios') ? 'close' : null,
             handler: () => {
-              console.log('Cancel clicked');
             }
           }
         ]
@@ -136,10 +122,8 @@ export class PrayerService {
   }
 
   loadOldPr(date: string): Observable<IPrayerReq[]> {
-    console.log('called load');
     return this.http.post<any>(this.url + 'getByDate', {date}, this.httpOptions)
     .map(doc => {
-      console.log(doc);
       doc.prayers = this.mapInfoPr(doc.prayers, doc.basicInfo);
       return doc.prayers;
     })

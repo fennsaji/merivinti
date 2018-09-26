@@ -23,17 +23,15 @@ export class MessagingService {
 
   initMessaging() {
     this.messaging = this.app.messaging();
+    this.messaging.usePublicVapidKey("BPGdlj1GXu_gWqy-2OJJiV9k-NFlh1rUud_A_gZsys_TNrC2HmffLtWjE-ZpeZiCts-LxsXoo1Yyc-Mu675zgKg");
     navigator.serviceWorker.register('service-worker.js').then((registration) => {
       this.messaging.useServiceWorker(registration);
-      console.log('Enabled notify 2');
       this.enableNotifications();
   });
   }
 
   enableNotifications() {
-    console.log('Requesting permission...');
     return this.messaging.requestPermission().then(() => {
-        console.log('Permission granted');
         // token might change - we need to listen for changes to it and update it
         this.setupOnTokenRefresh();
         return this.updateToken();
@@ -50,7 +48,6 @@ export class MessagingService {
     return this.messaging.getToken().then((currentToken) => {
       if (currentToken) {
         // we've got the token from Firebase, now let's store it in the database
-        console.log(currentToken)
         // return this.storage.set('fcmToken', currentToken);
         let httpOptions = {
           headers: new HttpHeaders({
@@ -64,17 +61,14 @@ export class MessagingService {
             this.url + "notify/regtoken",
             { regToken: currentToken },
             httpOptions
-          );
+          ).subscribe(() => {console.log("")});
           
-      } else {
-        console.log('No Instance ID token available. Request permission to generate one.');
       }
     });
   }
 
   private setupOnTokenRefresh(): void {
     this.unsubscribeOnTokenRefresh = this.messaging.onTokenRefresh(() => {
-      console.log("Token refreshed");
       this.updateToken();
     });
   }

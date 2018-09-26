@@ -38,7 +38,7 @@
         <ion-avatar item-start (tap)="goToProfile(item.username)">
           <img [src]="item.proPic | safeHtml">
         </ion-avatar>
-        <h3 class="inline" (tap)="goToProfile(item.username)">{{item.name}}</h3> 
+        <h3 class="inline" (tap)="goToProfile(item.username)">{{item.name}}</h3>
         <h3 class="inline" (tap)="goToChurchPro(item.churchId)" *ngIf="item.churchId"> | {{item.churchId}}</h3>
         <p class="date">{{ item.date | timeAgo}}</p>
         <button ion-button icon-only item-end clear *ngIf="item.username === username" (tap)="loadPrayerOptions(item._id, i)">
